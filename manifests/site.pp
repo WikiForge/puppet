@@ -6,7 +6,7 @@ node 'puppet1.wikiforge.net' {
     include puppetdb::database
     include role::puppetserver
     include role::salt
-    include role::ssl
+    # include role::ssl
 }
 
 node 'mw1.wikiforge.net' {
