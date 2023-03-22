@@ -1,8 +1,6 @@
-users::groups:
-  - mediawiki-admins
-  - mediawiki-roots
+users::groups: []
 
-contactgroups: ['sre', 'mediawiki']
+contactgroups: ['sre']
 
 jobrunner: true
 
@@ -29,4 +27,4 @@ nginx::keepalive_requests: 150
 nginx::logrotate_number: 2
 nginx::use_graylog: true
 
-puppetserver_hostname: 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com'
+puppetserver_hostname: 'puppet1.wikiforge.net'
