@@ -1,0 +1,13 @@
+users::groups:
+  - ssl-admins
+puppetserver: true
+puppetserver_java_opts: '-Xms512M -Xmx512M'
+puppetdb_enable: true
+puppetdb_hostname: ec2-3-16-47-25.us-east-2.compute.amazonaws.com
+puppetdb::db_ssl: true
+puppetdb::db_rw_host: ec2-3-16-47-25.us-east-2.compute.amazonaws.com
+postgresql::ssl: true
+puppetdb::command_processing_threads: 10
+puppetserver_hostname: 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com'
+role::salt::minions::salt_master: 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com'
+role::salt::minions::salt_master_key: true
