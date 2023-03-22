@@ -68,7 +68,7 @@ class puppetserver(
     git::clone { 'puppet':
         ensure    => present,
         directory => '/etc/puppetlabs/puppet/git',
-        origin    => 'https://github.com/Universal-Omega/puppet-production.git',
+        origin    => 'https://github.com/WikiForge/puppet.git',
         require   => Package['puppet-agent'],
     }
 
