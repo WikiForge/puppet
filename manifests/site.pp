@@ -1,7 +1,6 @@
 # servers
 
-# puppet1
-node 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com' {
+node 'puppet1.wikiforge.net' {
     include base
     include role::postgresql
     include puppetdb::database
@@ -10,8 +9,7 @@ node 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com' {
     include role::ssl
 }
 
-# mw1
-node 'ec2-18-221-90-68.us-east-2.compute.amazonaws.com' {
+node 'mw1.wikiforge.net' {
     include base
     include role::mediawiki
 }
