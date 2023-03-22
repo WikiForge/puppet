@@ -4,8 +4,8 @@ mailserver: false
 puppetserver: false
 mediawiki::branch: 'REL1_39'
 mediawiki::branch_mw_config: 'master'
-puppetserver_hostname: ec2-3-16-47-25.us-east-2.compute.amazonaws.com
-role::salt::minions::salt_master: 'ec2-3-16-47-25.us-east-2.compute.amazonaws.com'
+puppetserver_hostname: puppet1.wikiforge.net
+role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
