@@ -1,5 +1,4 @@
-users::groups:
-  - ssl-admins
+users::groups: []
 puppetserver: true
 puppetserver_java_opts: '-Xms512M -Xmx512M'
 puppetdb_enable: true
