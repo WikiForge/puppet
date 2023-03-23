@@ -173,12 +173,12 @@ class puppetdb(
         enable => true,
     }
 
-    monitoring::services { 'puppetdb':
-        check_command => 'tcp',
-        vars          => {
-            tcp_port    => '8081',
-        },
-    }
+#    monitoring::services { 'puppetdb':
+#        check_command => 'tcp',
+#        vars          => {
+#            tcp_port    => '8081',
+#        },
+#    }
 
     $firewall_rules_str = join(
         query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
