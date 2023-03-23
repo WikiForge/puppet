@@ -172,27 +172,4 @@ class puppetdb(
         ensure => running,
         enable => true,
     }
-
-#    monitoring::services { 'puppetdb':
-#        check_command => 'tcp',
-#        vars          => {
-#            tcp_port    => '8081',
-#        },
-#    }
-
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-        .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'icinga access port 8081':
-        proto  => 'tcp',
-        port   => '8081',
-        srange => "(${firewall_rules_str})",
-    }
 }
