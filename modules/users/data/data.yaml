@@ -11,4 +11,4 @@ users:
     uid: 1000
     name: Admin
     realname: Admin
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx #1]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx]
