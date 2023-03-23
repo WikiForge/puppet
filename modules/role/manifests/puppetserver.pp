@@ -36,22 +36,6 @@ class role::puppetserver (
         puppetserver_java_opts => $puppetserver_java_opts,
     }
 
-    # Used for puppetserver
-    prometheus::exporter::jmx { "puppetserver":
-        port        => 9400,
-        config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
-        content     => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
-        notify      => Service['puppetserver']
-    }
-
-    # Used for puppetdb
-    prometheus::exporter::jmx { "puppetdb":
-        port        => 9401,
-        config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
-        content     => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
-        notify      => Service['puppetdb']
-    }
-
     motd::role { 'role::puppetserver':
         description => 'Centralised puppetserver',
     }
