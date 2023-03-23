@@ -27,13 +27,12 @@ class role::puppetserver (
     String  $puppetserver_java_options = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
 
-    $puppetserver_java_opts = "${puppetserver_java_options} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml"
     class { '::puppetserver':
         puppetdb_hostname      => $puppetdb_hostname,
         puppetdb_enable        => $puppetdb_enable,
         puppet_major_version   => $puppet_major_version,
         puppetserver_hostname  => $puppetserver_hostname ,
-        puppetserver_java_opts => $puppetserver_java_opts,
+        puppetserver_java_opts => $puppetserver_java_options,
     }
 
     motd::role { 'role::puppetserver':
