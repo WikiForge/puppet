@@ -2,7 +2,7 @@ require 'puppet/application/face_base'
 
 class Puppet::Application::Puppetdbquery < Puppet::Application::FaceBase
   def self.setting
-    use_ssl = true
+    use_ssl = false
     begin
       require 'puppet'
       require 'puppet/util/puppetdb'
