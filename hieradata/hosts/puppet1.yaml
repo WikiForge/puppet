@@ -12,3 +12,4 @@ role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 role::salt::minions::salt_master_key: true
 
 mailserver: false
+dns: false
