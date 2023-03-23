@@ -64,7 +64,7 @@ class base::firewall (
         }
 
         $firewall_rules_str = join(
-            query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
+            query_facts('Class[Base]', ['ipaddress'])
             .map |$key, $value| {
                 "${value['ipaddress']}"
             }
