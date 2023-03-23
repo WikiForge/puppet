@@ -2,7 +2,7 @@
 
 node 'puppet1.wikiforge.net' {
     include base
-    include role::postgresql
+    # include role::postgresql
     include puppetdb::database
     include role::puppetserver
     include role::salt
