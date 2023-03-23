@@ -1,7 +1,7 @@
 users::groups: []
 puppetserver: true
 puppetserver_java_opts: '-Xms512M -Xmx512M'
-puppetdb_enable: true
+puppetdb_enable: false
 puppetdb_hostname: puppet1.wikiforge.net
 puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet1.wikiforge.net
