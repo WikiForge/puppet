@@ -12,11 +12,11 @@ class Hiera
           uri = URI(Puppet::Util::Puppetdb.config.server_urls.first)
           host = uri.host
           port = uri.port
-          ssl = uri.scheme == 'https'
+          ssl = uri.scheme == 'http'
         rescue
           host = 'puppetdb'
-          port = 443
-          ssl = true
+          port = 80
+          ssl = false
         end
 
         Hiera.debug('Hiera PuppetDB backend starting')
