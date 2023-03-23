@@ -49,14 +49,14 @@ class base (
     class { 'apt::security': }
 
     # Used by salt-user
-    users::user { 'salt-user':
-        ensure     => present,
-        uid        => 3100,
-        ssh_keys   => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTYeA06i16YF6VeCO0ctaCaSgK/8rNQ32aJqx9eNXmJ salt-user@puppet141'
-        ],
-        privileges => ['ALL = (ALL) NOPASSWD: ALL'],
-    }
+#    users::user { 'salt-user':
+#        ensure     => present,
+#        uid        => 3100,
+#        ssh_keys   => [
+#            ''
+#        ],
+#        privileges => ['ALL = (ALL) NOPASSWD: ALL'],
+#    }
 
     # Global vim defaults
     file { '/etc/vim/vimrc.local':
