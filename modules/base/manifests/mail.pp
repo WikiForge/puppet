@@ -24,7 +24,7 @@ class base::mail {
     }
 
     mailalias { 'root':
-        recipient => 'root@miraheze.org',
+        recipient => 'root@wikiforge.net',
     }
 
     file { '/etc/mailname':
