@@ -1,109 +1,139 @@
 # firewall for all servers
 class base::firewall (
-    Array[String] $block_abuse = lookup('block_abuse', {'default_value' => []}),
+  Enum['ferm', 'ufw'] $firewall_mode = lookup('base::firewall::mode', {'default_value' => 'ferm'})
 ) {
-    include ferm
-    # Increase the size of conntrack table size (default is 65536)
-    sysctl::parameters { 'ferm_conntrack':
-        values => {
-            'net.netfilter.nf_conntrack_max'                   => 262144,
-            'net.netfilter.nf_conntrack_tcp_timeout_time_wait' => 65,
-        },
-    }
-
-    # The sysctl value net.netfilter.nf_conntrack_buckets is read-only. It is configured
-    # via a modprobe parameter, bump it manually for running systems
-    exec { 'bump nf_conntrack hash table size':
-        command => '/bin/echo 32768 > /sys/module/nf_conntrack/parameters/hashsize',
-        onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
-    }
-
-    if $block_abuse != undef and $block_abuse != [] {
-        ferm::rule { 'drop-abuse-net-miaheze':
-            prio => '01',
-            rule => "saddr (${$block_abuse.join(' ')}) DROP;",
+    if $firewall_mode == 'ufw' {
+        # Ensure ferm is purged when installing ufw.
+        package { 'ferm':
+          ensure => purged,
         }
-    }
 
-    ferm::conf { 'main':
-        prio   => '02',
-        source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',
-    }
+        include ::ufw
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-        .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+        ufw::allow { 'ssh':
+          proto => 'tcp',
+          port  => 22,
         }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'nrpe':
-        proto  => 'tcp',
-        port   => '5666',
-        srange => "(${firewall_rules_str})",
-    }
 
-    $firewall_bastion_hosts = join(
-        query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
-        .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+        $firewall_rules = query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
+        $firewall_rules.each |$key, $value| {
+          ufw::allow { "nrpe ${value['ipaddress']} IPv4":
+            proto => 'tcp',
+            port  => 5666,
+            from  => $value['ipaddress'],
+          }
+
+          ufw::allow { "nrpe ${value['ipaddress6']} IPv6":
+            proto => 'tcp',
+            port  => 5666,
+            from  => $value['ipaddress6'],
+          }
         }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
 
-    ferm::service { 'ssh':
-        proto  => 'tcp',
-        port   => '22',
-        srange => "(${firewall_bastion_hosts})",
-    }
+        file { '/root/ufw-fix':
+          ensure => present,
+          source => 'puppet:///modules/base/ufw/ufw-fix',
+          mode   => '0755',
+        }
+    } else {
+        # Ensure ufw is purged when installing ferm.
+        package { 'ufw':
+            ensure => purged,
+        }
 
-    class { '::ulogd': }
+        include ferm
 
-    # Explicitly drop pxe/dhcp packets packets so they dont hit the log
-    ferm::filter_log { 'filter-bootp':
-        proto => 'udp',
-        daddr => '255.255.255.255',
-        sport => 67,
-        dport => 68,
-    }
+        # Increase the size of conntrack table size (default is 65536)
+        sysctl::parameters { 'ferm_conntrack':
+            values => {
+                'net.netfilter.nf_conntrack_max'                   => 262144,
+                'net.netfilter.nf_conntrack_tcp_timeout_time_wait' => 65,
+            },
+        }
 
-    ferm::rule { 'log-everything':
-        rule => "NFLOG mod limit limit 1/second limit-burst 5 nflog-prefix \"[fw-in-drop]\";",
-        prio => '98',
-    }
+        # The sysctl value net.netfilter.nf_conntrack_buckets is read-only. It is configured
+        # via a modprobe parameter, bump it manually for running systems
+        exec { 'bump nf_conntrack hash table size':
+            command => '/bin/echo 32768 > /sys/module/nf_conntrack/parameters/hashsize',
+            onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
+        }
 
-    file { '/usr/lib/nagios/plugins/check_conntrack':
-        source => 'puppet:///modules/base/firewall/check_conntrack.py',
-        mode   => '0755',
-    }
+        ferm::conf { 'main':
+            prio   => '02',
+            source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',
+        }
 
-    monitoring::nrpe { 'conntrack_table_size':
-        command => '/usr/lib/nagios/plugins/check_conntrack 80 90',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
-    }
+        $firewall_rules_str = join(
+            query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
+            .map |$key, $value| {
+                "${value['ipaddress']} ${value['ipaddress6']}"
+            }
+            .flatten()
+            .unique()
+            .sort(),
+            ' '
+        )
+        ferm::service { 'nrpe':
+            proto  => 'tcp',
+            port   => '5666',
+            srange => "(${firewall_rules_str})",
+        }
 
-    sudo::user { 'nagios_check_ferm':
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
-        require    => File['/usr/lib/nagios/plugins/check_ferm'],
-    }
+        ferm::service { 'ssh':
+            proto  => 'tcp',
+            port   => '22',
+        }
 
-    file { '/usr/lib/nagios/plugins/check_ferm':
-        source => 'puppet:///modules/base/firewall/check_ferm',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-    }
+        class { '::ulogd': }
 
-    monitoring::nrpe { 'ferm_active':
-        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
-        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
-        critical => true
+        # Explicitly drop pxe/dhcp packets packets so they dont hit the log
+        ferm::filter_log { 'filter-bootp':
+            proto => 'udp',
+            daddr => '255.255.255.255',
+            sport => 67,
+            dport => 68,
+        }
+
+        ferm::rule { 'log-everything':
+            rule => "NFLOG mod limit limit 1/second limit-burst 5 nflog-prefix \"[fw-in-drop]\";",
+            prio => '98',
+        }
+
+        file { '/usr/lib/nagios/plugins/check_conntrack':
+            source => 'puppet:///modules/base/firewall/check_conntrack.py',
+            mode   => '0755',
+        }
+
+        monitoring::services { 'conntrack_table_size':
+            check_command   => 'nrpe',
+            vars            => {
+                nrpe_command => 'conntrack_table_size',
+            },
+            require         => File['/usr/lib/nagios/plugins/check_conntrack'],
+        }
+
+        sudo::user { 'nagios_check_ferm':
+            user       => 'nagios',
+            privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
+            require    => File['/usr/lib/nagios/plugins/check_ferm'],
+        }
+
+        file { '/usr/lib/nagios/plugins/check_ferm':
+            source => 'puppet:///modules/base/firewall/check_ferm',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0555',
+        }
+
+        monitoring::services { 'ferm_active':
+          check_command   => 'nrpe',
+          vars            => {
+            nrpe_command  => 'ferm_active',
+          },
+          require         => [
+            File['/usr/lib/nagios/plugins/check_ferm'],
+            Sudo::User['nagios_check_ferm']
+          ],
+        }
     }
 }
