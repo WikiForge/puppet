@@ -10,3 +10,5 @@ puppetdb::command_processing_threads: 10
 puppetserver_hostname: 'puppet1.wikiforge.net'
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 role::salt::minions::salt_master_key: true
+
+mailserver: false
