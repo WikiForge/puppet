@@ -9,7 +9,6 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
-    include mediawiki::monitoring
 
     if lookup(mediawiki::use_staging) {
         class { 'mediawiki::deploy':
