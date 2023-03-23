@@ -148,11 +148,11 @@ class puppetdb(
         'access-log-config'         => '/etc/puppetlabs/puppetdb/request-logging.xml',
     }
 
-    if $bind_ip {
-        $actual_jetty_settings = merge($jetty_settings, {'ssl-host' => $bind_ip})
-    } else {
+#    if $bind_ip {
+#        $actual_jetty_settings = merge($jetty_settings, {'ssl-host' => $bind_ip})
+#    } else {
         $actual_jetty_settings = $jetty_settings
-    }
+#    }
 
     puppetdb::config { 'jetty':
         settings => $actual_jetty_settings,
