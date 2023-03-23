@@ -40,10 +40,10 @@ class puppetdb::database(
     }
 
     # Create the database
-    postgresql::db { 'puppetdb':
-        owner   => 'puppetdb',
-        require => Class[$require_class],
-    }
+   # postgresql::db { 'puppetdb':
+    #    owner   => 'puppetdb',
+    #    require => Class[$require_class],
+    #}
 
     # sudo -u postgres sh
     # psql
@@ -51,11 +51,11 @@ class puppetdb::database(
     # \q
     # exit
     #
-    exec { 'create_tgrm_extension':
-        command => '/usr/bin/psql puppetdb -c "create extension pg_trgm"',
-        unless  => '/usr/bin/psql puppetdb -c \'\dx\' | /bin/grep -q pg_trgm',
-        user    => 'postgres',
-        require => Postgresql::Db['puppetdb'],
-    }
+#    exec { 'create_tgrm_extension':
+#        command => '/usr/bin/psql puppetdb -c "create extension pg_trgm"',
+#        unless  => '/usr/bin/psql puppetdb -c \'\dx\' | /bin/grep -q pg_trgm',
+#        user    => 'postgres',
+#        require => Postgresql::Db['puppetdb'],
+#    }
 
 }
