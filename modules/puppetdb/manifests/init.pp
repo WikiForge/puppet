@@ -141,10 +141,10 @@ class puppetdb(
 
     $jetty_settings = {
         'port'                      => 8080,
-        'ssl-port'                  => 8081,
-        'ssl-key'                   => '/etc/puppetlabs/puppetdb/ssl/private.pem',
-        'ssl-cert'                  => '/etc/puppetlabs/puppetdb/ssl/public.pem',
-        'ssl-ca-cert'               => '/etc/puppetlabs/puppetdb/ssl/ca.pem',
+#        'ssl-port'                  => 8081,
+#        'ssl-key'                   => '/etc/puppetlabs/puppetdb/ssl/private.pem',
+#        'ssl-cert'                  => '/etc/puppetlabs/puppetdb/ssl/public.pem',
+#        'ssl-ca-cert'               => '/etc/puppetlabs/puppetdb/ssl/ca.pem',
         'access-log-config'         => '/etc/puppetlabs/puppetdb/request-logging.xml',
     }
 
