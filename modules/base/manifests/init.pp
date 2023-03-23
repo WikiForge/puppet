@@ -16,12 +16,8 @@ class base (
     include ssh
     include users
 
-    if !lookup('mailserver') {
-        include base::mail
-    }
-
     if !lookup('dns') {
-        include base::dns
+  #      include base::dns
     }
 
     file { '/usr/local/bin/gen_fingerprints':
