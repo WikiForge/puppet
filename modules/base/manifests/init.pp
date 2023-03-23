@@ -17,7 +17,7 @@ class base (
     include users
 
     if !lookup('dns') {
-  #      include base::dns
+        include base::dns
     }
 
     file { '/usr/local/bin/gen_fingerprints':
