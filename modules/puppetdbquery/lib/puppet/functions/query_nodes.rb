@@ -36,7 +36,7 @@ Puppet::Functions.create_function('query_nodes') do
     @puppetdb ||= PuppetDB::Connection.new(
       @uri.host,
       @uri.port,
-      @uri.scheme == 'https'
+      @uri.scheme == 'http'
     )
   end
 
