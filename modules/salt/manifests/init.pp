@@ -3,7 +3,7 @@ class salt {
         ensure  => present,
     }
 
-    $host = ""
+    $host = query_nodes("domain='${domain}'", 'fqdn')
     file { '/etc/salt/roster':
         content => template('salt/roster.erb'),
         owner   => 'root',
