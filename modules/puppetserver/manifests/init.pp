@@ -182,11 +182,6 @@ class puppetserver(
         require  => Package['puppetserver'],
     }
 
-    ferm::service { 'puppetserver':
-        proto => 'tcp',
-        port  => '8140',
-    }
-
     cron { 'puppet-git':
         command => '/usr/bin/git -C /etc/puppetlabs/puppet/git pull > /dev/null 2>&1',
         user    => 'root',
@@ -243,11 +238,4 @@ class puppetserver(
         hour     => 23,
         minute   => 0,
     }
-    
-#    monitoring::services { 'puppetserver':
-#        check_command => 'tcp',
-#        vars          => {
-#            tcp_port    => '8140',
-#        },
-#    }
 }
