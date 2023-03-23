@@ -131,14 +131,14 @@ class puppetserver(
         ],
     }
 
-    file { '/etc/puppetlabs/puppet/environments/production/ssl-cert':
+    /*file { '/etc/puppetlabs/puppet/environments/production/ssl-cert':
         ensure  => link,
         target  => '/etc/puppetlabs/puppet/ssl-cert',
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             Git::Clone['ssl']
         ],
-    }
+    }*/
 
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
