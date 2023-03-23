@@ -7,10 +7,10 @@ require 'net/http'
 require 'net/https'
 
 options = { host: 'puppetdb',
-            port: 443,
+            port: 80,
             fact: nil,
             query: nil,
-            ssl: true,
+            ssl: false,
             print: false }
 
 opt = OptionParser.new
