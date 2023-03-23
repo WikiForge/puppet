@@ -13,3 +13,4 @@ role::salt::minions::salt_master_key: true
 
 mailserver: false
 dns: false
+puppetdb::password::rw: ""
