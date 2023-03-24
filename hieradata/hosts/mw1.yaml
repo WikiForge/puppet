@@ -3,6 +3,7 @@ users::groups: []
 contactgroups: ['sre']
 
 jobrunner: true
+puppetserver: false
 
 # to-do
 mediawiki::jobqueue::runner::redis_ip: false
