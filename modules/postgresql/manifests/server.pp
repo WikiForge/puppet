@@ -72,9 +72,9 @@ class postgresql::server(
             group  => 'postgres',
         }
 
-        file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key":
+        file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.wikiforge.net.key":
             ensure  => 'present',
-            source  => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            source  => 'puppet:///ssl-keys/wildcard.wikiforge.net.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
@@ -88,7 +88,7 @@ class postgresql::server(
             group   => 'root',
             mode    => '0444',
             before  => Service['postgresql'],
-            require => File["/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key"],
+            require => File["/etc/postgresql/${pgversion}/main/ssl/wildcard.wikiforge.net.key"],
         }
     }
 
