@@ -11,7 +11,6 @@ class base (
     include base::timezone
     include base::upgrades
     # include base::firewall
-    # include base::monitoring
     include ssh
     include users
 
