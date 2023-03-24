@@ -33,3 +33,4 @@ puppetserver: false
 mediawiki::use_shellbox: false
 mediawiki::use_staging: true
 mediawiki::is_canary: false
+mediawiki::default_sync: 'all'
