@@ -32,3 +32,4 @@ puppetserver_hostname: 'puppet1.wikiforge.net'
 puppetserver: false
 mediawiki::use_shellbox: false
 mediawiki::use_staging: true
+mediawiki::is_canary: false
