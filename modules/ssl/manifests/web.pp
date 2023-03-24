@@ -16,29 +16,4 @@ class ssl::web {
         content => systemd_template('mirahezerenewssl'),
         restart => true,
     }
-
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-        .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'icinga 5000':
-        proto  => 'tcp',
-        port   => '5000',
-        srange => "(${firewall_rules_str})",
-    }
-
-    monitoring::services { 'MirahezeRenewSsl':
-        check_command => 'tcp',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSSL',
-        vars          => {
-            tcp_address => $::ipaddress6,
-            tcp_port    => '5000',
-        },
-    }
 }
