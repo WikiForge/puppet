@@ -9,7 +9,7 @@ class PuppetDB::Connection
 
   include Puppet::Util::Logging
 
-  def initialize(host = 'puppetdb', port = 80, use_ssl = false)
+  def initialize(host = 'puppetdb', port = 443, use_ssl = true)
     @host = host
     @port = port
     @use_ssl = use_ssl
