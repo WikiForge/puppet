@@ -1,0 +1,2 @@
+base::syslog::rsyslog_udp_localhost: true
+puppetserver_hostname: 'puppet1.wikiforge.net'
