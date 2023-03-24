@@ -27,8 +27,6 @@ class php::fpm(
         fail('You need to declare fpm as a sapi in the php class to be able to use fpm')
     }
 
-    include prometheus::exporter::fpm
-
     $main_config_file = "${php::config_dir}/fpm/php-fpm.conf"
     # Default config values
     $default_config = {
