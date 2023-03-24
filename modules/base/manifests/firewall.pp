@@ -44,22 +44,4 @@ class base::firewall (
         rule => "NFLOG mod limit limit 1/second limit-burst 5 nflog-prefix \"[fw-in-drop]\";",
         prio => '98',
     }
-
-    file { '/usr/lib/nagios/plugins/check_conntrack':
-        source => 'puppet:///modules/base/firewall/check_conntrack.py',
-        mode   => '0755',
-    }
-
-    sudo::user { 'nagios_check_ferm':
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
-        require    => File['/usr/lib/nagios/plugins/check_ferm'],
-    }
-
-    file { '/usr/lib/nagios/plugins/check_ferm':
-        source => 'puppet:///modules/base/firewall/check_ferm',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-    }
 }
