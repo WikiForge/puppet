@@ -2,8 +2,6 @@
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
 ) {
-    include prometheus::exporter::cadvisor
-
     include role::mediawiki::nutcracker
     include mediawiki
 
