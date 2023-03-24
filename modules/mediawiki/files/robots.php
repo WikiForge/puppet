@@ -11,7 +11,7 @@ $titleFactory = MediaWikiServices::getInstance()->getTitleFactory();
 $page = $wikiPageFactory->newFromTitle( $titleFactory->newFromText( 'Robots.txt', NS_MEDIAWIKI ) );
 
 header( 'Content-Type: text/plain; charset=utf-8' );
-header( 'X-Miraheze-Robots: Default' );
+header( 'X-WikiForge-Robots: Default' );
 
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
@@ -37,7 +37,7 @@ echo "# Dynamic sitemap url" . "\r\n";
 echo "Sitemap: {$wgServer}/sitemap.xml" . "\r\n\n";
 
 if ( $page->exists() ) {
-	header( 'X-Miraheze-Robots: Custom' );
+	header( 'X-WikiForge-Robots: Custom' );
 
 	echo "# -- BEGIN CUSTOM -- #\r\n\n";
 
