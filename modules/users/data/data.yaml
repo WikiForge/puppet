@@ -4,6 +4,12 @@ groups:
     description: roots, sudo everywhere
     members: [admin]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
+  ssl-admins:
+    gid: 2001
+    description: limited sudo access to manage SSL certificates
+    members: []
+    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
+                 'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
 
 users:
   admin:
