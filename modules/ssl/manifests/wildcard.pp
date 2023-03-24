@@ -10,18 +10,18 @@ define ssl::wildcard (
         $restart_nginx = undef
     }
 
-    if !defined(File["${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt"]) {
-        file { "${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt":
+    if !defined(File["${ssl_cert_path}/wildcard.wikiforge.net.crt"]) {
+        file { "${ssl_cert_path}/wildcard.wikiforge.net.crt":
             ensure => 'present',
-            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
+            source => 'puppet:///ssl/certificates/wildcard.wikiforge.net.crt',
             notify => $restart_nginx,
         }
     }
 
-    if !defined(File["${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key"]) {
-        file { "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key":
+    if !defined(File["${ssl_cert_key_private_path}/wildcard.wikiforge.net.key"]) {
+        file { "${ssl_cert_key_private_path}/wildcard.wikiforge.net.key":
             ensure    => 'present',
-            source    => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            source    => 'puppet:///ssl-keys/wildcard.wikiforge.net.key',
             owner     => 'root',
             group     => 'ssl-cert',
             mode      => '0660',
