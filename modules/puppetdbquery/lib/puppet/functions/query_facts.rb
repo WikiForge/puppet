@@ -30,7 +30,7 @@ Puppet::Functions.create_function('query_facts')  do
     facts_for_query = facts.map { |fact| fact.is_a?(Array) ? fact.first : fact }
 
     uri = URI(Puppet::Util::Puppetdb.config.server_urls.first)
-    puppetdb = PuppetDB::Connection.new(uri.host, uri.port, uri.scheme == 'http')
+    puppetdb = PuppetDB::Connection.new(uri.host, uri.port, uri.scheme == 'https')
     parser = PuppetDB::Parser.new
     query = parser.facts_query query, facts_for_query if query.is_a? String
     parser.facts_hash(puppetdb.query(:facts, query, :extract => [:certname, :name, :value]), facts)
