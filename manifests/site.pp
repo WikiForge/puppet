@@ -1,5 +1,10 @@
 # servers
 
+node 'bots1.wikiforge.net' {
+    include base
+    include role::irc
+}
+
 node 'puppet1.wikiforge.net' {
     include base
     include role::postgresql
