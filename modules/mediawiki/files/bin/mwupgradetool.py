@@ -3,14 +3,14 @@
 import os
 import requests
 import sys
-canary = 'mwtask141'
-serverlist = 'mw121,mw122,mw131,mw132,mw141,mw142'
+canary = 'mw1'
+serverlist = 'mw1'
 
 
 def check_up(server: str) -> bool:
-    headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
-    req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
-    if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
+    headers = {'X-WikiForge-Debug': f'{server}.meta.wikiforge.netwikiforge.net'}
+    req = requests.get('https://meta.wikiforge.net/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
+    if req.status_code == 200 and 'wikiforge' in req.text and server in req.headers['X-Served-By']:
         return True
     return False
 
