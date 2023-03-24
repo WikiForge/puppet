@@ -3,7 +3,6 @@ users::groups: []
 contactgroups: ['sre']
 
 jobrunner: true
-puppetserver: false
 
 # to-do
 mediawiki::jobqueue::runner::redis_ip: false
@@ -29,3 +28,7 @@ nginx::logrotate_number: 2
 nginx::use_graylog: true
 
 puppetserver_hostname: 'puppet1.wikiforge.net'
+
+# remove when we get common.yaml working
+puppetserver: false
+mediawiki::use_shellbox: false
