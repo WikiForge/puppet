@@ -68,8 +68,4 @@ class irc::relaybot {
             File["${install_path}/config.ini"],
         ],
     }
-
-    monitoring::nrpe { 'IRC-Discord Relay Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 2:2'
-    }
 }
