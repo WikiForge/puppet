@@ -26,14 +26,14 @@ class EnvironmentList(TypedDict):
 
 
 beta: Environment = {
-    'wikidbname': 'betawiki',
-    'wikiurl': 'beta.betaheze.org',
-    'servers': ['test131'],
+    'wikidbname': '',
+    'wikiurl': '',
+    'servers': [],
 }
 prod: Environment = {
-    'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
+    'wikidbname': 'metawiki',
     'wikiurl': 'publictestwiki.com',
-    'servers': ['mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142', 'mwtask141'],
+    'servers': ['mw1'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,
@@ -76,14 +76,14 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.wikiforge.net', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
-        server = f'{Debug}.miraheze.org'
-        headers = {'X-Miraheze-Debug': server}
+        server = f'{Debug}.wikiforge.net'
+        headers = {'X-WikiForge-Debug': server}
         location = f'{domain}@{server}'
     else:
         os.environ['NO_PROXY'] = 'localhost'
@@ -96,11 +96,11 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     else:
         proto = 'http://'
     req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
-    if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
+    if req.status_code == 200 and 'wikiforge' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
-        print(f'Text: {"miraheze" in req.text} \n {req.text}')
+        print(f'Text: {"wikiforge" in req.text} \n {req.text}')
         if 'X-Served-By' not in req.headers:
             req.headers['X-Served-By'] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
@@ -153,7 +153,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikiforge.net:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
 
@@ -217,7 +217,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             if options[option]:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
