@@ -18,6 +18,5 @@ class varnish::nginx {
 
     include ssl::hiera
 
-    ssl::cert { 'miraheze.wiki': }
-    ssl::cert { 'm.miraheze.org': }
+    ssl::cert { 'm.wikiforge.net': }
 }

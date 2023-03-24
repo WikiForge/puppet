@@ -34,10 +34,4 @@ class varnish::stunnel4 {
         ensure => present,
         source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
     }
-
-    $backends.each | $name, $property | {
-        monitoring::nrpe { "Stunnel for ${name}":
-            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
-        }
-    }
 }

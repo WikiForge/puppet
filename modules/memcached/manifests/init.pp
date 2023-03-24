@@ -94,12 +94,4 @@ class memcached(
         ensure  => present,
         content => systemd_template('memcached'),
     }
-
-    monitoring::services { 'memcached':
-        check_command => 'tcp',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Memcached',
-        vars          => {
-            tcp_port    => $port,
-        }
-    }
 }

@@ -19,9 +19,6 @@
 #   'present' or 'absent'; whether the site configuration is
 #   installed or removed in sites-available/
 #
-# [*monitor*]
-#   Boolean; Whether HTTPS monitoring should be enabled for the site.
-#
 # === Examples
 #
 #  nginx::site { 'mediawiki':
@@ -30,7 +27,6 @@
 #
 define nginx::site(
     VMlib::Ensure                $ensure  = 'present',
-    Boolean                      $monitor = true,
     Optional[String]             $content = undef,
     Optional[Stdlib::Filesource] $source  = undef,
 ) {

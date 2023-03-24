@@ -4,16 +4,16 @@ class ssl::web {
 
     ensure_packages(['python3-flask', 'python3-filelock'])
 
-    file { '/usr/local/bin/mirahezerenewssl.py':
+    file { '/usr/local/bin/wikiforgerenewssl.py':
         ensure => present,
-        source => 'puppet:///modules/ssl/mirahezerenewssl.py',
+        source => 'puppet:///modules/ssl/wikiforgerenewssl.py',
         mode   => '0755',
-        notify => Service['mirahezerenewssl'],
+        notify => Service['wikiforgerenewssl'],
     }
 
-    systemd::service { 'mirahezerenewssl':
+    systemd::service { 'wikiforgerenewssl':
         ensure  => present,
-        content => systemd_template('mirahezerenewssl'),
+        content => systemd_template('wikiforgerenewssl'),
         restart => true,
     }
 }

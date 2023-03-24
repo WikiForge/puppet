@@ -5,15 +5,6 @@ class irc::relaybot {
     $bot_token = lookup('passwords::irc::relaybot::bot_token')
     $irc_password = lookup('passwords::irc::relaybot::irc_password')
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy {
-        file { '/etc/apt/apt.conf.d/01irc':
-            ensure  => present,
-            content => template('irc/relaybot/aptproxy.erb'),
-            before  => Package['packages-microsoft-prod'],
-        }
-    }
-
     file { '/opt/packages-microsoft-prod.deb':
         ensure => present,
         source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
@@ -67,9 +58,5 @@ class irc::relaybot {
             Package['dotnet-sdk-6.0'],
             File["${install_path}/config.ini"],
         ],
-    }
-
-    monitoring::nrpe { 'IRC-Discord Relay Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 2:2'
     }
 }

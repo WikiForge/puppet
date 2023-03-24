@@ -1,4 +1,4 @@
-# This is the VCL file for Varnish, adjusted for Miraheze's needs.
+# This is the VCL file for Varnish, adjusted for WikiForge's needs.
 # It was originally written by Southparkfan in 2015, but rewritten in 2022 by John.
 # Some material used is inspired by the Wikimedia Foundation's configuration files.
 # Their material and license is available at https://github.com/wikimedia/puppet
@@ -15,7 +15,7 @@ import vsthrottle;
 # MediaWiki configuration
 probe mwhealth {
 	.request = "GET /check HTTP/1.1"
-		"Host: health.miraheze.org"
+		"Host: health.wikiforge.net"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each <%= @interval_check %>
@@ -53,10 +53,6 @@ sub vcl_init {
 # Purge ACL
 acl purge {
 	"localhost";
-	# IPv6
-	"2a10:6740::/64";
-	# IPv4
-	"31.24.105.128/28";
 }
 
 # Cookie handling logic
@@ -92,8 +88,8 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org") {
+	# Allow higher limits for static.wikiforge.net, we can handle more of those requests
+	if (req.http.Host == "static.wikiforge.net") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -130,23 +126,23 @@ sub vcl_synth {
 	// Homepage redirect to commons
 	if (resp.reason == "Commons Redirect") {
 		set resp.reason = "Moved Permanently";
-		set resp.http.Location = "https://commons.miraheze.org/";
+		set resp.http.Location = "https://commons.wikiforge.net/";
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
 	}
 
 	// Handle CORS preflight requests
 	if (
-		req.http.Host == "static.miraheze.org" &&
+		req.http.Host == "static.wikiforge.net" &&
 		resp.reason == "CORS Preflight"
 	) {
 		set resp.reason = "OK";
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
 
-		// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+		// allow Range requests, and avoid other CORS errors when debugging with X-WikiForge-Debug
 		set resp.http.Access-Control-Allow-Origin = "*";
-		set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+		set resp.http.Access-Control-Allow-Headers = "Range,X-WikiForge-Debug";
 		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
 		set resp.http.Access-Control-Max-Age = "86400";
 	}
@@ -170,7 +166,7 @@ sub mw_request {
 	
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
-	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+	if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
 	}
@@ -178,14 +174,14 @@ sub mw_request {
 
 	set req.backend_hint = mediawiki.backend();
 
-	# Rewrite hostname to static.miraheze.org for caching
+	# Rewrite hostname to static.wikiforge.net for caching
 	if (req.url ~ "^/static/") {
-		set req.http.Host = "static.miraheze.org";
+		set req.http.Host = "static.wikiforge.net";
 	}
 
-	# Numerous static.miraheze.org specific code
-	if (req.http.Host == "static.miraheze.org") {
-		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
+	# Numerous static.wikiforge.net specific code
+	if (req.http.Host == "static.wikiforge.net") {
+		# We can do this because static.wikiforge.net should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
 		unset req.http.Authorization;
@@ -221,7 +217,7 @@ sub mw_request {
 
 	# Don't cache certain things on static
 	if (
-		req.http.Host == "static.miraheze.org" &&
+		req.http.Host == "static.wikiforge.net" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
@@ -233,7 +229,7 @@ sub mw_request {
 
 	# We can rewrite those to one domain name to increase cache hits
 	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
-		set req.http.Host = "meta.miraheze.org";
+		set req.http.Host = "meta.wikiforge.net";
 	}
 
 	# api & rest.php are not safe when cached
@@ -256,18 +252,18 @@ sub vcl_recv {
 	unset req.http.Proxy; # https://httpoxy.org/
 
 	# Health checks, do not send request any further, if we're up, we can handle it
-	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
+	if (req.http.Host == "health.wikiforge.net" && req.url == "/check") {
 		return (synth(200));
 	}
 	
-	if (req.http.host == "static.miraheze.org" && req.url == "/") {
+	if (req.http.host == "static.wikiforge.net" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (
-			req.http.Host == "static.miraheze.org" &&
+			req.http.Host == "static.wikiforge.net" &&
 			req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
 		) {
 			# No point in compressing these
@@ -284,57 +280,10 @@ sub vcl_recv {
 
 	if (
 		req.url ~ "^/\.well-known" ||
-		req.http.Host == "ssl.miraheze.org" ||
-		req.http.Host == "acme.miraheze.org"
+		req.http.Host == "ssl.wikiforge.net" ||
+		req.http.Host == "acme.wikiforge.net"
 	) {
-		set req.backend_hint = puppet141;
-		return (pass);
-	}
-
-        if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-                set req.backend_hint = test131;
-                return (pass);
-        }
-
-	# Only cache js files from Matomo
-	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo131;
-
-		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
-			return (hash);
-		} else {
-			return (pass);
-		}
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
-		set req.backend_hint = mon141;
-
-		if (req.http.upgrade ~ "(?i)websocket") {
-			return (pipe);
-		}
-
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
-            req.http.Host == "blog.miraheze.org") {
-		set req.backend_hint = phab121;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "webmail.miraheze.org") {
-		set req.backend_hint = mail121;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "reports.miraheze.org") {
-		set req.backend_hint = reports121;
+		set req.backend_hint = puppet1;
 		return (pass);
 	}
 
@@ -380,7 +329,7 @@ sub vcl_backend_fetch {
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
-	# T9808: Assign restrictive Cache-Control if one is missing
+	# Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
 		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
 		set beresp.ttl = 0s;
@@ -441,7 +390,7 @@ sub vcl_backend_response {
 
 	# Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
 	if (bereq.url == "/robots.txt") {
-		if (beresp.http.X-Miraheze-Robots == "Custom") {
+		if (beresp.http.X-WikiForge-Robots == "Custom") {
 			set beresp.ttl = 300s;
 		} else {
 			set beresp.ttl = 43200s;
@@ -491,11 +440,11 @@ sub vcl_backend_response {
 		return(pass(601s));
 	}
 
-	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
-	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
+	// hit-for-pass objects >= 8388608 size and if domain == static.wikiforge.net or
+	// hit-for-pass objects >= 67108864 size and if domain != static.wikiforge.net.
 	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
+	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.wikiforge.net" ||
+		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.wikiforge.net"
 	) {
 		// HFP
 		return(pass(beresp.ttl));
@@ -507,11 +456,11 @@ sub vcl_backend_response {
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
 	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.miraheze.org. We also set this header for some images hosted
+	# static.wikiforge.net. We also set this header for some images hosted
 	# on the same site as the wiki (private).
 	if (
 		(
-	 	 	 req.http.Host == "static.miraheze.org" &&
+	 	 	 req.http.Host == "static.wikiforge.net" &&
 			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 		) ||
 	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
@@ -649,10 +598,10 @@ sub vcl_backend_error {
 		<div class="container">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<p style="font-align: center; animation: fadein 1s;"><?xml version="1.0" encoding="UTF-8" standalone="no"?><svg id="svg4206" version="1.1" inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)" width="130.851" height="134.98416" viewBox="0 0 130.851 134.98416" sodipodi:docname="mhwarn.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><defs id="defs4210" /> <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview4208" showgrid="true" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" inkscape:zoom="4.0163665" inkscape:cx="99.343524" inkscape:cy="87.890385" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg4206" showborder="false" inkscape:showpageshadow="2" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1"> <inkscape:grid type="xygrid" id="grid4863" originx="-29.149001" originy="-23.271838" /> </sodipodi:namedview> <path style="fill:#8e7650;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.721681,48.525706 21.189606,0.06232 10.968739,18.946003 -10.84409,18.696711 H 52.659356 L 41.752943,67.471705 Z" id="path4756" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 52.7219,0 73.911507,0.06233 84.880246,19.008333 74.036156,37.705042 H 52.659576 L 41.753162,18.946004 Z" id="path4756-4" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.7219,97.279112 21.189607,0.06233 10.968739,18.946008 -10.84409,18.69671 H 52.659576 L 41.753162,116.22513 Z" id="path4756-4-7" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.164066" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 94.666356,24.313311 21.189604,0.06232 10.96874,18.946001 -10.84409,18.696715 H 94.604032 L 83.697618,43.259317 Z" id="path4756-4-7-0-4" inkscape:connector-curvature="0" inkscape:transform-center-x="23.963831" inkscape:transform-center-y="-86.164068" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 10.946578,24.313315 21.1464,0.06232 10.94636,18.945997 -10.821965,18.696715 H 10.884381 L 2.04e-4,43.259317 Z" id="path4756-4-7-0-4-0" inkscape:connector-curvature="0" inkscape:transform-center-x="23.914978" inkscape:transform-center-y="-86.164069" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 10.968739,72.678425 32.158346,72.740745 43.12708,91.686749 32.282994,110.38347 H 10.906415 L 0,91.624434 Z" id="path4756-4-7-0-4-5" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.16407" /> <path d="M 92.925494,56.217561 A 37.925497,37.925497 0 1 0 130.851,94.143056 37.925497,37.925497 0 0 0 92.925494,56.217561 Z m 3.792549,60.680789 h -7.5851 v -7.58509 h 7.5851 z m 0,-15.17019 h -7.5851 V 71.387759 h 7.5851 z" id="path4" style="fill:#ff5d00;fill-opacity:1;stroke-width:3.79255" /></svg></p>
+				<p style="font-align: center; animation: fadein 1s;"></p>
 				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
 				<p class="lead">Try again later or click the button below to refresh.</p>
-				<p style="font-size: 70%; margin: -1em;">If you were trying to import something and encountered this error, use <a href="https://meta.miraheze.org/wiki/Special:RequestImportDump">ImportDump</a> instead.</p><br />
+				<p style="font-size: 70%; margin: -1em;">If you were trying to import something and encountered this error, use <a href="https://meta.wikiforge.net/wiki/Special:RequestImportDump">ImportDump</a> instead.</p><br />
 				<a href="javascript:document.location.reload(true);" class="btn btn-lg btn-outline-success" role="button">Refresh page</a>
 			</div>
 		</div>
@@ -661,10 +610,7 @@ sub vcl_backend_error {
 				<div class="row">
 					<div class="col-md-6">
 						<h2>What can I do?</h2>
-						<p>Please try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">Phabricator</a> or join our <a href="https://discord.gg/TVAJTE4CUn">Discord server</a> or IRC channel (<a href="https://web.libera.chat/?channel=#miraheze-sre">#miraheze-sre</a>) for additional updates. We apologise for the inconvenience. Our Site Reliability Engineers are working to correct the issue.</p>
-					</div>
-					<div class="col-md-6">
-						<a class="twitter-timeline" data-width="500" data-height="350" href="https://twitter.com/MirahezeStatus?ref_src=twsrc%5Etfw">Tweets by MirahezeStatus</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+						<p>Please try again in a few minutes. If the problem persists, you may join our <a href="https://discord.gg/ND5Arhght2">Discord server</a> or IRC channel (<a href="https://web.libera.chat/?channel=#wikiforge-sre">#wikiforge-sre</a>) for additional updates. We apologise for the inconvenience. Our Site Reliability Engineers should be working to correct the issue.</p>
 					</div>
 				</div>
 			</div>

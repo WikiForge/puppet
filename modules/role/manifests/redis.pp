@@ -1,7 +1,5 @@
 # role: redis
 class role::redis {
-    include prometheus::exporter::redis
-
     $redis_heap = lookup('redis::heap', {'default_value' => '7000mb'})
     class { '::redis':
         persist   => false,
@@ -10,7 +8,7 @@ class role::redis {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

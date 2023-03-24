@@ -8,7 +8,7 @@ class irc::irclogserverbot(
 ) {
     include ::irc
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $wikiforgebots_password = lookup('passwords::irc::wikiforgebots')
 
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
@@ -21,9 +21,5 @@ class irc::irclogserverbot(
         ensure  => present,
         content => systemd_template('irclogserverbot'),
         restart => true,
-    }
-
-    monitoring::nrpe { 'IRC Log Server Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1'
     }
 }

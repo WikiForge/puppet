@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*db_rw_host*] The read, write db hostname, eg db4.miraheze.org.
+# [*db_rw_host*] The read, write db hostname, eg db1.wikiforge.net.
 #
 # [*jvm_opts*] Puppetdb java options, eg configuring heap.
 #
@@ -16,7 +16,7 @@
 #
 # [*bind_ip*] The ip to bind to puppetdb, eg 0.0.0.0 which means any ip.
 #
-# [*db_ro_host*] The read only db hostname, eg db4.miraheze.org.
+# [*db_ro_host*] The read only db hostname, eg db1.wikiforge.net.
 #
 # [*db_password*] The db password for the postgresql db.
 #

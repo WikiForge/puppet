@@ -222,12 +222,6 @@ class mediawiki(
         ],
     }
 
-    file { '/etc/swift-env.sh':
-        ensure  => 'present',
-        content => template('mediawiki/swift-env.sh.erb'),
-        mode    => '0755',
-    }
-
     file { '/tmp/magick-tmp':
         ensure => directory,
         owner  => 'www-data',

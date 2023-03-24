@@ -13,12 +13,12 @@ class irc::irclogbot {
         require   => File['/etc/irclogbot'],
     }
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
-    $mirahezelogbot_password = lookup('passwords::mediawiki::mirahezelogbot')
-    $mirahezelogbot_consumer_token = lookup('passwords::mediawiki::mirahezelogbot_consumer_token')
-    $mirahezelogbot_consumer_secret = lookup('passwords::mediawiki::mirahezelogbot_consumer_secret')
-    $mirahezelogbot_access_token = lookup('passwords::mediawiki::mirahezelogbot_access_token')
-    $mirahezelogbot_access_secret = lookup('passwords::mediawiki::mirahezelogbot_access_secret')
+    $wikiforgebots_password = lookup('passwords::irc::wikiforgebots')
+    $wikiforgelogbot_password = lookup('passwords::mediawiki::wikiforgelogbot')
+    $wikiforgelogbot_consumer_token = lookup('passwords::mediawiki::wikiforgelogbot_consumer_token')
+    $wikiforgelogbot_consumer_secret = lookup('passwords::mediawiki::wikiforgelogbot_consumer_secret')
+    $wikiforgelogbot_access_token = lookup('passwords::mediawiki::wikiforgelogbot_access_token')
+    $wikiforgelogbot_access_secret = lookup('passwords::mediawiki::wikiforgelogbot_access_secret')
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
@@ -43,9 +43,5 @@ class irc::irclogbot {
         ensure  => present,
         content => systemd_template('logbot'),
         restart => true,
-    }
-
-    monitoring::nrpe { 'IRC Log Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1'
     }
 }

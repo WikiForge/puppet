@@ -9,8 +9,6 @@ class role::memcached (
     Float             $growth_factor    = lookup('role::memcached::growth_factor'),
     Optional[Integer] $threads          = lookup('role::memcached::threads'),
 ) {
-    include prometheus::exporter::memcached
-
     if !empty( $extended_options ) {
         $base_extra_options = {
             '-o' => join($extended_options, ','),
@@ -44,7 +42,7 @@ class role::memcached (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

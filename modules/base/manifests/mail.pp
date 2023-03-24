@@ -29,6 +29,6 @@ class base::mail {
 
     file { '/etc/mailname':
         ensure  => present,
-        content => 'miraheze.org',
+        content => 'wikiforge.net',
     }
 }
