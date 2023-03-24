@@ -5,6 +5,11 @@ node 'bots1.wikiforge.net' {
     include role::irc
 }
 
+node 'db1.wikiforge.net' {
+    include base
+    include role::db
+}
+
 node 'puppet1.wikiforge.net' {
     include base
     include role::postgresql
