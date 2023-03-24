@@ -22,8 +22,4 @@ class irc::ircrcbot(
         content => systemd_template('ircrcbot'),
         restart => true,
     }
-
-    monitoring::nrpe { 'IRC RC Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a ircrcbot.py -c 1:1'
-    }
 }
