@@ -8,7 +8,7 @@ class irc::ircrcbot(
 ) {
     include ::irc
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $wikifprgebots_password = lookup('passwords::irc::mirahezebots')
 
     file { '/usr/local/bin/ircrcbot.py':
         ensure  => present,
