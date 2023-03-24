@@ -29,19 +29,19 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre", "#miraheze-sre-security")
+targets = ("#wikiforge-sre", "#wikiforge-sre-security")
 
 # Name of nickserv user
 nickserv = "nickserv"
 
 # Nick to use when joining
-nick = "MirahezeLogbot"
+nick = "WikiForgeLogbot"
 
 # Username for NickServ Auth
-nick_username = "mirahezebots"
+nick_username = "wikiforgebots"
 
 # Password to identify with
-nick_password = "<%= @mirahezebots_password %>"
+nick_password = "<%= @wikiforgebots_password %>"
 
 # Network to join (ex: irc.libera.chat)
 network = "irc.libera.chat"
@@ -53,35 +53,34 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
-    "MirahezeLSBot_": "MirahezeLSBot",
-    "CosmicAlpha": "Universal Omega",
-    "Voidwalker": "Void"
+    "WikoForgeLSBot_": "WikiForgeLSBot",
+    "CosmicAlpha": "Universal Omega"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
 title_map = {"example": "Master"}
 
 # Scheme and wiki hostname to connect to
-wiki_connection = "meta.miraheze.org"
+wiki_connection = "meta.wikiforge.net"
 
 # Url path
 wiki_path = "/w/"
 
 # Username of wiki bot user
-wiki_user = "MirahezeLogbot"
+wiki_user = "WikiForgeLogbot"
 
 # Password of wiki bot user
-wiki_pass = "<%= @mirahezelogbot_password %>"
+wiki_pass = "<%= @wikiforgelogbot_password %>"
 
 # OAUTH
 
-wiki_consumer_token = "<%= @mirahezelogbot_consumer_token %>"
+wiki_consumer_token = "<%= @wikiforgelogbot_consumer_token %>"
 
-wiki_consumer_secret = "<%= @mirahezelogbot_consumer_secret %>"
+wiki_consumer_secret = "<%= @wikiforgelogbot_consumer_secret %>"
 
-wiki_access_token = "<%= @mirahezelogbot_access_token %>"
+wiki_access_token = "<%= @wikiforgelogbot_access_token %>"
 
-wiki_access_secret = "<%= @mirahezelogbot_access_secret %>"
+wiki_access_secret = "<%= @wikiforgelogbot_access_secret %>"
 
 # Whether to use a bot flag or not
 wiki_bot = True
