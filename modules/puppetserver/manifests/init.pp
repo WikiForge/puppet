@@ -72,12 +72,12 @@ class puppetserver(
         require   => Package['puppet-agent'],
     }
 
-    /* git::clone { 'ssl':
+    git::clone { 'ssl':
         ensure    => present,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
-        origin    => 'https://github.com/miraheze/ssl.git',
+        origin    => 'https://github.com/WikiForge/ssl.git',
         require   => Package['puppet-agent'],
-    } */
+    }
 
     file { '/etc/puppetlabs/puppet/private':
         ensure => directory,
@@ -131,14 +131,14 @@ class puppetserver(
         ],
     }
 
-    /*file { '/etc/puppetlabs/puppet/environments/production/ssl-cert':
+    file { '/etc/puppetlabs/puppet/environments/production/ssl-cert':
         ensure  => link,
         target  => '/etc/puppetlabs/puppet/ssl-cert',
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             Git::Clone['ssl']
         ],
-    }*/
+    }
 
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
