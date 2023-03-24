@@ -12,5 +12,5 @@ puppetserver_hostname: 'puppet1.wikiforge.net'
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 role::salt::minions::salt_master_key: true
 
-puppetdb::password::rw: ""
+puppetdb::password::rw: "password"
 passwords::geoipupdatekey: ""
