@@ -32,3 +32,4 @@ puppetserver_hostname: 'puppet1.wikiforge.net'
 # remove when we get common.yaml working
 puppetserver: false
 mediawiki::use_shellbox: false
+mediawiki::use_staging: false
