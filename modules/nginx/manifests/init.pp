@@ -41,7 +41,7 @@ class nginx (
 
     $module_path = get_module_path('varnish')
 
-    $cache_proxies = query_facts("domain='${domain}' and Class['Role::Varnish']", ['ipaddress'])
+    $cache_proxies = []
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
