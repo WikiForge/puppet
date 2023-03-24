@@ -13,7 +13,7 @@ class Puppet::Application::Puppetdbquery < Puppet::Application::FaceBase
     rescue Exception => e
       Puppet.debug(e.message)
       host = 'puppetdb'
-      port = 8080
+      port = 8081
     end
 
     Puppet.debug(host)
