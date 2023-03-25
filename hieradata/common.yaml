@@ -15,7 +15,11 @@ memcached_servers:
 
 varnish::interval-check: '60s'
 varnish::interval-timeout: '60s'
-varnish::backends: []
+varnish::backends:
+  mw1:
+    port: 8100
+    probe: mwhealth
+    pool: true
 
 # Logging
 base::syslog::syslog_daemon: syslog
