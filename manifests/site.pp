@@ -10,6 +10,11 @@ node 'db1.wikiforge.net' {
     include role::db
 }
 
+node 'mem1.wikiforge.net' {
+    include base
+    include role::memcached
+}
+
 node 'mw1.wikiforge.net' {
     include base
     include role::mediawiki
