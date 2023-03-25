@@ -1,0 +1,7 @@
+users::groups: 'cache-admins'
+varnish::cache_file_size: '10G'
+nginx::worker_processes: 4
+puppetserver_hostname: 'puppet1.wikiforge.net'
+
+base::syslog::rsyslog_udp_localhost: true
+nginx::logrotate_number: 2
