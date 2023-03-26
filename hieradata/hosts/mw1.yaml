@@ -1,8 +1,7 @@
 users::groups: []
 
-contactgroups: ['sre']
-
-jobrunner: false
+jobrunner: true
+jobrunner::intensive: true
 
 # to-do
 mediawiki::jobqueue::runner::redis_ip: false
