@@ -10,6 +10,12 @@ node 'db1.wikiforge.net' {
     include role::db
 }
 
+node 'jobchron1.wikiforge.net' {
+    include base
+    include role::redis
+    include mediawiki::jobqueue::chron
+}
+
 node 'mem1.wikiforge.net' {
     include base
     include role::memcached
