@@ -1,4 +1,5 @@
-users::groups: []
+users::groups:
+  - mediawiki-admins
 
 jobrunner: true
 jobrunner::intensive: true
