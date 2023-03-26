@@ -9,7 +9,7 @@ mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: false
-mediawiki::jobqueue::wiki: false
+mediawiki::jobqueue::wiki: 'metawiki'
 memcached_servers:
   - 3.21.232.233:11211:1
 
