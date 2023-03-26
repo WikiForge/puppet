@@ -10,13 +10,30 @@ groups:
     members: []
     privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
+  mediawiki-admins:
+    gid: 2001
+    description: sudo on MediaWiki servers
+    members: [rman41]
+    privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   universalomega:
     ensure: present
-    uid: 1001
+    uid: 1000
     name: universalomega
     realname: Universal Omega
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ
+  rman41:
+    ensure: present
+    uid: 1001
+    name: rman41
+    realname: Rman41
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyiMRpKS/pOT4VRdJ1aT9/YeO16FinmSqPjocT+B77f]
