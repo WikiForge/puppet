@@ -3,8 +3,7 @@ users::groups: []
 jobrunner: true
 jobrunner::intensive: true
 
-# to-do
-mediawiki::jobqueue::runner::redis_ip: false
+mediawiki::jobqueue::runner::redis_ip: '18.217.191.48:6379'
 mediawiki::use_staging: true
 
 role::mediawiki::use_strict_firewall: true
