@@ -21,17 +21,6 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
-  cache-admins:
-    gid: 2004
-    description: limited sudo access on cache proxies
-    members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/varnishlog',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/varnishstat',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
-                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   universalomega:
