@@ -20,6 +20,10 @@ varnish::backends:
     port: 8100
     probe: mwhealth
     pool: true
+  puppet1:
+    port: 8200
+    probe: false
+    pool: false
 
 # Logging
 base::syslog::syslog_daemon: syslog
