@@ -8,16 +8,16 @@ class role::db {
     ssl::wildcard { 'db wildcard': }
 
     file { '/etc/ssl/private':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'mysql',
-        mode   => '0750',
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'mysql',
+        mode    => '0750',
         recurse => true,
     }
 
     class { 'mariadb::config':
-        config          => 'mariadb/config/mw.cnf.erb',
-        password        => lookup('passwords::db::root'),
+        config   => 'mariadb/config/mw.cnf.erb',
+        password => lookup('passwords::db::root'),
     }
 
     file { '/etc/mysql/wikiforge/mediawiki-grants.sql':
@@ -43,13 +43,13 @@ class role::db {
     }
 
     # Create a user to allow db transfers between servers
-    /*users::user { 'dbcopy':
-        ensure   => present,
-        uid      => 3000,
-        ssh_keys => [
-            ''
-        ],
-    }*/
+    # users::user { 'dbcopy':
+    # ensure   => present,
+    # uid      => 3000,
+    # ssh_keys => [
+    # ''
+    # ],
+    # }
 
     motd::role { 'role::db':
         description => 'general database server',

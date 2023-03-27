@@ -185,7 +185,7 @@ define java::adopt (
 
   # set java architecture nomenclature
   $os_architecture = $facts['os']['architecture'] ? {
-    undef => $facts['architecture'],
+    undef => $facts['os']['architecture'],
     default => $facts['os']['architecture']
   }
 
