@@ -3,8 +3,8 @@
 # Nginx config using hiera
 class ssl::nginx {
     nginx::site { 'ssl-acme':
-        ensure  => present,
-        source  => 'puppet:///modules/ssl/nginx.conf',
+        ensure => present,
+        source => 'puppet:///modules/ssl/nginx.conf',
     }
 
     ssl::wildcard { 'ssl-acme nginx wildcard': }

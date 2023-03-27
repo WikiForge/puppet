@@ -1,7 +1,7 @@
 # role: ssl
 class role::ssl {
     include ::ssl
-    
+
     $firewall_srange = join(
         query_facts('Class[Role::Varnish]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {

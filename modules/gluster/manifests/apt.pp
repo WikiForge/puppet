@@ -7,8 +7,8 @@ class gluster::apt {
 
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
-        location => "https://download.gluster.org/pub/gluster/glusterfs/10/LATEST/Debian/${::lsbdistcodename}/amd64/apt",
-        release  => $::lsbdistcodename,
+        location => "https://download.gluster.org/pub/gluster/glusterfs/10/LATEST/Debian/${facts['facts['os']['distro']['codename']']}/amd64/apt",
+        release  => $facts['facts['os']['distro']['codename']'],
         repos    => 'main',
         require  => File['/etc/apt/trusted.gpg.d/gluster.gpg'],
         notify   => Exec['apt_update_gluster'],

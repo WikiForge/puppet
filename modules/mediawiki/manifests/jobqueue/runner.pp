@@ -62,7 +62,7 @@ class mediawiki::jobqueue::runner {
         if $wiki == 'metawiki' {
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => "/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py",
+                command => '/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py',
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
