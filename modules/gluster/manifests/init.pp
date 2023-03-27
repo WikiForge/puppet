@@ -49,12 +49,6 @@ class gluster {
         }
     }
 
-    file { '/etc/glusterfs/glusterd.vol':
-        ensure  => present,
-        content => template('gluster/glusterd.vol.erb'),
-        require => Package['glusterfs-server'],
-    }
-
     service { 'glusterd':
         ensure     => running,
         enable     => true,
