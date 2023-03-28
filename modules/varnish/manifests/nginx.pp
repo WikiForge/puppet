@@ -18,5 +18,5 @@ class varnish::nginx {
 
     include ssl::hiera
 
-    # ssl::cert { 'm.wikiforge.net': }
+    ssl::cert { 'm.wikiforge.net': }
 }
