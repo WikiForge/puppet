@@ -20,4 +20,6 @@ class mediawiki::nginx {
     ssl::wildcard { 'mediawiki nginx wildcard': }
 
     include ssl::hiera
+
+    ssl::cert { 'm.wikiforge.net': }
 }
