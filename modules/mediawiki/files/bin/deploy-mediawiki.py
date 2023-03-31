@@ -33,7 +33,7 @@ beta: Environment = {
 prod: Environment = {
     'wikidbname': 'metawiki',
     'wikiurl': 'meta.wikiforge.net',
-    'servers': ['mw1'],
+    'servers': ['mw1', 'mw2'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,
