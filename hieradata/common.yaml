@@ -20,6 +20,10 @@ varnish::backends:
     port: 8100
     probe: mwhealth
     pool: true
+  mw2:
+    port: 8101
+    probe: mwhealth
+    pool: true
   puppet1:
     port: 8200
     probe: false
