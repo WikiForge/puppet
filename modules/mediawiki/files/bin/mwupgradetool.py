@@ -4,7 +4,7 @@ import os
 import requests
 import sys
 canary = 'mw1'
-serverlist = 'mw1'
+serverlist = 'mw1,mw2'
 
 
 def check_up(server: str) -> bool:
