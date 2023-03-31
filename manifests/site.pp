@@ -41,7 +41,7 @@ node 'puppet1.wikiforge.net' {
     include role::postgresql
     include puppetdb::database
     include role::puppetserver
-    # include role::salt
+    include role::salt
     include role::ssl
 }
 
