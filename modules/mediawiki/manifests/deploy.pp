@@ -10,7 +10,7 @@ class mediawiki::deploy (
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure  => present,
-            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
+            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOGKDtpp19ayKYxCnBMwqVKvtusiN3wr4Yiw+lQtFvoQ MediaWikiDeploy',
             owner   => 'www-data',
             group   => 'www-data',
             mode    => '0400',
