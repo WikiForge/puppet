@@ -51,7 +51,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'generate sitemaps for all wikis':
             ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
+            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/WikiForgeMagic/maintenance/generateWikiForgeSitemap.php',
             user    => 'www-data',
             minute  => '0',
             hour    => '0',
@@ -62,7 +62,7 @@ class mediawiki::jobqueue::runner {
         if $wiki == 'metawiki' {
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => "/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py",
+                command => "/usr/bin/python3 /srv/mediawiki/w/extensions/WikiForgeMagic/py/generateSitemapIndex.py",
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
@@ -89,7 +89,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'update_sites':
             ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null',
+            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/WikiForgeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null',
             user     => 'www-data',
             minute   => '0',
             hour     => '5',
