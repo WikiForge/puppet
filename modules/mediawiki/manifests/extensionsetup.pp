@@ -14,6 +14,16 @@ class mediawiki::extensionsetup {
             require => Exec['oauth_composer'],
     }
 
+    git::clone { 'WikiForgeMagic':
+        ensure    => 'latest',
+        directory => "${mwpath}/extensions/WikiForgeMagic",
+        origin    => 'https://github.com/WikiForge/WikiForgeMagic.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+    }
+
     $composer = 'composer install --no-dev'
 
     exec { 'vendor_psysh_composer':
