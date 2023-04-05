@@ -24,8 +24,12 @@ varnish::backends:
     port: 8101
     probe: mwhealth
     pool: true
-  puppet1:
+  phorge1:
     port: 8200
+    probe: false
+    pool: false
+  puppet1:
+    port: 8201
     probe: false
     pool: false
 
