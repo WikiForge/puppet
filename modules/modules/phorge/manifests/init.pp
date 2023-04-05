@@ -99,8 +99,6 @@ class phorge (
         }
     }
 
-    $password = lookup('passwords::irc::wikiforgebots')
-
     nginx::site { 'support.wikiforge.net':
         ensure  => present,
         source  => 'puppet:///modules/phorge/support.wikiforge.net.conf',
