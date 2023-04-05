@@ -31,6 +31,11 @@ node /^mw[12]\.wikiforge\.net$/ {
     include role::mediawiki
 }
 
+node 'phorge1.wikiforge.net' {
+    include base
+    include role::phorge
+}
+
 node 'puppet1.wikiforge.net' {
     include base
     include role::postgresql
