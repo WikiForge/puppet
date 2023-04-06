@@ -99,9 +99,14 @@ class phorge (
         }
     }
 
+    nginx::site { 'phorge-storage.wikiforge.net':
+        ensure => present,
+        source => 'puppet:///modules/phorge/phorge-storage.wikiforge.net.conf',
+    }
+
     nginx::site { 'support.wikiforge.net':
-        ensure  => present,
-        source  => 'puppet:///modules/phorge/support.wikiforge.net.conf',
+        ensure => present,
+        source => 'puppet:///modules/phorge/support.wikiforge.net.conf',
     }
 
     ssl::wildcard { 'phorge wildcard': }
