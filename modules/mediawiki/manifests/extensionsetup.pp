@@ -14,14 +14,21 @@ class mediawiki::extensionsetup {
             require => Exec['oauth_composer'],
     }
 
-    git::clone { 'WikiForgeMagic':
-        ensure    => 'latest',
-        directory => "${mwpath}/extensions/WikiForgeMagic",
-        origin    => 'https://github.com/WikiForge/WikiForgeMagic.git',
-        branch    => 'master',
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
+    $module_path = get_module_path($module_name)
+    $repos = loadyaml("${module_path}/data/mediawiki-repos.yaml")
+
+    $repos.each_pair |$name, $params| {
+        git::clone { "MediaWiki ${name}":
+            ensure             => present,
+            directory          => "${mwpath}/${params['path']}",
+            origin             => $params['repo_url'],
+            branch             => $params['branch'],
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+            recurse_submodules => true,
+            require            => Git::Clone['MediaWiki core'],
+        }
     }
 
     $composer = 'composer install --no-dev'
@@ -35,7 +42,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/vendor",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki vendor'],
     }
 
     exec { 'wikibase_composer':
@@ -47,7 +54,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Wikibase",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Wikibase'],
     }
 
     exec { 'maps_composer':
@@ -59,7 +66,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Maps",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Maps'],
     }
 
     exec { 'flow_composer':
@@ -71,7 +78,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Flow",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Flow'],
     }
     exec { 'ipinfo_composer':
         command     => $composer,
@@ -82,7 +89,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/IPInfo",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki IPInfo'],
     }
 
     exec { 'oauth_composer':
@@ -94,7 +101,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/OAuth",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki OAuth'],
     }
 
     exec { 'oauth_lcobucci_composer':
@@ -118,7 +125,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/TemplateStyles",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki TemplateStyles'],
     }
 
     exec { 'antispoof_composer':
@@ -130,7 +137,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/AntiSpoof",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki AntiSpoof'],
     }
 
     exec { 'kartographer_composer':
@@ -142,7 +149,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Kartographer",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Kartographer'],
     }
 
     exec { 'timedmediahandler_composer':
@@ -154,7 +161,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/TimedMediaHandler",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki TimedMediaHandler'],
     }
 
     exec { 'translate_composer':
@@ -166,7 +173,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Translate",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Translate'],
     }
 
     exec { 'oathauth_composer':
@@ -178,7 +185,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/OATHAuth",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki OATHAuth'],
     }
 
     exec { 'lingo_composer':
@@ -190,7 +197,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Lingo",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Lingo'],
     }
 
     exec { 'wikibasequalityconstraints_composer':
@@ -202,7 +209,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/WikibaseQualityConstraints",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki WikibaseQualityConstraints'],
     }
 
     exec { 'wikibaselexeme_composer':
@@ -214,7 +221,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/WikibaseLexeme",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki WikibaseLexeme'],
     }
 
     exec { 'createwiki_composer':
@@ -226,7 +233,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/CreateWiki",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki CreateWiki'],
     }
 
     exec { 'datatransfer_composer':
@@ -238,7 +245,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/DataTransfer",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki DataTransfer'],
     }
 
     exec { 'bootstrap_composer':
@@ -250,7 +257,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/Bootstrap",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki Bootstrap'],
     }
 
     exec { 'structurednavigation_composer':
@@ -262,7 +269,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/StructuredNavigation",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki StructuredNavigation'],
     }
 
     exec { 'semanticmediawiki_composer':
@@ -274,7 +281,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/SemanticMediaWiki",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki SemanticMediaWiki'],
     }
 
     exec { 'chameleon_composer':
@@ -286,7 +293,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/skins/chameleon",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki chameleon'],
     }
 
     exec { 'pageproperties_composer':
@@ -298,7 +305,7 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/PageProperties",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki PageProperties'],
     }
 
     exec { 'WikibaseEdtf_composer':
@@ -310,6 +317,6 @@ class mediawiki::extensionsetup {
             "HOME=${mwpath}/extensions/WikibaseEdtf",
         ],
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => Git::Clone['MediaWiki WikibaseEdtf'],
     }
 }
