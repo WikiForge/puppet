@@ -118,7 +118,7 @@ class phorge (
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phorge/arcanist',
-        origin    => 'https://github.com/phacility/arcanist.git',
+        origin    => 'https://we.phorge.it/source/arcanist.git',
         require   => File['/srv/phorge'],
     }
 
