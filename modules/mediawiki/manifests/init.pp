@@ -1,7 +1,7 @@
 # === Class mediawiki
 class mediawiki(
-    Optional[String] $branch = undef,
-    Optional[String] $branch_mw_config = undef,
+    Optional[String] $branch = lookup(mediawiki::branch),
+    Optional[String] $branch_mw_config = lookup(mediawiki::branch_mw_config),
 ) {
     include mediawiki::cgroup
     include mediawiki::favicons
