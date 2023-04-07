@@ -20,6 +20,7 @@ define git::clone(
     String  $timeout = '600',
     String  $depth = 'full',
     Boolean $recurse_submodules = false,
+    Boolean $shallow_submodules = false,
     String  $mode = '0755',
     String  $umask = '022',
     Boolean $allow_unrelated_histories = false,
@@ -39,6 +40,11 @@ define git::clone(
         default: {
             $recurse_submodules_arg = $recurse_submodules ? {
                 true    => '--recurse-submodules ',
+                default => '',
+            }
+            
+            $shallow_submodules_arg = $shallow_submodules ? {
+                true    => '--shallow-submodules ',
                 default => '',
             }
 
@@ -70,7 +76,7 @@ define git::clone(
 
             # clone the repository
             exec { "git_clone_${title}":
-                command     => "${git} clone ${recurse_submodules_arg}${brancharg}${origin}${deptharg} ${allow_unrelated_histories_arg} ${directory}",
+                command     => "${git} clone ${recurse_submodules_arg}${shallow_submodules_arg}${brancharg}${origin}${deptharg} ${allow_unrelated_histories_arg} ${directory}",
                 provider    => shell,
                 logoutput   => on_failure,
                 cwd         => '/tmp',
