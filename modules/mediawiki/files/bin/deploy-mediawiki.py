@@ -148,11 +148,8 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
 
 
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None) -> str:
+def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
     extrap = ' '
-    if submodules:
-        extrap += '--recurse-submodules '
-
     if branch:
         extrap += f'origin {branch} '
 
@@ -191,12 +188,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             pull.append('world')
         if pull:
             for repo in pull:
-                if repo == 'world':
-                    sm = True
-                else:
-                    sm = False
                 try:
-                    stage.append(_construct_git_pull(repo, submodules=sm, branch=args.branch))
+                    stage.append(_construct_git_pull(repo, branch=args.branch))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
