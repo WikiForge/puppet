@@ -358,10 +358,10 @@ CreateWiki:
   branch: master
   path: extensions/CreateWiki
   repo_url: https://github.com/miraheze/CreateWiki
-MirahezeMagic:
+WikiForgeMagic:
   branch: master
-  path: extensions/MirahezeMagic
-  repo_url: https://github.com/miraheze/MirahezeMagic
+  path: extensions/WikiForgeMagic
+  repo_url: https://github.com/WikiForge/WikiForgeMagic
 Tabs:
   branch: REL1_39
   path: extensions/Tabs
