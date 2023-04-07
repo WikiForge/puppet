@@ -18,11 +18,16 @@ class mediawiki::extensionsetup {
     $repos = loadyaml("${module_path}/data/mediawiki-repos.yaml")
 
     $repos.each |$name, $params| {
+        $branch = $params['branch'] ? {
+            '{branch}' => lookup('mediawiki::branch'),
+            default    => $params['branch'],
+        }
+
         git::clone { "MediaWiki ${name}":
             ensure             => present,
             directory          => "${mwpath}/${params['path']}",
             origin             => $params['repo_url'],
-            branch             => regsubst($params['branch'], '\{branch\}', lookup('mediawiki::branch')),
+            branch             => inline_template('<%= @branch.to_s %>'),
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
