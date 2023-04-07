@@ -189,8 +189,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             print(text)
 
         if args.upgrade:
-             stage.append(_construct_upgrade_mediawiki_rm_staging())
-             stage.append(_construct_upgrade_mediawiki_run_puppet())
+            stage.append(_construct_upgrade_mediawiki_rm_staging())
+            stage.append(_construct_upgrade_mediawiki_run_puppet())
 
         pull = []
         if args.pull:
