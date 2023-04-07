@@ -562,7 +562,7 @@ EventLogging:
   branch: REL1_39
   path: extensions/EventLogging
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventLogging
-submodule "vendor:
+vendor:
   branch: REL1_39
   path: vendor
   repo_url: https://github.com/wikimedia/mediawiki-vendor
