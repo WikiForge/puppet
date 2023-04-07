@@ -19,7 +19,7 @@ class mediawiki::extensionsetup {
 
     $repos.each |$name, $params| {
         $branch = $params['branch'] ? {
-            '{branch}' => lookup('mediawiki::branch'),
+            '_branch_' => lookup('mediawiki::branch'),
             default    => $params['branch'],
         }
 
