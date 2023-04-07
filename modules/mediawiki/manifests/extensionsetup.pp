@@ -31,7 +31,10 @@ class mediawiki::extensionsetup {
             mode               => '0755',
             depth              => '5',
             recurse_submodules => true,
-            shallow_submodules => true,
+            shallow_submodules => $params['shallow_submodules'] ? {
+                undef   => false,
+                default => $params['shallow_submodules'],
+            },
             require            => Git::Clone['MediaWiki core'],
         }
     }
