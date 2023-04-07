@@ -17,7 +17,7 @@ class mediawiki::extensionsetup {
     $module_path = get_module_path($module_name)
     $repos = loadyaml("${module_path}/data/mediawiki-repos.yaml")
 
-    $repos.each_pair |$name, $params| {
+    $repos.each |$name, $params| {
         git::clone { "MediaWiki ${name}":
             ensure             => present,
             directory          => "${mwpath}/${params['path']}",
