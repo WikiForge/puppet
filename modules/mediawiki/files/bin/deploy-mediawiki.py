@@ -157,7 +157,7 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
 
 
 def _construct_upgrade_mediawiki_rm_staging() -> str:
-    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path('world')}'
+    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path("world")}'
 
 
 def _construct_upgrade_mediawiki_run_puppet() -> str:
