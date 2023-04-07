@@ -25,15 +25,15 @@ class mediawiki::extensionsetup {
             branch             => $params['branch'] ? {
                 '{branch}' => lookup('mediawiki::branch'),
                 default    => $params['branch'],
-            },
+            }.to_s,
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
             depth              => '5',
             recurse_submodules => true,
             shallow_submodules => $params['shallow_submodules'] ? {
-                undef   => false,
-                default => $params['shallow_submodules'],
+                true    => true,
+                default => false,
             },
             require            => Git::Clone['MediaWiki core'],
         }
