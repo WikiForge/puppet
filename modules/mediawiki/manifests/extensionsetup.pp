@@ -28,6 +28,7 @@ class mediawiki::extensionsetup {
             mode               => '0755',
             depth              => '5',
             recurse_submodules => true,
+            shallow_submodules => true,
             require            => Git::Clone['MediaWiki core'],
         }
     }
