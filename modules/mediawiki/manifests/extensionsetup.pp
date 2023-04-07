@@ -22,7 +22,7 @@ class mediawiki::extensionsetup {
             ensure             => present,
             directory          => "${mwpath}/${params['path']}",
             origin             => $params['repo_url'],
-            branch             => regsubst($params['branch'], '{branch}', lookup('mediawiki::branch')),
+            branch             => regsubst($params['branch'], '\{branch\}', lookup('mediawiki::branch')),
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
