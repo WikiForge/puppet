@@ -26,6 +26,7 @@ class mediawiki::extensionsetup {
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
+            depth              => '5',
             recurse_submodules => true,
             require            => Git::Clone['MediaWiki core'],
         }
