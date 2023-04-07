@@ -156,6 +156,14 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
+def _construct_upgrade_mediawiki_rm_staging() -> str:
+    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path('world')}'
+
+
+def _construct_upgrade_mediawiki_run_puppet() -> str:
+    return 'sudo puppet agent -tv'
+
+
 def run(args: argparse.Namespace, start: float) -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
@@ -179,13 +187,14 @@ def run(args: argparse.Namespace, start: float) -> None:
             os.system(f'/usr/local/bin/logsalmsg {text}')
         else:
             print(text)
+
+        if args.upgrade:
+             stage.append(_construct_upgrade_mediawiki_rm_staging())
+             stage.append(_construct_upgrade_mediawiki_run_puppet())
+
         pull = []
-        if args.world and not args.pull:
-            pull = ['world']
         if args.pull:
             pull = str(args.pull).split(',')
-        if args.world and 'world' not in pull:
-            pull.append('world')
         if pull:
             for repo in pull:
                 try:
@@ -215,7 +224,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -230,8 +239,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             else:
                 lang = ''
 
-            postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
@@ -287,6 +296,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
+    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
