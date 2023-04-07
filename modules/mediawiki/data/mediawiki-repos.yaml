@@ -1,89 +1,89 @@
 CheckUser:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CheckUser
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CheckUser
 AbuseFilter:
-  branch: {branch}
+  branch: _branch_
   path: extensions/AbuseFilter
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AbuseFilter
 CentralAuth:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CentralAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralAuth
 ParserFunctions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ParserFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ParserFunctions
 TitleBlacklist:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TitleBlacklist
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TitleBlacklist
 SpamBlacklist:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SpamBlacklist
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SpamBlacklist
 Vector:
-  branch: {branch}
+  branch: _branch_
   path: skins/Vector
   repo_url: https://github.com/wikimedia/mediawiki-skins-Vector
 MonoBook:
-  branch: {branch}
+  branch: _branch_
   path: skins/MonoBook
   repo_url: https://github.com/wikimedia/mediawiki-skins-MonoBook
 AntiSpoof:
-  branch: {branch}
+  branch: _branch_
   path: extensions/AntiSpoof
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AntiSpoof
 Babel:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Babel
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Babel
 Cite:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Cite
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Cite
 CodeEditor:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CodeEditor
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CodeEditor
 Echo:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Echo
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Echo
 Gadgets:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Gadgets
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Gadgets
 GlobalBlocking:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalBlocking
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalBlocking
 Interwiki:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Interwiki
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Interwiki
 MassMessage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MassMessage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MassMessage
 MobileFrontend:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MobileFrontend
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MobileFrontend
 Nuke:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Nuke
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Nuke
 OAuth:
-  branch: {branch}
+  branch: _branch_
   path: extensions/OAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OAuth
 Renameuser:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Renameuser
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Renameuser
 Thanks:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Thanks
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Thanks
 Translate:
@@ -95,7 +95,7 @@ UniversalLanguageSelector:
   path: extensions/UniversalLanguageSelector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UniversalLanguageSelector
 UrlShortener:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UrlShortener
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UrlShortener
 cldr:
@@ -103,92 +103,92 @@ cldr:
   path: extensions/cldr
   repo_url: https://github.com/wikimedia/mediawiki-extensions-cldr
 CologneBlue:
-  branch: {branch}
+  branch: _branch_
   path: skins/CologneBlue
   repo_url: https://github.com/wikimedia/mediawiki-skins-CologneBlue
 Modern:
-  branch: {branch}
+  branch: _branch_
   path: skins/Modern
   repo_url: https://github.com/wikimedia/mediawiki-skins-Modern
 WikiEditor:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikiEditor
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiEditor
 Flow:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Flow
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Flow
 VisualEditor:
-  branch: {branch}
+  branch: _branch_
   path: extensions/VisualEditor
   repo_url: https://github.com/wikimedia/mediawiki-extensions-VisualEditor
   shallow_submodules: true
 InputBox:
-  branch: {branch}
+  branch: _branch_
   path: extensions/InputBox
   repo_url: https://github.com/wikimedia/mediawiki-extensions-InputBox
 Scribunto:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Scribunto
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Scribunto
 Math:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Math
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Math
 Timeline:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Timeline
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Timeline
 CategoryTree:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CategoryTree
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CategoryTree
 CiteThisPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CiteThisPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CiteThisPage
 Disambiguator:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Disambiguator
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Disambiguator
 ImageMap:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ImageMap
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Imagemap
 GlobalCssJs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalCssJs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalCssJs
 DynamicPageList:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DynamicPageList
   repo_url: https://github.com/wikimedia/mediawiki-extensions-intersection
 TemplateData:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TemplateData
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TemplateData
 TimedMediaHandler:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TimedMediaHandler
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TimedMediaHandler
 CollapsibleVector:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CollapsibleVector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CollapsibleVector
 SubpageFun:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SubpageFun
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SubpageFun
 DPLForum:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DPLForum
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DPLForum
 Poem:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Poem
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Poem
 AdminLinks:
-  branch: {branch}
+  branch: _branch_
   path: extensions/AdminLinks
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AdminLinks
 SocialProfile:
@@ -196,115 +196,115 @@ SocialProfile:
   path: extensions/SocialProfile
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SocialProfile
 Variables:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Variables
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Variables
 CharInsert:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CharInsert
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CharInsert
 NewUserMessage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NewUserMessage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NewUserMessage
 CSS:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CSS
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CSS
 TextExtracts:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TextExtracts
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TextExtracts
 Popups:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Popups
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Popups
 PageImages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PageImages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageImages
 TitleKey:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TitleKey
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TitleKey
 SyntaxHighlight_GeSHi:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SyntaxHighlight_GeSHi
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SyntaxHighlight_GeSHi
 MsUpload:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MsUpload
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MsUpload
 MsLinks:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MsLinks
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MsLinks
 MultiBoilerplate:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MultiBoilerplate
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MultiBoilerplate
 RelatedArticles:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RelatedArticles
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RelatedArticles
 TemplateSandbox:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TemplateSandbox
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TemplateSandbox
 Josa:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Josa
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Josa
 PageTriage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PageTriage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageTriage
 SubPageList3:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SubPageList3
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SubPageList3
 NoTitle:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NoTitle
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NoTitle
 OpenGraphMeta:
-  branch: {branch}
+  branch: _branch_
   path: extensions/OpenGraphMeta
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OpenGraphMeta
 WikiLove:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikiLove
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiLove
 BetaFeatures:
-  branch: {branch}
+  branch: _branch_
   path: extensions/BetaFeatures
   repo_url: https://github.com/wikimedia/mediawiki-extensions-BetaFeatures
 SandboxLink:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SandboxLink
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SandboxLink
 MultimediaViewer:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MultimediaViewer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MultimediaViewer
 ContactPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ContactPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ContactPage
 PageNotice:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PageNotice
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageNotice
 Loops:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Loops
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Loops
 NewestPages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NewestPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NewestPages
 HeaderTabs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/HeaderTabs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-HeaderTabs
 VoteNY:
@@ -312,7 +312,7 @@ VoteNY:
   path: extensions/VoteNY
   repo_url: https://github.com/wikimedia/mediawiki-extensions-VoteNY
 Metrolook:
-  branch: {branch}
+  branch: _branch_
   path: skins/Metrolook
   repo_url: https://github.com/wikimedia/mediawiki-skins-Metrolook
 AJAXPoll:
@@ -324,35 +324,35 @@ BlogPage:
   path: extensions/BlogPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-BlogPage
 WebChat:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WebChat
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WebChat
 MsCalendar:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MsCalendar
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MsCalendar
 AuthorProtect:
-  branch: {branch}
+  branch: _branch_
   path: extensions/AuthorProtect
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AuthorProtect
 LinkSuggest:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LinkSuggest
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LinkSuggest
 DuskToDawn:
-  branch: {branch}
+  branch: _branch_
   path: skins/DuskToDawn
   repo_url: https://github.com/wikimedia/mediawiki-skins-DuskToDawn
 apex:
-  branch: {branch}
+  branch: _branch_
   path: skins/apex
   repo_url: https://github.com/wikimedia/mediawiki-skins-apex
 erudite:
-  branch: {branch}
+  branch: _branch_
   path: skins/erudite
   repo_url: https://github.com/wikimedia/mediawiki-skins-erudite
 ConfirmEdit:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ConfirmEdit
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ConfirmEdit
 CreateWiki:
@@ -364,11 +364,11 @@ WikiForgeMagic:
   path: extensions/WikiForgeMagic
   repo_url: https://github.com/WikiForge/WikiForgeMagic
 Tabs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Tabs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Tabs
 AddHTMLMetaAndTitle:
-  branch: {branch}
+  branch: _branch_
   path: extensions/AddHTMLMetaAndTitle
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AddHTMLMetaAndTitle
 HighlightLinksInCategory:
@@ -392,11 +392,11 @@ YouTube:
   path: extensions/YouTube
   repo_url: https://github.com/miraheze/YouTube
 LabeledSectionTransclusion:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LabeledSectionTransclusion
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LabeledSectionTransclusion
 ReplaceText:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ReplaceText
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ReplaceText
 JavascriptSlideshow:
@@ -404,15 +404,15 @@ JavascriptSlideshow:
   path: extensions/JavascriptSlideshow
   repo_url: https://gitlab.com/hydrawiki/extensions/javascriptslideshow
 Wikibase:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Wikibase
   repo_url: https://github.com/wikimedia/Wikibase
 RSS:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RSS
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RSS
 CookieWarning:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CookieWarning
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CookieWarning
 Maps:
@@ -420,7 +420,7 @@ Maps:
   path: extensions/Maps
   repo_url: https://github.com/ProfessionalWiki/Maps
 MassEditRegex:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MassEditRegex
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MassEditRegex
 HideSection:
@@ -428,51 +428,51 @@ HideSection:
   path: extensions/HideSection
   repo_url: https://github.com/labster/HideSection
 WikiTextLoggedInOut:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikiTextLoggedInOut
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiTextLoggedInOut
 Refreshed:
-  branch: {branch}
+  branch: _branch_
   path: skins/Refreshed
   repo_url: https://github.com/wikimedia/mediawiki-skins-Refreshed
 MediaWikiChat:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MediaWikiChat
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MediaWikiChat
 ArticleRatings:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ArticleRatings
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ArticleRatings
 Nostalgia:
-  branch: {branch}
+  branch: _branch_
   path: skins/Nostalgia
   repo_url: https://github.com/wikimedia/mediawiki-skins-Nostalgia
 FlaggedRevs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/FlaggedRevs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-FlaggedRevs
 PdfHandler:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PdfHandler
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PdfHandler
 TorBlock:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TorBlock
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TorBlock
 Newsletter:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Newsletter
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Newsletter
 OATHAuth:
-  branch: {branch}
+  branch: _branch_
   path: extensions/OATHAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OATHAuth
 CreatePage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CreatePage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CreatePage
 wikihiero:
-  branch: {branch}
+  branch: _branch_
   path: extensions/wikihiero
   repo_url: https://github.com/wikimedia/mediawiki-extensions-wikihiero
 ManageWiki:
@@ -480,7 +480,7 @@ ManageWiki:
   path: extensions/ManageWiki
   repo_url: https://github.com/miraheze/ManageWiki
 Quiz:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Quiz
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Quiz
 ProtectSite:
@@ -488,23 +488,23 @@ ProtectSite:
   path: extensions/ProtectSite
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ProtectSite
 Theme:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Theme
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Theme
 Gamepress:
-  branch: {branch}
+  branch: _branch_
   path: skins/Gamepress
   repo_url: https://github.com/wikimedia/mediawiki-skins-Gamepress
 DismissableSiteNotice:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DismissableSiteNotice
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DismissableSiteNotice
 NewSignupPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NewSignupPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NewSignupPage
 Graph:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Graph
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Graph
 Spoilers:
@@ -512,23 +512,23 @@ Spoilers:
   path: extensions/Spoilers
   repo_url: https://github.com/Telshin/Spoilers
 SimpleChanges:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SimpleChanges
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SimpleChanges
 CreateRedirect:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CreateRedirect
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CreateRedirect
 EditSubpages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/EditSubpages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EditSubpages
 ProofreadPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ProofreadPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ProofreadPage
 PagedTiffHandler:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PagedTiffHandler
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PagedTiffHandler
 AutoCreateCategoryPages:
@@ -536,19 +536,19 @@ AutoCreateCategoryPages:
   path: extensions/AutoCreateCategoryPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AutoCreateCategoryPages
 Timeless:
-  branch: {branch}
+  branch: _branch_
   path: skins/Timeless
   repo_url: https://github.com/wikimedia/mediawiki-skins-Timeless
 ContributionScores:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ContributionScores
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ContributionScores
 TocTree:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TocTree
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TocTree
 GroupsSidebar:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GroupsSidebar
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GroupsSidebar
 Tweeki:
@@ -556,23 +556,23 @@ Tweeki:
   path: skins/Tweeki
   repo_url: https://github.com/thaider/Tweeki
 GuidedTour:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GuidedTour
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GuidedTour
 EventLogging:
-  branch: {branch}
+  branch: _branch_
   path: extensions/EventLogging
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventLogging
 vendor:
-  branch: {branch}
+  branch: _branch_
   path: vendor
   repo_url: https://github.com/wikimedia/mediawiki-vendor
 CentralNotice:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CentralNotice
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralNotice
 UrlGetParameters:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UrlGetParameters
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UrlGetParameters
 Moderation:
@@ -580,19 +580,19 @@ Moderation:
   path: extensions/Moderation
   repo_url: https://github.com/edwardspec/mediawiki-moderation
 ArticleToCategory2:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ArticleToCategory2
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ArticleToCategory2
 Score:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Score
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Score
 LoginNotify:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LoginNotify
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LoginNotify
 MagicNoCache:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MagicNoCache
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MagicNoCache
 WikiForum:
@@ -608,15 +608,15 @@ HAWelcome:
   path: extensions/HAWelcome
   repo_url: https://github.com/wikimedia/mediawiki-extensions-HAWelcome
 MinervaNeue:
-  branch: {branch}
+  branch: _branch_
   path: skins/MinervaNeue
   repo_url: https://github.com/wikimedia/mediawiki-skins-MinervaNeue
 GlobalUserPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalUserPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUserPage
 GlobalPreferences:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalPreferences
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalPreferences
 QuizGame:
@@ -624,11 +624,11 @@ QuizGame:
   path: extensions/QuizGame
   repo_url: https://github.com/wikimedia/mediawiki-extensions-QuizGame
 Capiunto:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Capiunto
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Capiunto
 TemplateStyles:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TemplateStyles
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TemplateStyles
 WikiDiscover:
@@ -636,43 +636,43 @@ WikiDiscover:
   path: extensions/WikiDiscover
   repo_url: https://github.com/miraheze/WikiDiscover
 PipeEscape:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PipeEscape
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PipeEscape
 Kartographer:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Kartographer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Kartographer
 Description2:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Description2
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Description2
 GeoData:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GeoData
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GeoData
 TwoColConflict:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TwoColConflict
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TwoColConflict
 JSBreadCrumbs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/JSBreadCrumbs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-JSBreadCrumbs
 MyVariables:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MyVariables
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MyVariables
 RandomGameUnit:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RandomGameUnit
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RandomGameUnit
 NewUserNotif:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NewUserNotif
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NewUserNotif
 LinkTarget:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LinkTarget
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LinkTarget
 MatomoAnalytics:
@@ -680,23 +680,23 @@ MatomoAnalytics:
   path: extensions/MatomoAnalytics
   repo_url: https://github.com/miraheze/MatomoAnalytics
 WikidataPageBanner:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikidataPageBanner
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikidataPageBanner
 Listings:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Listings
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Listings
 UploadsLink:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UploadsLink
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UploadsLink
 RevisionSlider:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RevisionSlider
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RevisionSlider
 CodeMirror:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CodeMirror
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CodeMirror
 DiscordNotifications:
@@ -704,19 +704,19 @@ DiscordNotifications:
   path: extensions/DiscordNotifications
   repo_url: https://github.com/Universal-Omega/DiscordNotifications
 GeoCrumbs:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GeoCrumbs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GeoCrumbs
 NukeDPL:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NukeDPL
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NukeDPL
 ImageRating:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ImageRating
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ImageRating
 RandomImage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RandomImage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RandomImage
 PollNY:
@@ -724,7 +724,7 @@ PollNY:
   path: extensions/PollNY
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PollNY
 WikimediaIncubator:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikimediaIncubator
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikimediaIncubator
 ApprovedRevs:
@@ -744,11 +744,11 @@ LinkTitles:
   path: extensions/LinkTitles
   repo_url: https://github.com/bovender/LinkTitles
 TemplateWizard:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TemplateWizard
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TemplateWizard
 WikiSEO:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikiSEO
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiSEO
 DummyFandoomMainpageTags:
@@ -760,7 +760,7 @@ PortableInfobox:
   path: extensions/PortableInfobox
   repo_url: https://github.com/Universal-Omega/PortableInfobox
 UserMerge:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UserMerge
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UserMerge
 MobileDetect:
@@ -768,7 +768,7 @@ MobileDetect:
   path: extensions/MobileDetect
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MobileDetect
 Genealogy:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Genealogy
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Genealogy
 IncidentReporting:
@@ -780,7 +780,7 @@ DataDump:
   path: extensions/DataDump
   repo_url: https://github.com/miraheze/DataDump
 DisplayTitle:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DisplayTitle
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DisplayTitle
 WikiCategoryTagCloud:
@@ -788,27 +788,27 @@ WikiCategoryTagCloud:
   path: extensions/WikiCategoryTagCloud
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiCategoryTagCloud
 Mask:
-  branch: {branch}
+  branch: _branch_
   path: skins/Mask
   repo_url: https://github.com/wikimedia/mediawiki-skins-Mask
 JsonConfig:
-  branch: {branch}
+  branch: _branch_
   path: extensions/JsonConfig
   repo_url: https://github.com/wikimedia/mediawiki-extensions-JsonConfig
 CategorySortHeaders:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CategorySortHeaders
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CategorySortHeaders
 StopForumSpam:
-  branch: {branch}
+  branch: _branch_
   path: extensions/StopForumSpam
   repo_url: https://github.com/wikimedia/mediawiki-extensions-StopForumSpam
 SoftRedirector:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SoftRedirector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SoftRedirector
 CommonsMetadata:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CommonsMetadata
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CommonsMetadata
 AutoCreatePage:
@@ -816,15 +816,15 @@ AutoCreatePage:
   path: extensions/AutoCreatePage
   repo_url: https://github.com/Universal-Omega/AutoCreatePage
 LastModified:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LastModified
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LastModified
 CreatePageUw:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CreatePageUw
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CreatePageUw
 DarkMode:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DarkMode
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DarkMode
 FontAwesome:
@@ -840,11 +840,11 @@ SpriteSheet:
   path: extensions/SpriteSheet
   repo_url: https://github.com/miraheze/SpriteSheet
 LanguageSelector:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LanguageSelector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LanguageSelector
 ForcePreview:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ForcePreview
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ForcePreview
 SlackNotifications:
@@ -852,35 +852,35 @@ SlackNotifications:
   path: extensions/SlackNotifications
   repo_url: https://github.com/kulttuuri/SlackNotifications
 RegexFunctions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RegexFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RegexFunctions
 CommentStreams:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CommentStreams
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CommentStreams
 VEForAll:
-  branch: {branch}
+  branch: _branch_
   path: extensions/VEForAll
   repo_url: https://github.com/wikimedia/mediawiki-extensions-VEForAll
 DataTransfer:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DataTransfer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DataTransfer
 Calendar:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Calendar
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Calendar
 DynamicSidebar:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DynamicSidebar
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DynamicSidebar
 GlobalUsage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalUsage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUsage
 Femiwiki:
-  branch: {branch}
+  branch: _branch_
   path: skins/Femiwiki
   repo_url: https://github.com/femiwiki/FemiwikiSkin
 Citizen:
@@ -892,7 +892,7 @@ Mermaid:
   path: extensions/Mermaid
   repo_url: https://github.com/SemanticMediaWiki/Mermaid
 UserFunctions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UserFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UserFunctions
 TreeAndMenu:
@@ -900,7 +900,7 @@ TreeAndMenu:
   path: extensions/TreeAndMenu
   repo_url: https://gitlab.com/organicdesign/TreeAndMenu
 Lingo:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Lingo
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Lingo
 TwitterTag:
@@ -920,27 +920,27 @@ JsCalendar:
   path: extensions/JsCalendar
   repo_url: https://github.com/edwardspec/mediawiki-extension-JsCalendar
 Arrays:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Arrays
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Arrays
 RightFunctions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RightFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RightFunctions
 DeleteUserPages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DeleteUserPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DeleteUserPages
 OrphanedTalkPages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/OrphanedTalkPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OrphanedTalkPages
 Linter:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Linter
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Linter
 LdapAuthentication:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LdapAuthentication
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LdapAuthentication
 Cosmos:
@@ -948,7 +948,7 @@ Cosmos:
   path: skins/Cosmos
   repo_url: https://github.com/wikimedia/mediawiki-skins-Cosmos
 TranslationNotifications:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TranslationNotifications
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TranslationNotifications
 Truglass:
@@ -956,7 +956,7 @@ Truglass:
   path: skins/Truglass
   repo_url: https://github.com/wikimedia/mediawiki-skins-Truglass
 EventStreamConfig:
-  branch: {branch}
+  branch: _branch_
   path: extensions/EventStreamConfig
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventStreamConfig
 SimpleBlogPage:
@@ -964,23 +964,23 @@ SimpleBlogPage:
   path: extensions/SimpleBlogPage
   repo_url: https://github.com/Universal-Omega/SimpleBlogPage
 CleanChanges:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CleanChanges
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CleanChanges
 TimeMachine:
-  branch: {branch}
+  branch: _branch_
   path: extensions/TimeMachine
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TimeMachine
 Nimbus:
-  branch: {branch}
+  branch: _branch_
   path: skins/Nimbus
   repo_url: https://github.com/wikimedia/mediawiki-skins-Nimbus
 DiscussionTools:
-  branch: {branch}
+  branch: _branch_
   path: extensions/DiscussionTools
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DiscussionTools
 GoogleNewsSitemap:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GoogleNewsSitemap
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GoogleNewsSitemap
 SnapProjectEmbed:
@@ -996,31 +996,31 @@ Report:
   path: extensions/Report
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Report
 EditNotify:
-  branch: {branch}
+  branch: _branch_
   path: extensions/EditNotify
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EditNotify
 WikibaseQualityConstraints:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikibaseQualityConstraints
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikibaseQualityConstraints
 WikibaseLexeme:
-  branch: {branch}
+  branch: _branch_
   path: extensions/WikibaseLexeme
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikibaseLexeme
 Commentbox:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Commentbox
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Commentbox
 LogoFunctions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LogoFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LogoFunctions
 ProtectionIndicator:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ProtectionIndicator
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ProtectionIndicator
 GeoGebra:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GeoGebra
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GeoGebra
 GlobalNewFiles:
@@ -1028,7 +1028,7 @@ GlobalNewFiles:
   path: extensions/GlobalNewFiles
   repo_url: https://github.com/miraheze/GlobalNewFiles
 HasSomeColours:
-  branch: {branch}
+  branch: _branch_
   path: skins/HasSomeColours
   repo_url: https://github.com/wikimedia/mediawiki-skins-HasSomeColours
 VariablesLua:
@@ -1036,23 +1036,23 @@ VariablesLua:
   path: extensions/VariablesLua
   repo_url: https://github.com/Liquipedia/VariablesLua
 MsCatSelect:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MsCatSelect
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MsCatSelect
 Editcount:
-  branch: {branch}
+  branch: _branch_
   path: extensions/Editcount
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Editcount
 RandomSelection:
-  branch: {branch}
+  branch: _branch_
   path: extensions/RandomSelection
   repo_url: https://github.com/wikimedia/mediawiki-extensions-RandomSelection
 GoogleDocs4MW:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GoogleDocs4MW
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GoogleDocs4MW
 3D:
-  branch: {branch}
+  branch: _branch_
   path: extensions/3D
   repo_url: https://github.com/wikimedia/mediawiki-extensions-3D
 ShortDescription:
@@ -1064,11 +1064,11 @@ Video:
   path: extensions/Video
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Video
 SecureLinkFixer:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SecureLinkFixer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SecureLinkFixer
 PageAssessments:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PageAssessments
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageAssessments
 mw-ScratchBlocks4:
@@ -1084,15 +1084,15 @@ Monaco:
   path: skins/Monaco
   repo_url: https://github.com/Universal-Omega/Monaco
 UserPageEditProtection:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UserPageEditProtection
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UserPageEditProtection
 GlobalWatchlist:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GlobalWatchlist
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalWatchlist
 CountDownClock:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CountDownClock
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CountDownClock
 WikibaseLocalMedia:
@@ -1100,7 +1100,7 @@ WikibaseLocalMedia:
   path: extensions/WikibaseLocalMedia
   repo_url: https://github.com/ProfessionalWiki/WikibaseLocalMedia
 BlueSky:
-  branch: {branch}
+  branch: _branch_
   path: skins/BlueSky
   repo_url: https://github.com/wikimedia/mediawiki-skins-BlueSky
 TabberNeue:
@@ -1128,15 +1128,15 @@ PageForms:
   path: extensions/PageForms
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageForms
 SkinPerPage:
-  branch: {branch}
+  branch: _branch_
   path: extensions/SkinPerPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SkinPerPage
 ArticlePlaceholder:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ArticlePlaceholder
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ArticlePlaceholder
 Anisa:
-  branch: {branch}
+  branch: _branch_
   path: skins/Anisa
   repo_url: https://github.com/wikimedia/mediawiki-skins-Anisa
 PageSchemas:
@@ -1164,15 +1164,15 @@ Flatbox:
   path: skins/Flatbox
   repo_url: https://github.com/enginbyram/mediawiki-flatbox
 ArticleCreationWorkflow:
-  branch: {branch}
+  branch: _branch_
   path: extensions/ArticleCreationWorkflow
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ArticleCreationWorkflow
 Mirage:
-  branch: {branch}
+  branch: _branch_
   path: skins/Mirage
   repo_url: https://github.com/wikimedia/mediawiki-skins-Mirage
 MixedNamespaceSearchSuggestions:
-  branch: {branch}
+  branch: _branch_
   path: extensions/MixedNamespaceSearchSuggestions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MixedNamespaceSearchSuggestions
 WMAU:
@@ -1180,7 +1180,7 @@ WMAU:
   path: skins/WMAU
   repo_url: https://github.com/wikimedia/mediawiki-skins-WMAU
 LockAuthor:
-  branch: {branch}
+  branch: _branch_
   path: extensions/LockAuthor
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LockAuthor
 TemplateStylesExtender:
@@ -1192,11 +1192,11 @@ StandardDialogs:
   path: extensions/StandardDialogs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-StandardDialogs
 StructuredNavigation:
-  branch: {branch}
+  branch: _branch_
   path: extensions/StructuredNavigation
   repo_url: https://github.com/wikimedia/mediawiki-extensions-StructuredNavigation
 PropertySuggester:
-  branch: {branch}
+  branch: _branch_
   path: extensions/PropertySuggester
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PropertySuggester
 QuickInstantCommons:
@@ -1208,23 +1208,23 @@ SemanticMediaWiki:
   path: extensions/SemanticMediaWiki
   repo_url: https://github.com/SemanticMediaWiki/SemanticMediaWiki
 HitCounters:
-  branch: {branch}
+  branch: _branch_
   path: extensions/HitCounters
   repo_url: https://github.com/wikimedia/mediawiki-extensions-HitCounters
 UploadWizard:
-  branch: {branch}
+  branch: _branch_
   path: extensions/UploadWizard
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UploadWizard
 InterwikiSorting:
-  branch: {branch}
+  branch: _branch_
   path: extensions/InterwikiSorting
   repo_url: https://github.com/wikimedia/mediawiki-extensions-InterwikiSorting
 CreatedPagesList:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CreatedPagesList
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CreatedPagesList
 CategoryExplorer:
-  branch: {branch}
+  branch: _branch_
   path: extensions/CategoryExplorer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CategoryExplorer
 NamespacePreload:
@@ -1236,7 +1236,7 @@ ExternalData:
   path: extensions/ExternalData
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ExternalData
 NativeSvgHandler:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NativeSvgHandler
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NativeSvgHandler
 ImportDump:
@@ -1244,7 +1244,7 @@ ImportDump:
   path: extensions/ImportDump
   repo_url: https://github.com/miraheze/ImportDump
 GrowthExperiments:
-  branch: {branch}
+  branch: _branch_
   path: extensions/GrowthExperiments
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GrowthExperiments
 Share:
@@ -1252,7 +1252,7 @@ Share:
   path: extensions/Share
   repo_url: https://github.com/AgentIsai/Share
 IPInfo:
-  branch: {branch}
+  branch: _branch_
   path: extensions/IPInfo
   repo_url: https://github.com/wikimedia/mediawiki-extensions-IPInfo
 WikibaseEdtf:
@@ -1276,7 +1276,7 @@ RemoveRedlinks:
   path: extensions/RemoveRedlinks
   repo_url: https://github.com/marohh/mediawikiRemoveRedlinks
 Splash:
-  branch: {branch}
+  branch: _branch_
   path: skins/Splash
   repo_url: https://github.com/wikimedia/mediawiki-skins-Splash
 PageProperties:
@@ -1284,6 +1284,6 @@ PageProperties:
   path: extensions/PageProperties
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageProperties
 NearbyPages:
-  branch: {branch}
+  branch: _branch_
   path: extensions/NearbyPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NearbyPages
