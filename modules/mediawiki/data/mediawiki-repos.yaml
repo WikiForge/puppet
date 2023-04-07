@@ -122,6 +122,7 @@ VisualEditor:
   branch: {branch}
   path: extensions/VisualEditor
   repo_url: https://github.com/wikimedia/mediawiki-extensions-VisualEditor
+  shallow_submodules: true
 InputBox:
   branch: {branch}
   path: extensions/InputBox
