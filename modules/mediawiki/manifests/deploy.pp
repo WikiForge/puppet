@@ -86,17 +86,16 @@ class mediawiki::deploy (
     }
 
     git::clone { 'MediaWiki core':
-        ensure             => 'present',
-        directory          => '/srv/mediawiki-staging/w',
-        origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => $branch,
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '1500',
-        depth              => '5',
-        recurse_submodules => true,
-        require            => File['/srv/mediawiki-staging'],
+        ensure    => 'present',
+        directory => '/srv/mediawiki-staging/w',
+        origin    => 'https://github.com/wikimedia/mediawiki.git',
+        branch    => $branch,
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+        timeout   => '1500',
+        depth     => '5',
+        require   => File['/srv/mediawiki-staging'],
     }
 
     git::clone { 'landing':
