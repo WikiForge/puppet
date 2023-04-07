@@ -126,3 +126,10 @@ def test_construct_git_pull() -> None:
 
 def test_construct_git_pull_branch() -> None:
     assert mwd._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+
+
+def test_construct_upgrade_mediawiki_rm_staging() -> None:
+    assert mwd._construct_upgrade_mediawiki_rm_staging() == 'sudo -u www-data rm -rf /srv/mediawiki-staging/w/'
+
+def test_construct_upgrade_mediawiki_run_puppet() -> None:
+    assert mwd._construct_upgrade_mediawiki_run_puppet() == 'sudo puppet agent -tv'
