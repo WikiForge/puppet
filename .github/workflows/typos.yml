@@ -1,4 +1,4 @@
-name: Check for Typos
+name: Walmart
 on:
   push:
   pull_request:
