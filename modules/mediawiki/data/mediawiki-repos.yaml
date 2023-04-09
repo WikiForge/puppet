@@ -1255,3 +1255,7 @@ NearbyPages:
   branch: _branch_
   path: extensions/NearbyPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-NearbyPages
+PWA:
+  branch: main
+  path: extensions/PWA
+  repo_url: https://github.com/Wikimedica/MediaWiki-extensions-PWA
