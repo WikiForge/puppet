@@ -1,8 +1,6 @@
 # class base::upgrades
 class base::upgrades {
-    package { 'unattended-upgrades':
-        ensure => present,
-    }
+    ensure_packages('unattended-upgrades')
 
     file { '/etc/apt/apt.conf.d/50unattended-upgrades':
         ensure  => present,
