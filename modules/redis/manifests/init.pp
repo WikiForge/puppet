@@ -7,9 +7,7 @@ class redis (
     Integer $maxmemory_samples = 5,
     Variant[Boolean, String] $password = false,
 ) {
-    package { 'redis-server':
-        ensure  => present,
-    }
+    ensure_packages('redis-server')
 
     file { '/etc/redis/redis.conf':
         content => template('redis/redis.conf.erb'),
