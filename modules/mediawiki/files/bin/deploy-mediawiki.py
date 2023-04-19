@@ -24,6 +24,7 @@ class EnvironmentList(TypedDict):
     prod: Environment
     test: Environment
 
+
 prod: Environment = {
     'wikidbname': 'metawiki',
     'wikiurl': 'meta.wikiforge.net',
