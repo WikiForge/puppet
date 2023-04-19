@@ -18,7 +18,7 @@ class base::dns {
     }
 
     file { '/etc/resolv.conf':
-        content => template('base/dns/resolv.conf.erb'),
+        source  => 'puppet:///modules/base/dns/resolv.conf',
         require => Package['pdns-recursor'],
     }
 }
