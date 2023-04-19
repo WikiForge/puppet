@@ -5,7 +5,7 @@ node 'bots1.wikiforge.net' {
     include role::irc
 }
 
-node 'cp1.wikiforge.net' {
+node /^cp[12]\.wikiforge\.net$/ {
     include base
     include role::varnish
 }
