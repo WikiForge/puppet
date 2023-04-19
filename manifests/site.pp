@@ -31,6 +31,11 @@ node /^mw[12]\.wikiforge\.net$/ {
     include role::mediawiki
 }
 
+node /^ns[12]\.wikiforge\.net$/ {
+    include base
+    include role::dns
+}
+
 node 'phorge1.wikiforge.net' {
     include base
     include role::phorge
