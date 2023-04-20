@@ -12,9 +12,9 @@ class base {
     include ssh
     include users
 
-    # if !lookup('dns') {
-    #     include base::dns
-    # }
+    if !lookup('dns') {
+        include base::dns
+    }
 
     file { '/usr/local/bin/gen_fingerprints':
         ensure => present,
