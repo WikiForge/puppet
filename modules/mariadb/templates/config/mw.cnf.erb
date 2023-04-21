@@ -1,3 +1,6 @@
+[client]
+ssl-capath=/etc/ssl/certs
+
 [mysql]
 port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
@@ -86,6 +89,12 @@ slow-query-log-file            = /var/log/mysql/mysql-slow.log
 userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
+
+ssl
+ssl-capath                     = /etc/ssl/certs
+ssl-cert                       = /etc/ssl/localcerts/wildcard.wikiforge.net.crt
+ssl-key                        = /etc/ssl/private/wildcard.wikiforge.net.key
+tls_version                    = TLSv1.2,TLSv1.3
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 
