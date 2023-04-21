@@ -6,19 +6,20 @@ class role::db {
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $phorge_password = lookup('passwords::db::phorge')
 
-    ssl::wildcard { 'db wildcard': }
+    ssl::wildcard { 'db wildcard':
+        ssl_cert_key_private_group => 'mysql',
+    }
 
     file { '/etc/ssl/private':
         ensure => directory,
         owner  => 'root',
         group  => 'mysql',
-        mode   => '0750',
-        recurse => true,
+        mode   => '0750'
     }
 
     class { 'mariadb::config':
-        config          => 'mariadb/config/mw.cnf.erb',
-        password        => lookup('passwords::db::root'),
+        config   => 'mariadb/config/mw.cnf.erb',
+        password => lookup('passwords::db::root'),
     }
 
     file { '/etc/mysql/wikiforge/mediawiki-grants.sql':
