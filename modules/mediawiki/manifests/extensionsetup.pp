@@ -63,7 +63,7 @@ class mediawiki::extensionsetup (
 
         if $params['latest'] {
             exec { "MediaWiki-${branch} ${name} Sync":
-                command     => "/usr/local/bin/deploy-mediawiki --folders=w/${params['path']} --servers=${lookup(mediawiki::default_sync)} --no-log",
+                command     => "/usr/local/bin/deploy-mediawiki --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)} --no-log",
                 cwd         => '/srv/mediawiki-staging',
                 refreshonly => true,
                 user        => www-data,
