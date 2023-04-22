@@ -3,9 +3,12 @@
 # MediaWiki deploy files
 class mediawiki::deploy (
     String $branch,
-    String $branch_mw_config,
+    String $version,
 ) {
-    include mediawiki::extensionsetup
+    class { 'mediawiki::extensionsetup':
+        branch  => $branch,
+        version => $version,
+    }
 
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
@@ -85,7 +88,7 @@ class mediawiki::deploy (
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/WikiForge/mw-config',
-        branch    => $branch_mw_config,
+        branch    => 'master',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
@@ -94,7 +97,7 @@ class mediawiki::deploy (
 
     git::clone { 'MediaWiki core':
         ensure    => 'present',
-        directory => '/srv/mediawiki-staging/w',
+        directory => "/srv/mediawiki-staging/${version}",
         origin    => 'https://github.com/wikimedia/mediawiki',
         branch    => $branch,
         owner     => 'www-data',
