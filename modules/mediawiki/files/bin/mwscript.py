@@ -13,13 +13,13 @@ def run(args: argparse.Namespace) -> None:
     if script in longscripts:
         long = True
     if len(scriptsplit) == 1:
-        script = f'/srv/mediawiki/w/maintenance/{script}'
+        script = f'/srv/mediawiki/{args.version}/maintenance/{script}'
     elif len(scriptsplit) == 2:
-        script = f'/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
+        script = f'/srv/mediawiki/{args.version}/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
         if scriptsplit[1] in longscripts:
             long = True
     else:
-        script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
+        script = f'/srv/mediawiki/{args.version}/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
         if scriptsplit[2] in longscripts:
             long = True
 
@@ -33,7 +33,7 @@ def run(args: argparse.Namespace) -> None:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
         long = True
-        generate = f'php /srv/mediawiki/w/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}'
+        generate = f'php /srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
@@ -64,6 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('script')
     parser.add_argument('wiki')
     parser.add_argument('arguments', nargs='*', default=[])
+    parser.add_argument('--version', dest='version', default='1.39')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
