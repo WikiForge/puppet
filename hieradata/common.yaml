@@ -4,8 +4,10 @@ jobrunner::intensive: false
 puppetserver: false
 dns: false
 
-mediawiki::branch: 'REL1_39'
-mediawiki::branch_mw_config: 'master'
+mediawiki::multiversion::versions:
+  1.39:
+    branch: 'REL1_39'
+
 puppetserver_hostname: puppet1.wikiforge.net
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 mediawiki::use_staging: false
