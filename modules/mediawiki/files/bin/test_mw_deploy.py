@@ -41,11 +41,11 @@ def test_check_up_debug_fail() -> None:
 
 
 def test_get_staging_path() -> None:
-    assert mwd._get_staging_path('world') == '/srv/mediawiki-staging/w/'
+    assert mwd._get_staging_path('version') == '/srv/mediawiki-staging/version/'
 
 
 def test_get_deployed_path() -> None:
-    assert mwd._get_deployed_path('world') == '/srv/mediawiki/w/'
+    assert mwd._get_deployed_path('version') == '/srv/mediawiki/version/'
 
 
 def test_construct_rsync_no_location_local() -> None:
