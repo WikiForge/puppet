@@ -54,6 +54,7 @@ img-src:
   - "'self'"
   - 'data:'
   - '*.wikiforge.net'
+  - '*.miraheze.org'
   - 'upload.wikimedia.org'
   - 'wikimedia.org'
   - 'maps.google.com'
@@ -77,6 +78,7 @@ font-src:
   - "'self'"
   - 'data:'
   - '*.wikiforge.net'
+  - '*.miraheze.org'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'

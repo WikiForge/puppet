@@ -3,6 +3,7 @@
 GRANT ALL PRIVILEGES
     ON *.* TO 'root'@'localhost'
     IDENTIFIED BY '<%= @password %>'
+    REQUIRE SSL
     WITH GRANT OPTION;
 
 -- Grants for 'replica'@'%'
@@ -10,3 +11,4 @@ GRANT ALL PRIVILEGES
 GRANT REPLICATION SLAVE
     ON *.* TO 'replica'@'%'
     IDENTIFIED BY '<%= @mariadb_replica_password %>'
+    REQUIRE SSL;

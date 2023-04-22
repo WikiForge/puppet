@@ -1,6 +1,9 @@
 jobrunner: false
 jobrunner::intensive: false
+
 puppetserver: false
+dns: false
+
 mediawiki::branch: 'REL1_39'
 mediawiki::branch_mw_config: 'master'
 puppetserver_hostname: puppet1.wikiforge.net
@@ -24,6 +27,10 @@ varnish::backends:
     port: 8101
     probe: mwhealth
     pool: true
+  test1:
+    port: 8180
+    probe: false
+    pool: false
   phorge1:
     port: 8200
     probe: false

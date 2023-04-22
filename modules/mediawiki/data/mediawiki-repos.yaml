@@ -363,6 +363,7 @@ WikiForgeMagic:
   branch: master
   path: extensions/WikiForgeMagic
   repo_url: https://github.com/WikiForge/WikiForgeMagic
+  latest: true
 Tabs:
   branch: _branch_
   path: extensions/Tabs

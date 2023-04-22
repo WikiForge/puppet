@@ -22,6 +22,7 @@ class Environment(TypedDict):
 
 class EnvironmentList(TypedDict):
     prod: Environment
+    test: Environment
 
 
 prod: Environment = {
@@ -29,14 +30,23 @@ prod: Environment = {
     'wikiurl': 'meta.wikiforge.net',
     'servers': ['mw2', 'mw1'],
 }
+test: Environment = {
+    'wikidbname': 'test1wiki',
+    'wikiurl': 'test1.wikiforge.net',
+    'servers': ['test1'],
+}
 ENVIRONMENTS: EnvironmentList = {
     'prod': prod,
+    'test': test,
 }
 del prod
+del test
 HOSTNAME = socket.gethostname().split('.')[0]
 
 
 def get_environment_info() -> Environment:
+    if HOSTNAME.startswith('test'):
+        return ENVIRONMENTS['test']
     return ENVIRONMENTS['prod']
 
 

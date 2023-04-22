@@ -3,7 +3,6 @@
 # Nginx config using hiera
 class mediawiki::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
-    $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $php_fpm_sock = 'php/fpm-www.sock'
 
     nginx::conf { 'mediawiki-includes':
@@ -20,6 +19,4 @@ class mediawiki::nginx {
     ssl::wildcard { 'mediawiki nginx wildcard': }
 
     include ssl::hiera
-
-    ssl::cert { 'm.wikiforge.net': }
 }

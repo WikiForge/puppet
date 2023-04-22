@@ -32,7 +32,7 @@ probe mwhealth {
 
 <%- @backends.each_pair do | name, property | -%>
 backend <%= name %> {
-	.host = "localhost";
+	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
@@ -52,7 +52,7 @@ sub vcl_init {
 
 # Purge ACL
 acl purge {
-	"localhost";
+	"127.0.0.1";
 }
 
 # Cookie handling logic
@@ -284,6 +284,21 @@ sub vcl_recv {
 		req.http.Host == "acme.wikiforge.net"
 	) {
 		set req.backend_hint = puppet1;
+		return (pass);
+	}
+
+ 	if (req.http.Host == "test1.wikiforge.net") {
+                set req.backend_hint = test1;
+                return (pass);
+        }
+
+	# Do not cache requests from this domain
+	if (
+		req.http.Host == "support.wikiforge.net" ||
+		req.http.Host == "phorge-storage.wikiforge.net" ||
+		req.http.Host == "blog.wikiforge.net"
+	) {
+		set req.backend_hint = phorge1;
 		return (pass);
 	}
 

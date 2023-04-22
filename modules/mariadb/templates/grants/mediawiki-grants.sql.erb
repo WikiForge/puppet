@@ -3,6 +3,7 @@
 GRANT USAGE
     ON *.* TO 'mediawiki'@'%'
     IDENTIFIED BY '<%= @mediawiki_password %>'
+    REQUIRE SSL
     WITH MAX_STATEMENT_TIME 600;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES, CREATE TEMPORARY TABLES
@@ -18,16 +19,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
     ON `prodglobal`.* TO 'mediawiki'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'mediawiki'@'%';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `parsercache`.* TO 'mediawiki'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'mediawiki'@'%';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `survey`.* TO 'mediawiki'@'%';
 
 -- Grants for 'cargouser'@''
 
@@ -39,7 +34,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 
 GRANT USAGE
     ON *.* TO 'wikiadmin'@'%'
-    IDENTIFIED BY '<%= @wikiadmin_password %>';
+    IDENTIFIED BY '<%= @wikiadmin_password %>'
+    REQUIRE SSL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'wikiadmin'@'%';
@@ -54,13 +50,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
     ON `prodglobal`.* TO 'wikiadmin'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'wikiadmin'@'%';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `parsercache`.* TO 'wikiadmin'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'wikiadmin'@'%';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `survey`.* TO 'wikiadmin'@'%';

@@ -2,6 +2,7 @@
 define ssl::wildcard (
     $ssl_cert_path = '/etc/ssl/localcerts',
     $ssl_cert_key_private_path = '/etc/ssl/private',
+    $ssl_cert_key_private_group = 'ssl-cert',
 ) {
 
     if defined(Service['nginx']) {
@@ -23,7 +24,7 @@ define ssl::wildcard (
             ensure    => 'present',
             source    => 'puppet:///ssl-keys/wildcard.wikiforge.net.key',
             owner     => 'root',
-            group     => 'ssl-cert',
+            group     => $ssl_cert_key_private_group,
             mode      => '0660',
             show_diff => false,
             notify    => $restart_nginx,

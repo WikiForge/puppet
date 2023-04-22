@@ -5,7 +5,7 @@ node 'bots1.wikiforge.net' {
     include role::irc
 }
 
-node 'cp1.wikiforge.net' {
+node /^cp[12]\.wikiforge\.net$/ {
     include base
     include role::varnish
 }
@@ -31,6 +31,11 @@ node /^mw[12]\.wikiforge\.net$/ {
     include role::mediawiki
 }
 
+node /^ns[12]\.wikiforge\.net$/ {
+    include base
+    include role::dns
+}
+
 node 'phorge1.wikiforge.net' {
     include base
     include role::phorge
@@ -43,6 +48,11 @@ node 'puppet1.wikiforge.net' {
     include role::puppetserver
     include role::salt
     include role::ssl
+}
+
+node 'test1.wikiforge.net' {
+    include base
+    include role::mediawiki
 }
 
 # ensures all servers have basic class if puppet runs

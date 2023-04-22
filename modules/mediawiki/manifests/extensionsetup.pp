@@ -21,7 +21,10 @@ class mediawiki::extensionsetup {
         git::clone { "MediaWiki ${name}":
             ensure             => $params['removed'] ? {
                 true    => absent,
-                default => present,
+                default => $params['latest'] ? {
+                    true    => latest,
+                    default => present,
+                },
             },
             directory          => "${mwpath}/${params['path']}",
             origin             => $params['repo_url'],
@@ -39,6 +42,17 @@ class mediawiki::extensionsetup {
                 default => false,
             },
             require            => Git::Clone['MediaWiki core'],
+        }
+
+        if $params['latest'] {
+            exec { "MediaWiki ${name} Sync":
+                command     => "/usr/local/bin/deploy-mediawiki --folders=w/${params['path']} --servers=${lookup(mediawiki::default_sync)} --no-log",
+                cwd         => '/srv/mediawiki-staging',
+                refreshonly => true,
+                user        => www-data,
+                subscribe   => Git::Clone["MediaWiki ${name}"],
+                require     => File['/usr/local/bin/deploy-mediawiki'],
+            }
         }
     }
 
