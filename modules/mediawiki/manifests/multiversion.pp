@@ -29,7 +29,7 @@ class mediawiki::multiversion (
         if lookup(mediawiki::use_staging) {
             class { 'mediawiki::extensionsetup':
                 branch  => $params['branch'],
-                version => String($version),
+                version => $version,
             }
 
             git::clone { "MediaWiki-${params['branch']} core":
