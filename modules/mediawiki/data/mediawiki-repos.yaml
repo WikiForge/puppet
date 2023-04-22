@@ -34,6 +34,7 @@ AntiSpoof:
   branch: _branch_
   path: extensions/AntiSpoof
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AntiSpoof
+  composer: true
 Babel:
   branch: _branch_
   path: extensions/Babel
@@ -78,6 +79,7 @@ OAuth:
   branch: _branch_
   path: extensions/OAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OAuth
+  composer: true
 Renameuser:
   branch: _branch_
   path: extensions/Renameuser
@@ -90,6 +92,7 @@ Translate:
   branch: master
   path: extensions/Translate
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Translate
+  composer: true
 UniversalLanguageSelector:
   branch: master
   path: extensions/UniversalLanguageSelector
@@ -118,6 +121,7 @@ Flow:
   branch: _branch_
   path: extensions/Flow
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Flow
+  composer: true
 VisualEditor:
   branch: _branch_
   path: extensions/VisualEditor
@@ -171,6 +175,7 @@ TimedMediaHandler:
   branch: _branch_
   path: extensions/TimedMediaHandler
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TimedMediaHandler
+  composer: true
 CollapsibleVector:
   branch: _branch_
   path: extensions/CollapsibleVector
@@ -359,6 +364,7 @@ CreateWiki:
   branch: master
   path: extensions/CreateWiki
   repo_url: https://github.com/miraheze/CreateWiki
+  composer: true
 WikiForgeMagic:
   branch: master
   path: extensions/WikiForgeMagic
@@ -408,6 +414,7 @@ Wikibase:
   branch: _branch_
   path: extensions/Wikibase
   repo_url: https://github.com/wikimedia/Wikibase
+  composer: true
 RSS:
   branch: _branch_
   path: extensions/RSS
@@ -420,6 +427,7 @@ Maps:
   branch: master
   path: extensions/Maps
   repo_url: https://github.com/ProfessionalWiki/Maps
+  composer: true
 MassEditRegex:
   branch: _branch_
   path: extensions/MassEditRegex
@@ -468,6 +476,7 @@ OATHAuth:
   branch: _branch_
   path: extensions/OATHAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OATHAuth
+  composer: true
 CreatePage:
   branch: _branch_
   path: extensions/CreatePage
@@ -632,6 +641,7 @@ TemplateStyles:
   branch: _branch_
   path: extensions/TemplateStyles
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TemplateStyles
+  composer: true
 WikiDiscover:
   branch: master
   path: extensions/WikiDiscover
@@ -644,6 +654,7 @@ Kartographer:
   branch: _branch_
   path: extensions/Kartographer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Kartographer
+  composer: true
 Description2:
   branch: _branch_
   path: extensions/Description2
@@ -892,6 +903,7 @@ Lingo:
   branch: _branch_
   path: extensions/Lingo
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Lingo
+  composer: true
 TwitterTag:
   branch: master
   path: extensions/TwitterTag
@@ -988,10 +1000,12 @@ WikibaseQualityConstraints:
   branch: _branch_
   path: extensions/WikibaseQualityConstraints
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikibaseQualityConstraints
+  composer: true
 WikibaseLexeme:
   branch: _branch_
   path: extensions/WikibaseLexeme
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikibaseLexeme
+  composer: true
 Commentbox:
   branch: _branch_
   path: extensions/Commentbox
@@ -1092,10 +1106,12 @@ chameleon:
   branch: master
   path: skins/chameleon
   repo_url: https://github.com/ProfessionalWiki/chameleon
+  composer: true
 Bootstrap:
   branch: master
   path: extensions/Bootstrap
   repo_url: https://github.com/ProfessionalWiki/Bootstrap
+  composer: true
 EmbedVideo:
   branch: master
   path: extensions/EmbedVideo
@@ -1164,6 +1180,7 @@ StructuredNavigation:
   branch: _branch_
   path: extensions/StructuredNavigation
   repo_url: https://github.com/wikimedia/mediawiki-extensions-StructuredNavigation
+  composer: true
 PropertySuggester:
   branch: _branch_
   path: extensions/PropertySuggester
@@ -1176,6 +1193,7 @@ SemanticMediaWiki:
   branch: master
   path: extensions/SemanticMediaWiki
   repo_url: https://github.com/SemanticMediaWiki/SemanticMediaWiki
+  composer: true
 HitCounters:
   branch: _branch_
   path: extensions/HitCounters
@@ -1224,10 +1242,12 @@ IPInfo:
   branch: _branch_
   path: extensions/IPInfo
   repo_url: https://github.com/wikimedia/mediawiki-extensions-IPInfo
+  composer: true
 WikibaseEdtf:
   branch: master
   path: extensions/WikibaseEdtf
   repo_url: https://github.com/ProfessionalWiki/WikibaseEdtf
+  composer: true
 SemanticFormsSelect:
   branch: master
   path: extensions/SemanticFormsSelect
@@ -1252,6 +1272,7 @@ PageProperties:
   branch: master
   path: extensions/PageProperties
   repo_url: https://github.com/wikimedia/mediawiki-extensions-PageProperties
+  composer: true
 NearbyPages:
   branch: _branch_
   path: extensions/NearbyPages
