@@ -9,9 +9,22 @@ class mediawiki::multiversion (
 
     $versions.each |$version, $params| {
         if lookup(mediawiki::use_staging) {
-            class { 'mediawiki::deploy':
+            class { 'mediawiki::extensionsetup':
                 branch  => $params['branch'],
                 version => $version,
+            }
+
+            git::clone { "MediaWiki-${params['branch']} core":
+                ensure    => 'present',
+                directory => "/srv/mediawiki-staging/${version}",
+                origin    => 'https://github.com/wikimedia/mediawiki',
+                branch    => $params['branch'],
+                owner     => 'www-data',
+                group     => 'www-data',
+                mode      => '0755',
+                timeout   => '1500',
+                depth     => '5',
+                require   => File['/srv/mediawiki-staging'],
             }
         }
 
