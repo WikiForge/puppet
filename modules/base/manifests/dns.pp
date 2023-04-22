@@ -1,8 +1,6 @@
 # class base::dns
 class base::dns {
-    package { 'pdns-recursor':
-        ensure => present,
-    }
+    ensure_packages('pdns-recursor')
 
     file { '/etc/powerdns/recursor.conf':
         mode   => '0444',
