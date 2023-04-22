@@ -10,7 +10,7 @@ from sys import exit
 from langcodes import tag_is_valid
 
 
-repos = {'config': 'config', 'landing': 'landing', 'errorpages': 'ErrorPages'}
+repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'landing': 'landing', 'errorpages': 'ErrorPages'}
 DEPLOYUSER = 'www-data'
 
 
@@ -135,10 +135,6 @@ def _get_staging_path(repo: str) -> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
-def _get_staging_path_version(version: str) -> str:
-    return f'/srv/mediawiki-staging/{version}/'
-
-
 def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
@@ -170,10 +166,6 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
-def _construct_upgrade_mediawiki_rm_staging(version: str) -> str:
-    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path_version(version)}'
-
-
 def _construct_upgrade_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
@@ -181,7 +173,7 @@ def _construct_upgrade_mediawiki_run_puppet() -> str:
 def run(args: argparse.Namespace, start: float) -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
-    options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
+    options = {'config': args.config, args.version: args.version, 'landing': args.landing, 'errorpages': args.errorpages}
     exitcodes = []
     loginfo = {}
     rsyncpaths = []
@@ -221,8 +213,8 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
-                if option == 'world':  # install steps for w
-                    os.chdir(_get_staging_path_version(args.version))
+                if option == 'world':  # install steps for mediawiki
+                    os.chdir(_get_staging_path(args.version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{args.version} php /srv/mediawiki-staging/{args.version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
