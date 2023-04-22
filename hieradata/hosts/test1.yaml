@@ -18,7 +18,7 @@ mediawiki::php::enable_request_profiling: true
 mediawiki::use_staging: true
 
 mediawiki::multiversion::versions:
-  1.39:
+  '1.39':
     branch: 'REL1_40'
 
 php::php_version: '7.4'
