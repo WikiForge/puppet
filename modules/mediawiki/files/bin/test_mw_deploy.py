@@ -129,7 +129,7 @@ def test_construct_git_pull_branch() -> None:
 
 
 def test_construct_upgrade_mediawiki_rm_staging() -> None:
-    assert mwd._construct_upgrade_mediawiki_rm_staging() == 'sudo -u www-data rm -rf /srv/mediawiki-staging/w/'
+    assert mwd._construct_upgrade_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
 
 def test_construct_upgrade_mediawiki_run_puppet() -> None:
