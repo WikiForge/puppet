@@ -10,7 +10,7 @@ from sys import exit
 from langcodes import tag_is_valid
 
 
-repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version' }
+repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
 DEPLOYUSER = 'www-data'
 
 
@@ -164,6 +164,10 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
         extrap += f'origin {branch} '
 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
+
+
+def _construct_upgrade_mediawiki_rm_staging(version: str) -> str:
+    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path(version)}'
 
 
 def _construct_upgrade_mediawiki_run_puppet() -> str:
