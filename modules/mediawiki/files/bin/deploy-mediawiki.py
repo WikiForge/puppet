@@ -134,6 +134,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
 def _get_staging_path(repo: str) -> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
+
 def _get_staging_path_version(version: str) -> str:
     return f'/srv/mediawiki-staging/{version}/'
 
@@ -169,8 +170,8 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
-def _construct_upgrade_mediawiki_rm_staging() -> str:
-    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path_version(args.version)}'
+def _construct_upgrade_mediawiki_rm_staging(version: str) -> str:
+    return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path_version(version)}'
 
 
 def _construct_upgrade_mediawiki_run_puppet() -> str:
@@ -202,7 +203,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             print(text)
 
         if args.upgrade:
-            stage.append(_construct_upgrade_mediawiki_rm_staging())
+            stage.append(_construct_upgrade_mediawiki_rm_staging(args.version))
             stage.append(_construct_upgrade_mediawiki_run_puppet())
 
         pull = []
