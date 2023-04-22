@@ -34,7 +34,7 @@ class mediawiki::extensionsetup (
             directory          => "${mwpath}/${params['path']}",
             origin             => $params['repo_url'],
             branch             => $params['branch'] ? {
-                '_branch_' => lookup('mediawiki::branch'),
+                '_branch_' => $branch,
                 default    => $params['branch'],
             },
             owner              => 'www-data',
