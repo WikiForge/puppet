@@ -7,6 +7,24 @@ class mediawiki::multiversion (
         group  => 'www-data',
     }
 
+    file { '/srv/mediawiki/w':
+        ensure  => 'link',
+        target  => "/srv/mediawiki/config/initialise/entrypoints",
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/config'],
+    }
+
+    if lookup(mediawiki::use_staging) {
+        file { '/srv/mediawiki-staging/w':
+            ensure  => 'link',
+            target  => "/srv/mediawiki-staging/config/initialise/entrypoints",
+            owner   => 'www-data',
+            group   => 'www-data',
+            require => File['/srv/mediawiki-staging/config'],
+        }
+    }
+
     $versions.each |$version, $params| {
         if lookup(mediawiki::use_staging) {
             class { 'mediawiki::extensionsetup':
@@ -28,7 +46,6 @@ class mediawiki::multiversion (
             }
         }
 
-        # Create mediawiki directory for each version
         file { "/srv/mediawiki/${version}":
             ensure => 'directory',
             owner  => 'www-data',
@@ -46,7 +63,6 @@ class mediawiki::multiversion (
             require   => File['/srv/mediawiki/femiwiki-deploy'],
         }
 
-        # Create symbolic links for shared files using version's configuration
         file { "/srv/mediawiki/${version}/skins/Femiwiki/node_modules":
             ensure  => 'link',
             target  => "/srv/mediawiki/femiwiki-deploy/${version}/node_modules",
