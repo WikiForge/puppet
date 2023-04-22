@@ -10,7 +10,8 @@ class mediawiki::multiversion (
     $versions.each |$version, $params| {
         if lookup(mediawiki::use_staging) {
             class { 'mediawiki::deploy':
-                branch => $params['branch'],
+                branch  => $params['branch'],
+                version => $version,
             }
         }
 
