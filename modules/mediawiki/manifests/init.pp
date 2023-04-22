@@ -1,8 +1,5 @@
 # === Class mediawiki
-class mediawiki(
-    String $branch = lookup(mediawiki::branch),
-    String $branch_mw_config = lookup(mediawiki::branch_mw_config),
-) {
+class mediawiki {
     include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::nginx
@@ -11,13 +8,12 @@ class mediawiki(
     include mediawiki::php
 
     if lookup(mediawiki::use_staging) {
-        class { 'mediawiki::deploy':
-            branch           => $branch,
-            branch_mw_config => $branch_mw_config
-        }
+        include mediawiki::deploy
     } else {
         include mediawiki::rsync
     }
+
+    include mediawiki::multiversion
 
     if lookup(jobrunner) {
         include mediawiki::jobqueue::runner
@@ -88,27 +84,8 @@ class mediawiki(
         require            => Package['libjpeg-dev'],
     }
 
-    git::clone { 'femiwiki-deploy':
-        ensure    => 'latest',
-        directory => '/srv/mediawiki/femiwiki-deploy',
-        origin    => 'https://github.com/miraheze/femiwiki-deploy',
-        branch    => $branch,
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
-    }
-
-    file { '/srv/mediawiki/w/skins/Femiwiki/node_modules':
-        ensure  => 'link',
-        target  => '/srv/mediawiki/femiwiki-deploy/node_modules',
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => [ Git::Clone['femiwiki-deploy'], File['/srv/mediawiki/w'] ],
-    }
-
     file { [
         '/srv/mediawiki',
-        '/srv/mediawiki/w',
         '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
         '/srv/mediawiki/stopforumspam',
@@ -147,14 +124,6 @@ class mediawiki(
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/sitemap.php',
         require => File['/srv/mediawiki'],
-    }
-
-    file { '/srv/mediawiki/w/LocalSettings.php':
-        ensure  => 'link',
-        target  => '/srv/mediawiki/config/LocalSettings.php',
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => [ File['/srv/mediawiki/w'], File['/srv/mediawiki/config'] ],
     }
 
     $wikiadmin_password         = lookup('passwords::db::wikiadmin')
