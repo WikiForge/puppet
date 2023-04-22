@@ -39,16 +39,13 @@ class puppetdb(
     ensure_packages('default-jdk')
 
     ## PuppetDB installation
-
-    package { 'puppetdb':
-        ensure  => present,
-        require => Apt::Source['puppetlabs'],
-    }
-
-    package { 'puppetdb-termini':
-        ensure  => present,
-        require => Apt::Source['puppetlabs'],
-    }
+    ensure_packages(
+        ['puppetdb', 'puppetdb-termini'],
+        {
+            ensure  => present,
+            require => Apt::Source['puppetlabs'],
+        },
+    )
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
     file { '/etc/puppetdb':
@@ -161,9 +158,7 @@ class puppetdb(
         },
     }
 
-    package { 'policykit-1':
-        ensure => present,
-    }
+    ensure_packages('policykit-1')
 
     service { 'puppetdb':
         ensure => running,
