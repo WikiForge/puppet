@@ -36,10 +36,7 @@ class puppetdb(
     Boolean $db_ssl = lookup('puppetdb::db_ssl', {'default_value' => true}),
     Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 ) {
-
-    package { 'default-jdk':
-        ensure => present,
-    }
+    ensure_packages('default-jdk')
 
     ## PuppetDB installation
 
