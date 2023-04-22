@@ -5,7 +5,7 @@ puppetserver: false
 dns: false
 
 mediawiki::multiversion::versions:
-  1.39:
+  '1.39':
     branch: 'REL1_39'
 
 puppetserver_hostname: puppet1.wikiforge.net
