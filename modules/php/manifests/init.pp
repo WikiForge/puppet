@@ -47,9 +47,12 @@ class php(
     # to declare the php::fpm class (and possibly some php::fpm::pool defines
     # too).
     $sapis.each |$sapi| {
-        package { $package_by_sapi[$sapi]:
-            ensure => $ensure,
-        }
+        ensure_packages(
+            $package_by_sapi[$sapi],
+            {
+                ensure => $ensure,
+            },
+        )
         # The directory gets managed by us actively.
         # This means that rogue configurations added by
         # packages will be actively removed.
