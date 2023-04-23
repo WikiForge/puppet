@@ -27,7 +27,7 @@ class mediawiki::multiversion (
 
     $versions.each |$version, $params| {
         if lookup(mediawiki::use_staging) {
-            class { 'mediawiki::extensionsetup':
+            mediawiki::extensionsetup { "MediaWiki-${version}":
                 branch  => $params['branch'],
                 version => $version,
             }
