@@ -1,9 +1,14 @@
 # === Class mediawiki::jobqueue::chron
 #
 # JobQueue Chron runner on redis masters only
-class mediawiki::jobqueue::chron {
+class mediawiki::jobqueue::chron (
+    String $version,
+) {
     include mediawiki::php
-    include mediawiki::jobqueue::shared
+
+    class { 'mediawiki::jobqueue::shared':
+        version => $version,
+    }
 
     systemd::service { 'jobchron':
         ensure    => present,
