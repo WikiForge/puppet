@@ -4,7 +4,10 @@
 class mediawiki::jobqueue::runner (
     String $version,
 ) {
-    include mediawiki::jobqueue::shared
+    class { 'mediawiki::jobqueue::shared':
+        version => $version,
+    }
+
     $wiki = lookup('mediawiki::jobqueue::wiki')
     ensure_packages('python3-xmltodict')
 
