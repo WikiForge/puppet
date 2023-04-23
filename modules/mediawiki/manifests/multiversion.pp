@@ -84,5 +84,11 @@ class mediawiki::multiversion (
                 File['/srv/mediawiki/config'],
             ],
         }
+
+        if (lookup(jobrunner) and $params['default']) {
+            class { 'mediawiki::jobqueue::runner':
+                version => $version,
+            }
+        }
     }
 }
