@@ -218,6 +218,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
                 if option == 'world':  # install steps for world
+                    option = args.version
                     os.chdir(_get_staging_path(args.version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{args.version} php /srv/mediawiki-staging/{args.version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
@@ -268,6 +269,8 @@ def run(args: argparse.Namespace, start: float) -> None:
     # actually set remote lists
     for option in options:
         if options[option]:
+            if option == 'world':
+                option = args.version
             rsyncpaths.append(_get_deployed_path(option))
     if args.files:
         for file in str(args.files).split(','):
