@@ -74,6 +74,7 @@ class mediawiki::extensionsetup (
     }
 
     file { "${mwpath}/composer.local.json":
+        ensure  => present,
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0664',
