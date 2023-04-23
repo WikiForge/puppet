@@ -1,7 +1,9 @@
 # === Class mediawiki::jobqueue::shared
 #
 # JobQueue resources for both runner & chron
-class mediawiki::jobqueue::shared {
+class mediawiki::jobqueue::shared (
+    String $version,
+) {
     git::clone { 'JobRunner':
         ensure    => latest,
         directory => '/srv/jobrunner',
