@@ -1,5 +1,5 @@
-# === Class mediawiki::extensionsetup
-class mediawiki::extensionsetup (
+# === Define mediawiki::extensionsetup
+define mediawiki::extensionsetup (
     String $branch,
     String $version,
 ) {
