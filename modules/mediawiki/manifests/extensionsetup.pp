@@ -73,6 +73,14 @@ class mediawiki::extensionsetup (
         }
     }
 
+    file { "${mwpath}/composer.local.json":
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0664',
+        source  => 'puppet:///modules/mediawiki/composer.local.json',
+        require => Git::Clone["MediaWiki-${branch} core"],
+    }
+
     exec { "vendor_psysh_composer_${branch}":
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
         unless      => 'composer show --installed psy/psysh 0.11.8',
