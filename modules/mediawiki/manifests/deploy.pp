@@ -69,13 +69,6 @@ class mediawiki::deploy {
         require => File['/usr/local/bin/deploy-mediawiki'],
     }
 
-    file { '/usr/local/bin/mwupgradetool':
-        ensure  => 'present',
-        mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
-        require => File['/usr/local/bin/deploy-mediawiki'],
-    }
-
     git::clone { 'MediaWiki config':
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/config',
