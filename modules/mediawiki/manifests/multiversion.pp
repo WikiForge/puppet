@@ -85,9 +85,17 @@ class mediawiki::multiversion (
             ],
         }
 
-        if (lookup(jobrunner) and $params['default']) {
-            class { 'mediawiki::jobqueue::runner':
-                version => $version,
+        if $params['default'] {
+            if lookup(jobrunner) {
+                class { 'mediawiki::jobqueue::runner':
+                    version => $version,
+                }
+            }
+
+            if lookup(jobchron) {
+                class { 'mediawiki::jobqueue::chron':
+                    version => $version,
+                }
             }
         }
     }
