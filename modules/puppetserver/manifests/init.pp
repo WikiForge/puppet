@@ -164,18 +164,6 @@ class puppetserver(
         notify => Service['puppetserver'],
     }
 
-    rsyslog::input::file { 'puppetserver':
-        path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
-        syslog_tag_prefix => '',
-        use_udp           => true,
-    }
-
-    rsyslog::input::file { 'puppetserver-access':
-        path              => '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
-        syslog_tag_prefix => '',
-        use_udp           => true,
-    }
-
     service { 'puppetserver':
         ensure   => running,
         provider => 'systemd',
