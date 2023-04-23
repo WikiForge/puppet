@@ -1,5 +1,5 @@
 class mediawiki::multiversion (
-    Hash $versions = lookup('mediawiki::multiversion::versions', {'default_value' => {}}),
+    Hash $versions = lookup('mediawiki::multiversion::versions'),
 ) {
     file { '/srv/mediawiki/femiwiki-deploy':
         ensure => 'directory',
