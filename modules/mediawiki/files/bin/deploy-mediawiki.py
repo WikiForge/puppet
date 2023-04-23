@@ -177,7 +177,7 @@ def _construct_upgrade_mediawiki_run_puppet() -> str:
 def run(args: argparse.Namespace, start: float) -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
-    options = {'config': args.config, args.world: args.world, 'landing': args.landing, 'errorpages': args.errorpages}
+    options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     exitcodes = []
     loginfo = {}
     rsyncpaths = []
@@ -199,7 +199,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             print(text)
 
         if args.upgrade:
-            stage.append(_construct_upgrade_mediawiki_rm_staging(args.world))
+            stage.append(_construct_upgrade_mediawiki_rm_staging(args.version))
             stage.append(_construct_upgrade_mediawiki_run_puppet())
 
         pull = []
@@ -217,11 +217,11 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
-                if option == args.world:  # install steps for world
-                    os.chdir(_get_staging_path(args.world))
+                if option == 'world':  # install steps for world
+                    os.chdir(_get_staging_path(args.version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{args.world} php /srv/mediawiki-staging/{args.world}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
-                    rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{args.version} php /srv/mediawiki-staging/{args.version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rsyncpaths.append(f'/srv/mediawiki/cache/{args.version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
         if args.files:  # specfic extra files
@@ -234,7 +234,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.world}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -249,8 +249,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             else:
                 lang = ''
 
-            postinstall.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.world}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.world}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{args.version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
@@ -276,9 +276,9 @@ def run(args: argparse.Namespace, start: float) -> None:
         for folder in str(args.folders).split(','):
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.extensionlist:
-        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
+        rsyncfiles.append(f'/srv/mediawiki/cache/{args.version}/extension-list.json')
     if args.l10n:
-        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
+        rsyncpaths.append(f'/srv/mediawiki/cache/{args.version}/l10n/')
 
     for path in rsyncpaths:
         exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
@@ -306,9 +306,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
-    parser.add_argument('--world', dest='world')
     parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
+    parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
@@ -318,6 +318,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
+    parser.add_argument('--version', dest='version', default='1.39')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
