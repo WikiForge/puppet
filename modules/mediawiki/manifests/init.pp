@@ -15,10 +15,6 @@ class mediawiki {
 
     include mediawiki::multiversion
 
-    if lookup(jobrunner) {
-        include mediawiki::jobqueue::runner
-    }
-
     if lookup(mediawiki::use_shellbox) {
         include mediawiki::shellbox
     }
