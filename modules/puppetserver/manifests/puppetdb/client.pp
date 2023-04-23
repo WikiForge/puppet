@@ -44,10 +44,4 @@ class puppetserver::puppetdb::client(
         source => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
         notify => Service['puppetdb'],
     }
-
-    rsyslog::input::file { 'puppetdb':
-        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
-        syslog_tag_prefix => '',
-        use_udp           => true,
-    }
 }
