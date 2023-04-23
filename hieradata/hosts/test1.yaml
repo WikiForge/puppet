@@ -3,6 +3,7 @@ users::groups:
 
 jobrunner: true
 mediawiki::jobqueue::runner::redis_ip: '18.217.191.48:6379'
+mediawiki::jobqueue::wiki: 'test1wiki'
 
 role::mediawiki::use_strict_firewall: true
 
@@ -22,6 +23,7 @@ mediawiki::multiversion::versions:
     branch: 'REL1_39'
   '1.40':
     branch: 'REL1_40'
+    default: true
 
 php::php_version: '7.4'
 
