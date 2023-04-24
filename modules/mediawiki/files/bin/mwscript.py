@@ -8,6 +8,9 @@ def run(args: argparse.Namespace) -> None:
     longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
 
+    if not args.version:
+        args.version = os.system(f'getMWVersion {args.wiki}')
+
     script = args.script
     scriptsplit = script.split('/')
     if script in longscripts:
@@ -64,7 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('script')
     parser.add_argument('wiki')
     parser.add_argument('arguments', nargs='*', default=[])
-    parser.add_argument('--version', dest='version', default='1.39')
+    parser.add_argument('--version', dest='version')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
