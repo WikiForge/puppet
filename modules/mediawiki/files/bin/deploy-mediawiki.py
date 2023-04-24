@@ -186,6 +186,10 @@ def run(args: argparse.Namespace, start: float) -> None:
     rebuild = []
     postinstall = []
     stage = []
+
+    if not args.version:
+        args.version = os.system(f'getMWVersion {envinfo["wikidbname"]}')
+
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
@@ -321,7 +325,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version', default='1.39')
+    parser.add_argument('--version', dest='version')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
