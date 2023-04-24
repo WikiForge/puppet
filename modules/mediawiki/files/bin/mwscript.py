@@ -9,7 +9,7 @@ def run(args: argparse.Namespace) -> None:
     long = False
 
     if not args.version:
-        args.version = os.system(f'getMWVersion {args.wiki}')
+        args.version = os.popen(f'getMWVersion {args.wiki}').read().strip()
 
     script = args.script
     scriptsplit = script.split('/')
