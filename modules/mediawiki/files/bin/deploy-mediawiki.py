@@ -188,7 +188,7 @@ def run(args: argparse.Namespace, start: float) -> None:
     stage = []
 
     if not args.version:
-        args.version = os.system(f'getMWVersion {envinfo["wikidbname"]}')
+        args.version = os.popen(f'getMWVersion {envinfo["wikidbname"]}').read().strip()
 
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
