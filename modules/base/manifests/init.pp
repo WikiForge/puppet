@@ -9,6 +9,7 @@ class base {
     include base::timezone
     include base::upgrades
     # include base::firewall
+    include base::backup
     include ssh
     include users
 
