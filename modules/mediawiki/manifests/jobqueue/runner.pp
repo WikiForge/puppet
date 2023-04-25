@@ -74,6 +74,11 @@ class mediawiki::jobqueue::runner (
                 special => 'daily',
             }
 
+            # Backups
+            file { '/srv/backups':
+                ensure => directory,
+            }
+
             cron { 'backups-mediawiki-xml':
                 ensure   => present,
                 command  => '/usr/local/bin/wikiforge-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
