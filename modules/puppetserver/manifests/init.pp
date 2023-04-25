@@ -231,4 +231,23 @@ class puppetserver(
         hour     => 23,
         minute   => 0,
     }
+
+    # Backups
+    cron { 'backups-sslkeys':
+        ensure  => present,
+        command => '/usr/local/bin/wikiforge-backup backup sslkeys > /var/log/sslkeys-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '6',
+        weekday => '0',
+    }
+
+    cron { 'backups-private':
+        ensure  => present,
+        command => '/usr/local/bin/wikiforge-backup backup private > /var/log/private-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '3',
+        weekday => '0',
+    }
 }
