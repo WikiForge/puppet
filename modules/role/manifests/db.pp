@@ -66,6 +66,11 @@ class role::db (
         description => 'general database server',
     }
 
+    # Backup provisioning
+    file { '/srv/backups':
+        ensure => directory,
+    }
+
     cron { 'backups-sql':
         ensure   => present,
         command  => '/usr/local/bin/wikiforge-backup backup sql > /var/log/sql-backup.log 2>&1',
