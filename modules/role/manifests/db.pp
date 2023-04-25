@@ -66,7 +66,7 @@ class role::db (
         description => 'general database server',
     }
 
-    # Backup provisioning
+    # Backups
     file { '/srv/backups':
         ensure => directory,
     }
