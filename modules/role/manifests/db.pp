@@ -1,5 +1,9 @@
 # class: role::db
-class role::db {
+class role::db (
+    Optional[Array[String]] $weekly_misc = lookup('role::db::weekly_misc', {'default_value' => []}),
+    Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
+    Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []})
+) {
     include mariadb::packages
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
@@ -60,5 +64,47 @@ class role::db {
 
     motd::role { 'role::db':
         description => 'general database server',
+    }
+
+    cron { 'backups-sql':
+        ensure   => present,
+        command  => '/usr/local/bin/wikiforge-backup backup sql > /var/log/sql-backup.log 2>&1',
+        user     => 'root',
+        minute   => '0',
+        hour     => '3',
+        monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
+    }
+
+    $weekly_misc.each |String $db| {
+        cron { "backups-${db}":
+            ensure  => present,
+            command => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
+            user    => 'root',
+            minute  => '0',
+            hour    => '5',
+            weekday => '0',
+        }
+    }
+
+    $fortnightly_misc.each |String $db| {
+        cron { "backups-${db}":
+            ensure   => present,
+            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
+            user     => 'root',
+            minute   => '0',
+            hour     => '5',
+            monthday => ['1', '15'],
+        }
+    }
+
+    $monthly_misc.each |String $db| {
+        cron { "backups-${db}":
+            ensure   => present,
+            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
+            user     => 'root',
+            minute   => '0',
+            hour     => '5',
+            monthday => ['24'],
+        }
     }
 }
