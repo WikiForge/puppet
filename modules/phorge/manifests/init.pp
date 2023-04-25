@@ -188,4 +188,13 @@ class phorge (
         restart => true,
         require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
+
+    cron { 'backups-phorge':
+        ensure   => present,
+        command  => '/usr/local/bin/wikiforge-backup backup phorge > /var/log/phorge-backup.log',
+        user     => 'root',
+        minute   => '0',
+        hour     => '1',
+        monthday => ['1', '15'],
+    }
 }
