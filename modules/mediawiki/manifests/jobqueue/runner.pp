@@ -73,6 +73,16 @@ class mediawiki::jobqueue::runner (
                 user    => 'www-data',
                 special => 'daily',
             }
+
+            cron { 'backups-mediawiki-xml':
+                ensure   => present,
+                command  => '/usr/local/bin/wikiforge-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
+                user     => 'root',
+                minute   => '0',
+                hour     => '1',
+                monthday => ['27'],
+                month    => ['3', '6', '9', '12']
+            }
         }
 
         cron { 'update_statistics':
