@@ -10,7 +10,7 @@ node /^cp[12]\.wikiforge\.net$/ {
     include role::varnish
 }
 
-node 'db1.wikiforge.net' {
+node /^db[12]\.wikiforge\.net$/ {
     include base
     include role::db
 }
