@@ -1,13 +1,13 @@
 # class: mariadb::config
 class mariadb::config(
-    String            $config                       = undef,
-    String            $password                     = undef,
-    String            $datadir                      = '/srv/mariadb',
-    String            $tmpdir                       = '/tmp',
-    String            $innodb_buffer_pool_size      = '5G',
-    Integer           $max_connections              = 500,
-    Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
-    Optional[Integer] $server_id                    = undef,
+    String                      $config                       = undef,
+    String                      $password                     = undef,
+    String                      $datadir                      = '/srv/mariadb',
+    String                      $tmpdir                       = '/tmp',
+    String                      $innodb_buffer_pool_size      = '5G',
+    Integer                     $max_connections              = 500,
+    VMlib::Mariadb_version      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
+    Optional[Integer]           $server_id                    = undef,
 ) {
     $mariadb_replica_password = lookup('passwords::mariadb_replica_password')
 
