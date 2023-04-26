@@ -1,2 +1,2 @@
 puppetserver_hostname: 'puppet1.wikiforge.net'
-mariadb::version: '10.11.2'
+mariadb::version: '10.11'
