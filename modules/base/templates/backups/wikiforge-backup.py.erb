@@ -128,7 +128,7 @@ def backup_mediawiki_xml(dt: str, database: str):
 
     for db in dbs:
         version = os.popen(f'getMWVersion {db}').read().strip()
-        os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=5 --wiki={db}')
+        os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=7 --wiki={db}')
 
         pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
         pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
