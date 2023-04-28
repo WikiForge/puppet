@@ -13,6 +13,7 @@ import requests
 
 from fabric import Connection
 from datetime import datetime
+from py7zr import SevenZipFile
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiForge backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
@@ -110,14 +111,13 @@ def backup_mediawiki_static(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        tar = tarfile.open(f'{db}.tar.gz', 'w:gz')
-        tar.add(f'/mnt/mediawiki-static/{db}', arcname=f'mediawiki-static-{db}')
-        tar.close()
+        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w' ) as archive:
+            archive.writeall(f'/mnt/mediawiki-static/{db}', f'mediawiki-static-{db}')
 
-        pca_connection().put(f'{db}.tar.gz', f'mediawiki-static/{db}/{dt}.tar.gz', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.tar.gz', 4)
+        pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
 
-        os.remove(f'{db}.tar.gz')
+        os.remove(f'{db}.7z')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
