@@ -13,7 +13,7 @@ import requests
 
 from fabric import Connection
 from datetime import datetime
-from py7zr import FILTER_LZMA2, PRESET_EXTREME, SevenZipFile
+from py7zr import SevenZipFile
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiForge backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
@@ -111,7 +111,7 @@ def backup_mediawiki_static(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w', filters=[{"id": FILTER_LZMA2, "preset": 9 | PRESET_EXTREME}]) as archive:
+        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
             archive.writeall(f'/mnt/mediawiki-static/{db}', f'mediawiki-static-{db}')
 
         pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
@@ -128,12 +128,12 @@ def backup_mediawiki_xml(dt: str, database: str):
 
     for db in dbs:
         version = os.popen(f'getMWVersion {db}').read().strip()
-        os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
+        os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=5 --wiki={db}')
 
-        pca_connection().put(f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.gz', 13)
+        pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
 
-        os.remove(f'/srv/backups/{db}.xml.gz')
+        os.remove(f'/srv/backups/{db}.xml.7z')
 
 
 def backup(source: str, database: str):
@@ -179,9 +179,9 @@ def download(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phorge']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
-        download_pca(f'{source}/{database}/{dt}.xml.gz')
+        download_pca(f'{source}/{database}/{dt}.xml.7z')
     elif source in ['sql', 'mediawiki-static']:
-        download_pca(f'{source}/{database}/{dt}.tar.gz')
+        download_pca(f'{source}/{database}/{dt}.7z')
 
     print(f'Completed! This took {time.time() - ts}s')
 
@@ -202,8 +202,10 @@ def find_backups(source: str, database: str):
 def unfreeze_backup(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phorge']:
         file = f'{source}/{dt}.tar.gz'
-    elif source in ['sql', 'mediawiki-static', 'mediawiki-xml']:
+    elif source in ['sql']:
         file = f'{source}/{database}/{dt}.tar.gz'
+    elif source in ['mediawiki-static', 'mediawiki-xml']:
+        file = f'{source}/{database}/{dt}.7z'
 
     pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
     available_in = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
