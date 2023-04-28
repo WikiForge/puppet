@@ -13,7 +13,7 @@ import requests
 
 from fabric import Connection
 from datetime import datetime
-from py7zr import SevenZipFile
+from py7zr import FILTER_LZMA2, PRESET_EXTREME, SevenZipFile
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiForge backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
@@ -111,7 +111,7 @@ def backup_mediawiki_static(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w' ) as archive:
+        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w', filters=[{"id": FILTER_LZMA2, "preset": 9 | PRESET_EXTREME}]) as archive:
             archive.writeall(f'/mnt/mediawiki-static/{db}', f'mediawiki-static-{db}')
 
         pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
