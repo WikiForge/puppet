@@ -117,7 +117,7 @@ def backup_mediawiki_static(dt: str, database: str):
         pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
         pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
 
-        os.remove(f'{db}.7z')
+        os.remove(f'/mnt/mediawiki-static/{db}.7z')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
