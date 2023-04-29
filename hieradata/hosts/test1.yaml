@@ -1,6 +1,7 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
+  - mediawiki-test-admins
 
 jobrunner: true
 mediawiki::jobqueue::runner::redis_ip: '18.217.191.48:6379'
