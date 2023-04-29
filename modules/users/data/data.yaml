@@ -4,11 +4,11 @@ groups:
     description: roots, sudo everywhere
     members: [universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
-  ssl-admins:
+  mediawiki-roots:
     gid: 2001
-    description: limited sudo access to manage SSL certificates
+    description: full root access on MediaWiki servers
     members: []
-    privileges: []
+    privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2002
     description: sudo on MediaWiki servers
