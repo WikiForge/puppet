@@ -26,15 +26,6 @@ class ssl {
         require => File['/var/www/.well-known/acme-challenge'],
     }
 
-    file { '/home/ssl-admins':
-        ensure    => directory,
-        owner     => 'puppet',
-        group     => 'ssl-admins',
-        mode      => '0660',
-        recurse   => true,
-        max_files => '7000',
-    }
-
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
