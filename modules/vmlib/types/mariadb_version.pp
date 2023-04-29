@@ -1,1 +1,1 @@
-type VMlib::Mariadb_version = Enum['10.5', '10.11', '11.0']
+type VMlib::Mariadb_version = Enum['10.11', '11.0']
