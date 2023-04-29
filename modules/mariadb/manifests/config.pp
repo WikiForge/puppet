@@ -6,7 +6,6 @@ class mariadb::config(
     String                      $tmpdir                       = '/tmp',
     String                      $innodb_buffer_pool_size      = '5G',
     Integer                     $max_connections              = 500,
-    VMlib::Mariadb_version      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
     Optional[Integer]           $server_id                    = undef,
 ) {
     $mariadb_replica_password = lookup('passwords::mariadb_replica_password')
@@ -43,7 +42,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0755',
-        require => Package["mariadb-server-${version}"],
+        require => Package['mariadb-server'],
     }
 
     if $tmpdir != '/tmp' {
@@ -52,7 +51,7 @@ class mariadb::config(
             owner   => 'mysql',
             group   => 'mysql',
             mode    => '0775',
-            require => Package["mariadb-server-${version}"],
+            require => Package['mariadb-server'],
         }
     }
 
@@ -61,7 +60,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0750',
-        require => Package["mariadb-server-${version}"],
+        require => Package['mariadb-server'],
     }
 
     file { '/etc/mysql/wikiforge/default-grants.sql':
@@ -82,13 +81,13 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0644',
-        require => Package["mariadb-server-${version}"],
+        require => Package['mariadb-server'],
     }
 
     logrotate::conf { 'mysql-server':
         ensure  => present,
         source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
-        require => Package["mariadb-server-${version}"],
+        require => Package['mariadb-server'],
     }
 
     systemd::unit { 'mariadb.service':
