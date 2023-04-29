@@ -113,15 +113,19 @@ def backup_mediawiki_static(dt: str, database: str):
     excluded_dirs = {'archive', 'deleted', 'dumps', 'lockdir', 'sitemaps', 'temp', 'thumb'}
 
     for db in dbs:
-        archive_filename = f'/mnt/mediawiki-static/{db}.7z'
-        with SevenZipFile(archive_filename, mode='w') as archive:
+        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
             for root, dirs, files in os.walk(f'/mnt/mediawiki-static/{db}'):
                 # Remove excluded directories from the list of subdirectories to traverse
-                dirs[:] = [d for d in dirs if d not in excluded_dirs]
+                excluded = [d for d in dirs if d in excluded_dirs]
+                included = [d for d in dirs if d not in excluded_dirs]
+                print(f'Excluded directories: {excluded}')
+                print(f'Included directories: {included}')
 
-            archive.writeall(f'/mnt/mediawiki-static/{db}', arcname=os.path.basename(archive_filename))
+                dirs[:] = included
 
-        pca_connection().put(archive_filename, f'mediawiki-static/{db}/{dt}.7z', False)
+            archive.writeall(root, f'mediawiki-static-{db}')
+
+        pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
         pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
 
         os.remove(f'/mnt/mediawiki-static/{db}.7z')
