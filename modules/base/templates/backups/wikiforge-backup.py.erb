@@ -116,18 +116,21 @@ def backup_mediawiki_static(dt: str, database: str):
         with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
             for root, dirs, files in os.walk(f'/mnt/mediawiki-static/{db}'):
                 # Remove excluded directories from the list of subdirectories to traverse
-                excluded = [d for d in dirs if d in excluded_dirs]
-                included = [d for d in dirs if d not in excluded_dirs]
-                print(f'Excluded directories: {excluded}')
-                print(f'Included directories: {included}')
+                dirs[:] = [d for d in dirs if d not in excluded_dirs]
 
-                dirs[:] = included
+                for file in files:
+                    # Get the full path of the file to add to the archive
+                    filepath = os.path.join(root, file)
 
-            archive.writeall(root, f'mediawiki-static-{db}')
+                    # Determine the path of the file relative to the root directory
+                    relpath = os.path.relpath(filepath, f'/mnt/mediawiki-static/{db}')
+
+                    # Add the file to the archive, preserving the directory structure
+                    with open(filepath, 'rb') as f:
+                        archive.writestr(relpath, f.read())
 
         pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
         pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
-
         os.remove(f'/mnt/mediawiki-static/{db}.7z')
 
 
