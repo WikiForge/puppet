@@ -110,7 +110,7 @@ def backup_mediawiki_static(dt: str, database: str):
     else:
         dbs = [database]
 
-    excluded_dirs = {'archive', 'deleted', 'lockdir', 'temp', 'thumb', 'dumps'}
+    excluded_dirs = {'archive', 'deleted', 'dumps', 'lockdir', 'sitemaps', 'temp', 'thumb'}
 
     for db in dbs:
         with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
