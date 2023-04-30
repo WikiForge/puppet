@@ -6,11 +6,14 @@ import os
 import time
 import requests
 import socket
+import json
 from sys import exit
 from langcodes import tag_is_valid
 
 
-repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
+versions = json.loads(os.popen('getMWVersions').read().strip())
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
+
 DEPLOYUSER = 'www-data'
 
 
