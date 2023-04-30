@@ -49,7 +49,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         if float(args.version) >= 1.40 and not args.confirm:
             print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
             print('WARNING: Use of classes is not well tested. Please use with caution.')
-            if input("Type 'Y' to confirm (or any other key to stop - rerun without --version={args.version}): ").upper() != 'Y':
+            if input(f"Type 'Y' to confirm (or any other key to stop - rerun without --version={args.version}): ").upper() != 'Y':
                 sys.exit(2)
     if float(args.version) >= 1.40:
         runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
