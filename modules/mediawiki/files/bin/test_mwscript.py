@@ -32,7 +32,7 @@ def test_get_command_extension_list():
             'long': True,
             'nolog': False,
         }
-    except OSError:
+    except KeyError:
         pytest.skip('You have a stupid environment')
 
 
@@ -89,7 +89,7 @@ def test_get_command_extension_list_runner():
             'long': True,
             'nolog': False,
         }
-    except OSError:
+    except KeyError:
         pytest.skip('You have a stupid environment')
 
 
