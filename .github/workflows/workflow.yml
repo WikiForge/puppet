@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.9', '3.10']
+        python: ['3.9', '3.11']
     steps:
       - uses: actions/checkout@v3
       - name: Python ${{ matrix.python }}
@@ -31,5 +31,5 @@ jobs:
       - name: Run tests
         run: |
           flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301
-          pytest -vv -n auto
+          coverage run --branch -m pytest modules/mediawiki
           mypy modules/mediawiki modules/ssl --ignore-missing-imports

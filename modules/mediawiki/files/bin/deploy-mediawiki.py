@@ -1,16 +1,23 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, Union, TypedDict
+from typing import Optional, TypedDict
 import os
 import time
 import requests
 import socket
+import json
 from sys import exit
 from langcodes import tag_is_valid
 
+mw_versions = os.popen('getMWVersions').read().strip()
+versions = {'version': 'version'}
+if mw_versions:
+    versions = json.loads(mw_versions)
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing'}
 
-repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
+del mw_versions
+
 DEPLOYUSER = 'www-data'
 
 
@@ -139,7 +146,7 @@ def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: Union[None, str] = None, server: Union[None, str] = None) -> str:
+def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: Optional[str] = None, server: Optional[str] = None) -> str:
     if time:
         params = '--inplace'
     else:
@@ -155,7 +162,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikiforge.net:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
-    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
+    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
 def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
@@ -325,7 +332,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version')
+    parser.add_argument('--version', dest='version', choices=list(versions.values()))
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
