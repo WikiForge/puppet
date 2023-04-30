@@ -40,7 +40,10 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         sys.exit(2)
 
     if not args.version:
-        args.version = os.popen(f'getMWVersion {wiki}').read().strip()
+        dbname = wiki
+        if not dbname:
+            dbname = 'default'
+        args.version = os.popen(f'getMWVersion {dbname}').read().strip()
 
     script = args.script
     if not script.endswith('.php'):
@@ -76,7 +79,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     if wiki == 'all':
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
-    elif wiki in validDBLists:
+    elif wiki and wiki in validDBLists:
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
