@@ -6,10 +6,11 @@ sys.path.insert(0, r'/etc/irclogbot/mwclient')
 import mwclient  # noqa: E402
 import datetime  # noqa: E402
 
+
 sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
-months = ["January", "February", "March", "April", "May", "June", "July",
-          "August", "September", "October", "November", "December"]
+months = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+          'August', 'September', 'October', 'November', 'December' ]
 
 
 def log(config, message, project, author):
@@ -25,7 +26,7 @@ def log(config, message, project, author):
                          consumer_token=config.wiki_consumer_token,
                          consumer_secret=config.wiki_consumer_secret,
                          access_token=config.wiki_access_token,
-                         access_secret=config.wiki_access_secret
+                         access_secret=config.wiki_access_secret,
                         )
     if config.enable_projects:
         project = project.capitalize()
@@ -42,10 +43,10 @@ def log(config, message, project, author):
     position = 0
     # Um, check the date
     now = datetime.datetime.utcnow()
-    logline = "* %02d:%02d %s: %s" % (now.hour, now.minute, author, message)
+    logline = '* %02d:%02d %s: %s' % (now.hour, now.minute, author, message)
 
     # Try extracting latest date header
-    header = "=" * config.wiki_header_depth
+    header = '=' * config.wiki_header_depth
     header_date = None
     for line in lines:
         position += 1
@@ -65,7 +66,8 @@ def log(config, message, project, author):
         if not re.search(r'\[\[Category:' + config.wiki_category + r'\]\]',
                          text):
             lines.append('<noinclude>[[Category:'
-                         + config.wiki_category + ']]</noinclude>')
+                         + config.wiki_category + ']]'
+                         + '</noinclude>')
 
     page.save(
         '\n'.join(lines),
