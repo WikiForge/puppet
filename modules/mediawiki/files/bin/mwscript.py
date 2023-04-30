@@ -24,9 +24,6 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     long = False
     generate = None
 
-    if not args.version:
-        args.version = os.popen(f'getMWVersion {args.wiki}').read().strip()
-
     try:
         if args.extension:
             wiki = ''
@@ -41,6 +38,10 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     except IndexError:
         print('Not enough Arguments given.')
         sys.exit(2)
+
+    if not args.version:
+        args.version = os.popen(f'getMWVersion {wiki}').read().strip()
+
     script = args.script
     if not script.endswith('.php'):
         if float(args.version) < 1.40:
