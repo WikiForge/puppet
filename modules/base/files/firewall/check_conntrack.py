@@ -18,8 +18,8 @@ def get_sysctl(name):
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage:")
-        print("check_conntrack WARNING CRITICAL")
+        print('Usage:')
+        print('check_conntrack WARNING CRITICAL')
         sys.exit(-1)
 
     w = int(sys.argv[1])
@@ -28,7 +28,7 @@ def main():
     # get the values and verify they are not None
     max_value = get_sysctl('net/netfilter/nf_conntrack_max')
     if max_value is None or max_value < 0:
-        print("WARNING: could not read sysctl settings")
+        print('WARNING: could not read sysctl settings')
         sys.exit(1)
 
     count_value = get_sysctl('net/netfilter/nf_conntrack_count')
@@ -36,16 +36,16 @@ def main():
 
     # check what is the value of full and act upon it
     if full >= c:
-        print("CRITICAL: nf_conntrack is %d %% full" % full)
+        print(f'CRITICAL: nf_conntrack is {full}% full')
         sys.exit(2)
     elif full >= w and full < c:
-        print("WARNING: nf_conntrack is %d %% full" % full)
+        print(f'WARNING: nf_conntrack is {full}% full')
         sys.exit(1)
     elif full < w:
-        print("OK: nf_conntrack is %d %% full" % full)
+        print(f'OK: nf_conntrack is {full}% full')
         sys.exit(0)
     else:
-        print("UNKNOWN: error reading nf_conntrack")
+        print('UNKNOWN: error reading nf_conntrack')
         sys.exit(3)
 
 
