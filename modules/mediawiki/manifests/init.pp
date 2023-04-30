@@ -157,6 +157,12 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/getMWVersion.php',
     }
 
+    file { '/usr/local/bin/getMWVersions':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/getMWVersions.php',
+    }
+
     file { '/usr/local/bin/mwscript':
         ensure => 'present',
         mode   => '0755',
