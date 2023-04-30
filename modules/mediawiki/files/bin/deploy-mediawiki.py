@@ -10,7 +10,7 @@ from sys import exit
 from langcodes import tag_is_valid
 
 
-repos = {'1.39': '1.39', '1.40': '1.40', '1.41': '1.41', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
+repos = {'1.39': '1.39', '1.40': '1.40', 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
 DEPLOYUSER = 'www-data'
 
 
