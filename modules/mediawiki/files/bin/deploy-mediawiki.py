@@ -10,9 +10,13 @@ import json
 from sys import exit
 from langcodes import tag_is_valid
 
+mw_versions = os.popen('getMWVersions').read().strip()
+versions = {'version': 'version'}
+if mw_versions:
+    versions = json.loads(mw_versions)
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing'}
 
-versions = json.loads(os.popen('getMWVersions').read().strip())
-repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'version': 'version'}
+del mw_versions
 
 DEPLOYUSER = 'www-data'
 
@@ -328,7 +332,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version')
+    parser.add_argument('--version', dest='version', choices=list(versions.values()))
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
