@@ -26,7 +26,7 @@ mediawiki::multiversion::versions:
   '1.40':
     branch: 'REL1_40'
     default: true
-  'master':
+  master:
     branch: 'master'
 
 php::php_version: '7.4'
