@@ -15,6 +15,6 @@ class base::backup (
 
     file { '/usr/local/bin/wikiforge-backup':
         mode    => '0555',
-        content => template('base/backups/wikiforge-backup.py.erb'),
+        content => template('base/backups/wikiforge-backup.py'),
     }
 }
