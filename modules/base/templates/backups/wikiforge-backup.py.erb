@@ -258,7 +258,7 @@ def download(source: str, dt: str, database: str):
                         break
     elif source in ['sql', 'mediawiki-static']:
         file_prefix = f'{source}/{database}/{dt}'
-        if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part0', 0).status_code == 404:
+        if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.7z.part0', 0).status_code == 404:
             download_pca(f'{file_prefix}.7z')
         else:
             # Download and combine parts
@@ -266,10 +266,10 @@ def download(source: str, dt: str, database: str):
             with open(f'{file_prefix}.7z', 'wb') as outfile:
                 while True:
                     try:
-                        download_pca(f'{file_prefix}.part{chunk_num}')
-                        with open(f'{file_prefix}.part{chunk_num}', 'rb') as infile:
+                        download_pca(f'{file_prefix}.7z.part{chunk_num}')
+                        with open(f'{file_prefix}.7z.part{chunk_num}', 'rb') as infile:
                             outfile.write(infile.read())
-                        os.remove(f'{file_prefix}.part{chunk_num}')
+                        os.remove(f'{file_prefix}.7z.part{chunk_num}')
                         chunk_num += 1
                     except:
                         print(f'Error downloading chunk {chunk_num}. Retrying...')
