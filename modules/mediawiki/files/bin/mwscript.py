@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import json
 import sys
 from typing import TYPE_CHECKING, TypedDict
 if TYPE_CHECKING:
@@ -19,7 +20,15 @@ class CommandInfo(TypedDict):
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo:
-    validDBLists = ('active')
+    mw_versions = os.popen('getMWVersions all').read().strip()
+    versions = {}
+    if mw_versions:
+        versions = json.loads(mw_versions)
+
+    del mw_versions
+
+    validDBLists = ('active',) + tuple([f"{key}-wikis" for key in versions.keys()])
+
     longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
     generate = None
