@@ -38,7 +38,7 @@ parser.add_argument('--database', dest='database', help='Specific database to do
 args = parser.parse_args()
 
 
-MAX_SIZE = 5 * 1024 * 1024 * 1024 # 5GB
+MAX_SIZE = 0.01 * 1024 * 1024 * 1024 # 5GB
 
 
 def pca_connection():
