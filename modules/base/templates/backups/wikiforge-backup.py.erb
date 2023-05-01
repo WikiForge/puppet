@@ -38,7 +38,7 @@ parser.add_argument('--database', dest='database', help='Specific database to do
 args = parser.parse_args()
 
 
-MAX_SIZE = 0.01 * 1024 * 1024 * 1024 # 5GB
+MAX_SIZE = int(0.05 * 1024 * 1024 * 1024) # 5GB
 
 
 def pca_connection():
@@ -74,10 +74,10 @@ def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
         for i in range(chunk_num):
             chunk_data = f.read(MAX_SIZE)
             chunk_hash = hashlib.md5(chunk_data).hexdigest()
-            chunk_path = f'{upload_path}.part{i}'
+            chunk_path = f'{file_path}.part{i}'
             with open(chunk_path, 'wb') as chunk_file:
                 chunk_file.write(chunk_data)
-            pca_connection().put(chunk_path, chunk_path, False)
+            pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
             pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
             os.remove(chunk_path)
 
@@ -238,9 +238,43 @@ def download(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phorge']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
-        download_pca(f'{source}/{database}/{dt}.xml.7z')
+        file_prefix = f'{source}/{database}/{dt}.xml'
+        if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part0', 0).status_code == 404:
+            download_pca(f'{file_prefix}.7z')
+        else:
+            # Download and combine parts
+            chunk_num = 0
+            with open(f'{file_prefix}.7z', 'wb') as outfile:
+                while True:
+                    try:
+                        download_pca(f'{file_prefix}.part{chunk_num}')
+                        with open(f'{file_prefix}.part{chunk_num}', 'rb') as infile:
+                            outfile.write(infile.read())
+                        os.remove(f'{file_prefix}.part{chunk_num}')
+                        chunk_num += 1
+                    except:
+                        print(f'Error downloading chunk {chunk_num}. Retrying...')
+                    if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part{chunk_num}', 0).status_code == 404:
+                        break
     elif source in ['sql', 'mediawiki-static']:
-        download_pca(f'{source}/{database}/{dt}.7z')
+        file_prefix = f'{source}/{database}/{dt}'
+        if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part0', 0).status_code == 404:
+            download_pca(f'{file_prefix}.7z')
+        else:
+            # Download and combine parts
+            chunk_num = 0
+            with open(f'{file_prefix}.7z', 'wb') as outfile:
+                while True:
+                    try:
+                        download_pca(f'{file_prefix}.part{chunk_num}')
+                        with open(f'{file_prefix}.part{chunk_num}', 'rb') as infile:
+                            outfile.write(infile.read())
+                        os.remove(f'{file_prefix}.part{chunk_num}')
+                        chunk_num += 1
+                    except:
+                        print(f'Error downloading chunk {chunk_num}. Retrying...')
+                    if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part{chunk_num}', 0).status_code == 404:
+                        break
 
     print(f'Completed! This took {time.time() - ts}s')
 
