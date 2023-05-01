@@ -22,7 +22,6 @@ class mediawiki::packages {
         'nodejs',
         'ploticus',
         'poppler-utils',
-        'python3-pip',
         'netpbm',
         'librsvg2-dev',
         'libjpeg-dev',
