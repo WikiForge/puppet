@@ -11,7 +11,6 @@ Changes by Universal Omega for WikiForge:
   - Support mediawiki-static backups
   - Support multiversion in mediawiki-xml
   - Use 7zip for mediawiki-static and mediawiki-xml
-    - Use py7zr for this as 7zip offers higher compression
   - Support file chunking
     - Max object size is 5GB, as that is max object size in Swift
 """
@@ -23,6 +22,7 @@ import os
 import json
 import glob
 import requests
+import subprocess
 import math
 import hashlib
 
@@ -153,17 +153,8 @@ def backup_mediawiki_static(dt: str, database: str):
     else:
         dbs = [database]
 
-    excluded_dirs = {'archive', 'deleted', 'dumps', 'lockdir', 'sitemaps', 'temp', 'thumb'}
-
     for db in dbs:
-        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
-            for root, dirs, files in os.walk(f'/mnt/mediawiki-static/{db}'):
-                dirs[:] = [d for d in dirs if d not in excluded_dirs]
-
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    archive_path = os.path.relpath(file_path, f'/mnt/mediawiki-static/{db}')
-                    archive.write(file_path, archive_path)
+        subprocess.run(['7z', 'a', '-m0=lzma2', '-mx=9', '-mfb=64', '-md=32m', '-ms=on', f'/mnt/mediawiki-static/{db}.7z', f'/mnt/mediawiki-static/{db}', '-xr!archive', '-xr!deleted', '-xr!dumps', '-xr!ImportDump', '-xr!lockdir', '-xr!sitemaps', '-xr!temp', '-xr!thumb'])
 
         file_size = os.path.getsize(f'/mnt/mediawiki-static/{db}.7z')
         if file_size <= MAX_SIZE:
