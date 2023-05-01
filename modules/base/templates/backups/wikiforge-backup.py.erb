@@ -254,7 +254,7 @@ def download(source: str, dt: str, database: str):
                         chunk_num += 1
                     except:
                         print(f'Error downloading chunk {chunk_num}. Retrying...')
-                    if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part{chunk_num}', 0).status_code == 404:
+                    if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.7z.part{chunk_num}', 0).status_code == 404:
                         break
     elif source in ['sql', 'mediawiki-static']:
         file_prefix = f'{source}/{database}/{dt}'
