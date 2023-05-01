@@ -263,7 +263,7 @@ def download(source: str, dt: str, database: str):
         else:
             # Download and combine parts
             chunk_num = 0
-            with open(f'{file_prefix}.7z', 'wb') as outfile:
+            with open(f'{source}-{database}-{dt}.7z', 'wb') as outfile:
                 while True:
                     try:
                         download_pca(f'{file_prefix}.7z.part{chunk_num}')
