@@ -12,7 +12,6 @@ Changes by Universal Omega for WikiForge:
   - Support multiversion in mediawiki-xml
   - Use 7zip for mediawiki-xml
   - Support file chunking
-    - Max object size is 5GB, as that is max object size in Swift
 """
 
 import argparse
@@ -156,7 +155,7 @@ def backup_mediawiki_static(dt: str, database: str):
         exclude_dirs = ['archive', 'deleted', 'dumps', 'ImportDump', 'lockdir', 'sitemaps', 'temp', 'thumb']
         exclude_args = [f'--exclude=/mnt/mediawiki-static/{db}/{dir}' for dir in exclude_dirs]
 
-        subprocess.run(['tar', '-zcvf', f'/mnt/mediawiki-static/{db}.tar.gz'] + exclude_args + [f'/mnt/mediawiki-static/{db}'])
+        subprocess.run(['tar', '-zcf', f'/mnt/mediawiki-static/{db}.tar.gz'] + exclude_args + [f'/mnt/mediawiki-static/{db}'])
 
         file_size = os.path.getsize(f'/mnt/mediawiki-static/{db}.tar.gz')
         if file_size <= MAX_SIZE:
