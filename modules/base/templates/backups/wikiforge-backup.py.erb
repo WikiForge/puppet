@@ -35,8 +35,12 @@ parser.add_argument('--date', dest='date', help='Date for backup to download', m
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
 
+# Shouldn't upload files much larger to Swift
+MAX_SIZE = int(4.5 * 1024 * 1024 * 1024) # 4.5GB
+
 # Larger files seem to get killed or OOM
-MAX_SIZE = int(0.25 * 1024 * 1024 * 1024) # 0.25GB
+MAX_CHUNK_SIZE = int(0.25 * 1024 * 1024 * 1024) # 0.25GB
+
 
 
 def pca_connection():
@@ -68,9 +72,9 @@ def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
     file_size = os.path.getsize(file_path)
 
     with open(file_path, 'rb') as f:
-        chunk_num = int(math.ceil(file_size / MAX_SIZE))
+        chunk_num = int(math.ceil(file_size / MAX_CHUNK_SIZE))
         for i in range(chunk_num):
-            chunk_data = f.read(MAX_SIZE)
+            chunk_data = f.read(MAX_CHUNK_SIZE)
             chunk_hash = hashlib.md5(chunk_data).hexdigest()
             chunk_path = f'{file_path}.part{i}'
             with open(chunk_path, 'wb') as chunk_file:
