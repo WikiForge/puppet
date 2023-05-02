@@ -35,8 +35,8 @@ parser.add_argument('--date', dest='date', help='Date for backup to download', m
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
 
-# Shouldn't upload files much larger to Swift
-MAX_SIZE = int(4.5 * 1024 * 1024 * 1024) # 4.5GB
+# 5GB is the max upload size for Swift
+MAX_SIZE = int(5 * 1024 * 1024 * 1024) # 5GB
 
 # Larger files seem to get killed or OOM
 MAX_CHUNK_SIZE = int(0.15 * 1024 * 1024 * 1024) # 0.15GB
