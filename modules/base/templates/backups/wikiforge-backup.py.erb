@@ -35,8 +35,8 @@ parser.add_argument('--date', dest='date', help='Date for backup to download', m
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
 
-
-MAX_SIZE = int(0.5 * 1024 * 1024 * 1024) # 500MB
+# Larger files seem to get killed or OOM
+MAX_SIZE = int(0.25 * 1024 * 1024 * 1024) # 0.25GB
 
 
 def pca_connection():
