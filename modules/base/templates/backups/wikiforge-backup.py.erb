@@ -10,7 +10,7 @@ Changes by Universal Omega for WikiForge:
   - Suport Phorge backups
   - Support mediawiki-static backups
   - Support multiversion in mediawiki-xml
-  - Use 7zip for mediawiki-static and mediawiki-xml
+  - Use 7zip for mediawiki-xml
   - Support file chunking
     - Max object size is 5GB, as that is max object size in Swift
 """
@@ -153,16 +153,18 @@ def backup_mediawiki_static(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        subprocess.run(['7z', 'a', '-m0=lzma2', '-mx=7', '-mfb=64', '-md=32m', '-ms=on', f'/mnt/mediawiki-static/{db}.7z', f'/mnt/mediawiki-static/{db}', '-xr!archive', '-xr!deleted', '-xr!dumps', '-xr!ImportDump', '-xr!lockdir', '-xr!sitemaps', '-xr!temp', '-xr!thumb'])
+        tar = tarfile.open(f'/mnt/mediawiki-static/{db}.tar.gz', 'w:gz')
+        tar.add(f'/mnt/mediawiki-static/{db}', arcname=db)
+        tar.close()
 
-        file_size = os.path.getsize(f'/mnt/mediawiki-static/{db}.7z')
+        file_size = os.path.getsize(f'/mnt/mediawiki-static/{db}.tar.gz')
         if file_size <= MAX_SIZE:
-            pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
-            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
+            pca_connection().put(f'/mnt/mediawiki-static/{db}.tar.gz', f'mediawiki-static/{db}/{dt}.tar.gz', False)
+            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.tar.gz', 4)
         else:
-            upload_in_chunks(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', 4)
+            upload_in_chunks(f'/mnt/mediawiki-static/{db}.tar.gz', f'mediawiki-static/{db}/{dt}.tar.gz', 4)
 
-        os.remove(f'/mnt/mediawiki-static/{db}.7z')
+        os.remove(f'/mnt/mediawiki-static/{db}.tar.gz')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
@@ -225,7 +227,7 @@ def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    file_ext = 'tar.gz' if source in ['private', 'sslkeys', 'phorge', 'sql'] else '7z'
+    file_ext = 'tar.gz' if source in ['mediawiki-static', 'phorge', 'private', 'sql', 'sslkeys'] else '7z'
     file_prefix = f'{source}/{database}/{dt}.{file_ext}' if source in ['mediawiki-xml', 'mediawiki-static'] else f'{source}/{dt}.{file_ext}'
     file_name = f'{source}-{database}-{dt}.{file_ext}' if source in ['mediawiki-xml', 'mediawiki-static'] else f'{source}-{dt}.{file_ext}'
 
@@ -266,9 +268,9 @@ def find_backups(source: str, database: str):
 def unfreeze_backup(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phorge']:
         file = f'{source}/{dt}.tar.gz'
-    elif source in ['sql']:
+    elif source in ['mediawiki-static', 'sql']:
         file = f'{source}/{database}/{dt}.tar.gz'
-    elif source in ['mediawiki-static', 'mediawiki-xml']:
+    elif source in ['mediawiki-xml']:
         file = f'{source}/{database}/{dt}.7z'
 
     pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
