@@ -231,7 +231,7 @@ def download(source: str, dt: str, database: str):
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
     file_ext = 'tar.gz' if source in ['mediawiki-static', 'phorge', 'private', 'sql', 'sslkeys'] else '7z'
-    file_prefix = f'{source}/{database}/{dt}.{file_ext}' if source in ['mediawiki-xml', 'mediawiki-static'] else f'{source}/{dt}.{file_ext}'
+    file_prefix = f'{source}/{database}/{dt}.{file_ext}' if source in ['mediawiki-xml', 'mediawiki-static', 'sql'] else f'{source}/{dt}.{file_ext}'
     file_name = f'{source}-{database}-{dt}.{file_ext}' if source in ['mediawiki-xml', 'mediawiki-static'] else f'{source}-{dt}.{file_ext}'
 
     if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part0', 0).status_code == 404:
