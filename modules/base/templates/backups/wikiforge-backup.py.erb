@@ -69,18 +69,29 @@ def pca_web(method: str, url: str, expiry: int):
 # expiry is in weeks
 def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
     file_size = os.path.getsize(file_path)
+    chunk_num = int(math.ceil(file_size / MAX_CHUNK_SIZE))
 
-    with open(file_path, 'rb') as f:
-        chunk_num = int(math.ceil(file_size / MAX_CHUNK_SIZE))
-        for i in range(chunk_num):
-            chunk_data = f.read(MAX_CHUNK_SIZE)
-            chunk_hash = hashlib.md5(chunk_data).hexdigest()
-            chunk_path = f'{file_path}.part{i}'
-            with open(chunk_path, 'wb') as chunk_file:
-                chunk_file.write(chunk_data)
-            pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
-            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
-            os.remove(chunk_path)
+    for i in range(chunk_num):
+        chunk_path = f'{file_path}.part{i}'
+
+        # Upload a specific chunk
+        def upload_chunk():
+            with open(chunk_path, 'rb') as chunk_file:
+                chunk_data = chunk_file.read()
+                chunk_hash = hashlib.md5(chunk_data).hexdigest()
+                pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
+                pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
+                os.remove(chunk_path)
+
+        # Try to upload the chunk up to 3 times
+        for j in range(3):
+            try:
+                upload_chunk()
+                break
+            except Exception as e:
+                print(f"Upload failed for chunk {i}: {str(e)}")
+                if j == 2:
+                    raise
 
 
 def backup_private(dt: str):
