@@ -78,9 +78,16 @@ def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
             chunk_path = f'{file_path}.part{i}'
             with open(chunk_path, 'wb') as chunk_file:
                 chunk_file.write(chunk_data)
-            pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
-            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
-            os.remove(chunk_path)
+            retry = True
+            while retry:
+                try:
+                    put_url = pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
+                    pca_web('POST', put_url, expiry)
+                    os.remove(chunk_path)
+                    retry = False
+                except Exception as e:
+                    print(f"Error uploading chunk {i}: {e}")
+                    retry = True
 
 
 def backup_private(dt: str):
