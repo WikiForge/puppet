@@ -82,8 +82,8 @@ def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
             retry_count = 0
             while retry_count < max_retries:
                 try:
-                    put_url = pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
-                    pca_web('POST', put_url, expiry)
+                    pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
+                    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
                     os.remove(chunk_path)
                     break
                 except Exception as e:
