@@ -42,7 +42,6 @@ MAX_SIZE = int(4.5 * 1024 * 1024 * 1024) # 4.5GB
 MAX_CHUNK_SIZE = int(0.25 * 1024 * 1024 * 1024) # 0.25GB
 
 
-
 def pca_connection():
     return Connection('gateways.storage.us-west-or.cloud.ovh.us', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
 
