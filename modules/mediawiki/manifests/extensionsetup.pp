@@ -23,11 +23,6 @@ define mediawiki::extensionsetup (
     $repos = loadyaml("${module_path}/data/mediawiki-repos.yaml")
 
     $repos.each |$name, $params| {
-        $repo_branch = $params['branch']
-        if ($branch == 'master' and $params['alpha_branch']) {
-            $repo_branch = $params['alpha_branch']
-        }
-
         git::clone { "MediaWiki-${branch} ${name}":
             ensure             => $params['removed'] ? {
                 true    => absent,
@@ -40,7 +35,10 @@ define mediawiki::extensionsetup (
             origin             => $params['repo_url'],
             branch             => $params['branch'] ? {
                 '_branch_' => $branch,
-                default    => $repo_branch,
+                default    => $params['alpha_branch'] ? {
+                    undef   => $params['branch'],
+                    default => $branch == 'master' ? 'master' : $params['alpha_branch'],
+                },
             },
             owner              => 'www-data',
             group              => 'www-data',
