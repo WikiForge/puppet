@@ -883,6 +883,7 @@ Femiwiki:
   branch: _branch_
   path: skins/Femiwiki
   repo_url: https://github.com/femiwiki/FemiwikiSkin
+  alpha_branch: main
 Citizen:
   branch: main
   path: skins/Citizen
