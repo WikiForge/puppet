@@ -37,7 +37,10 @@ define mediawiki::extensionsetup (
                 '_branch_' => $branch,
                 default    => $params['alpha_branch'] ? {
                     undef   => $params['branch'],
-                    default => $branch == 'master' ? 'master' : $params['alpha_branch'],
+                    default => $branch == 'master' ? {
+                        true => 'master',
+                        default => $params['alpha_branch'],
+                    },
                 },
             },
             owner              => 'www-data',
