@@ -34,14 +34,14 @@ define mediawiki::extensionsetup (
             directory          => "${mwpath}/${params['path']}",
             origin             => $params['repo_url'],
             branch             => $params['branch'] ? {
-                '_branch_' => $branch,
-                default    => $params['alpha_branch'] ? {
-                    undef   => $params['branch'],
-                    default => $branch == 'master' ? {
-                        true => 'master',
+                '_branch_' => $branch == 'master' ? {
+                    true => $params['alpha_branch'] ? {
+                        undef   => $branch,
                         default => $params['alpha_branch'],
                     },
-                },
+                    default => $branch,
+                }
+                default    => $params['branch'],
             },
             owner              => 'www-data',
             group              => 'www-data',
