@@ -40,7 +40,7 @@ define mediawiki::extensionsetup (
                         default => $params['alpha_branch'],
                     },
                     default => $branch,
-                }
+                },
                 default    => $params['branch'],
             },
             owner              => 'www-data',
