@@ -16,8 +16,6 @@ if mw_versions:
     versions = json.loads(mw_versions)
 repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing'}
 
-default_version = os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()
-
 del mw_versions
 
 DEPLOYUSER = 'www-data'
@@ -347,7 +345,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version', action=VersionAction, default=[default_version], help='version(s) to deploy')
+    parser.add_argument('--version', dest='version', action=VersionAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
