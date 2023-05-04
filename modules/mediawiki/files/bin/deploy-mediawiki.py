@@ -183,8 +183,9 @@ def _construct_upgrade_mediawiki_run_puppet() -> str:
 
 def run(args: argparse.Namespace, start: float) -> None:
     run_process(args=args, start=start)
-    for version in args.version:
-        run_process(args=args, start=start, version=version)
+    if args.world or args.l10n or args.extensionlist or args.upgrade:
+        for version in args.version:
+            run_process(args=args, start=start, version=version)
 
 
 def run_process(args: argparse.Namespace, start: float, version: Optional[str] = None) -> None:
