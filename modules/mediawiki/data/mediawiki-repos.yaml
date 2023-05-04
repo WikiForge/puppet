@@ -867,6 +867,7 @@ DataTransfer:
   branch: _branch_
   path: extensions/DataTransfer
   repo_url: https://github.com/wikimedia/mediawiki-extensions-DataTransfer
+  composer: true
 Calendar:
   branch: _branch_
   path: extensions/Calendar
