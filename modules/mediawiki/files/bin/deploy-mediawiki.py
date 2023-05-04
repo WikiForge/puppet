@@ -320,7 +320,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
 
 class VersionsAction(argparse.Action):
-    def __call__(self, parser, namespace, values, **kwargs):
+    def __call__(self, parser, namespace, values, option_string=None): # noqa: U100
         input_versions = values.split(',')
         valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
         if 'all' in input_versions:
