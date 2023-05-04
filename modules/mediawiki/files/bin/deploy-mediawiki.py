@@ -322,7 +322,7 @@ def run_process(args: argparse.Namespace, start: float, version: Optional[str] =
 class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         input_versions = values.split(',')
-        valid_versions = list(versions.values())
+        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
         if input_versions == 'all':
             input_versions = valid_versions
         invalid_versions = set(input_versions) - set(valid_versions)
