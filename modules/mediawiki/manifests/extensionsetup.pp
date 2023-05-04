@@ -87,14 +87,4 @@ define mediawiki::extensionsetup (
         source  => 'puppet:///modules/mediawiki/composer.local.json',
         require => Git::Clone["MediaWiki-${branch} core"],
     }
-
-    exec { "DataTransfer-${branch} composer":
-        command     => 'composer require phpoffice/phpspreadsheet',
-        creates     => "${mwpath}/extensions/DataTransfer/vendor",
-        cwd         => "${mwpath}/extensions/DataTransfer",
-        path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/DataTransfer",
-        user        => 'www-data',
-        require     => Git::Clone["MediaWiki-${branch} DataTransfer"],
-    }
 }
