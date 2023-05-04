@@ -317,11 +317,12 @@ def run(args: argparse.Namespace, start: float) -> None:
 
 class CommaSeparatedChoices(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        choices = self.choices or []
-        for value in values.split(','):
-            if value not in choices:
-                raise argparse.ArgumentError(self, f'invalid choice: {value}')
-        setattr(namespace, self.dest, values.split(','))
+        choices = self.choices or parser.choices[self.dest]
+        items = values.split(',')
+        for item in items:
+            if item not in choices:
+                raise argparse.ArgumentError(self, f"invalid choice: {item!r} (choose from {', '.join(choices)})")
+        setattr(namespace, self.dest, items)
 
 
 if __name__ == '__main__':
