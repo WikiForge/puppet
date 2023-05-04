@@ -318,7 +318,7 @@ class VersionAction(argparse.Action):
         valid_versions = list(versions.values())
         invalid_versions = set(versions) - set(valid_versions)
         if invalid_versions:
-            parser.error(f'invalid version choice(s): {', '.join(invalid_versions)}')
+            parser.error(f'invalid version choice(s): {", ".join(invalid_versions)}')
         setattr(namespace, self.dest, versions)
 
 
