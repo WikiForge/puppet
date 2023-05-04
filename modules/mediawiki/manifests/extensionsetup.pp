@@ -88,16 +88,6 @@ define mediawiki::extensionsetup (
         require => Git::Clone["MediaWiki-${branch} core"],
     }
 
-    exec { "vendor_psysh_composer_${branch}":
-        command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
-        unless      => 'composer show --installed psy/psysh 0.11.8',
-        cwd         => "${mwpath}/vendor",
-        path        => '/usr/bin',
-        environment => "HOME=${mwpath}/vendor",
-        user        => 'www-data',
-        require     => Git::Clone["MediaWiki-${branch} vendor"],
-    }
-
     exec { "oauth_lcobucci_composer_${branch}":
         command     => 'composer require "lcobucci/jwt:4.1.5" --update-no-dev',
         unless      => 'composer show --installed lcobucci/jwt 4.1.5',
