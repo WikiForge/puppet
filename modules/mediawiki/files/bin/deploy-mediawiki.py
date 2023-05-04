@@ -184,7 +184,7 @@ def _construct_upgrade_mediawiki_run_puppet() -> str:
 def run(args: argparse.Namespace, start: float) -> None:
     run_process(args=args, start=start)
     if args.world or args.l10n or args.extensionlist or args.upgrade:
-        for version in args.version:
+        for version in args.versions:
             run_process(args=args, start=start, version=version)
 
 
@@ -240,11 +240,11 @@ def run_process(args: argparse.Namespace, start: float, version: Optional[str] =
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
-        if args.files:  # specfic extra files
+        if args.files and not version:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
-        if args.folders:  # specfic extra folders
+        if args.folders and not version:  # specfic extra folders
             folders = str(args.folders).split(',')
             for folder in folders:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
@@ -323,6 +323,8 @@ class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         input_versions = values.split(',')
         valid_versions = list(versions.values())
+        if input_versions == 'all':
+            input_versions = valid_versions
         invalid_versions = set(input_versions) - set(valid_versions)
         if invalid_versions:
             parser.error(f'invalid version choice(s): {", ".join(invalid_versions)}')
@@ -346,7 +348,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version', action=VersionAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--versions', dest='versions', action=VersionAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
