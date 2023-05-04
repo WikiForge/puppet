@@ -57,12 +57,6 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_server_list(envinfo: Environment, servers: str) -> list[str]:
-    if servers == 'all':
-        return envinfo['servers']
-    return servers.split(',')
-
-
 def run_command(cmd: str) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
@@ -190,7 +184,6 @@ def run(args: argparse.Namespace, start: float) -> None:
 
 def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:
     envinfo = get_environment_info()
-    servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     loginfo = {}
@@ -205,7 +198,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
     synced = loginfo['servers']
-    if HOSTNAME in servers:
+    if HOSTNAME in args.servers:
         del loginfo['servers']
         text = f'starting deploy of "{str(loginfo)}" to {synced}'
         if not args.nolog:
@@ -299,9 +292,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
 
     for path in rsyncpaths:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=args.servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
     for file in rsyncfiles:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=args.servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
 
@@ -331,6 +324,18 @@ class VersionsAction(argparse.Action):
         setattr(namespace, self.dest, input_versions)
 
 
+class ServersAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None): # noqa: U100
+        input_servers = values.split(',')
+        valid_servers = get_environment_info()['servers']
+        if 'all' in input_servers:
+            input_servers = valid_servers
+        invalid_servers = set(input_servers) - set(valid_servers)
+        if invalid_servers:
+            parser.error(f'invalid server choice(s): {", ".join(invalid_servers)}')
+        setattr(namespace, self.dest, input_servers)
+
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -349,7 +354,7 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
-    parser.add_argument('--servers', dest='servers', required=True)
+    parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
 
