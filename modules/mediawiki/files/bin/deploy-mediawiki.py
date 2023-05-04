@@ -188,7 +188,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             run_process(args=args, start=start, version=version)
 
 
-def run_process(args: argparse.Namespace, start: float, version: Optional[str] = None) -> None:
+def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
