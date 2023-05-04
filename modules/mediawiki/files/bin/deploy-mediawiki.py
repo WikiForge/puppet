@@ -323,7 +323,7 @@ class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         input_versions = values.split(',')
         valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
-        if input_versions == 'all':
+        if 'all' in input_versions:
             input_versions = valid_versions
         invalid_versions = set(input_versions) - set(valid_versions)
         if invalid_versions:
