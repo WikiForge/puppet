@@ -313,6 +313,11 @@ def run(args: argparse.Namespace, start: float) -> None:
 
 
 class VersionAction(argparse.Action):
+    mw_versions = os.popen('getMWVersions').read().strip()
+    versions = {'version': 'version'}
+    if mw_versions:
+        versions = json.loads(mw_versions)
+
     def __call__(self, parser, namespace, values, option_string=None):
         versions = values.split(',')
         valid_versions = list(versions.values())
