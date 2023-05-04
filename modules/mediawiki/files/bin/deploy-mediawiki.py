@@ -315,6 +315,15 @@ def run(args: argparse.Namespace, start: float) -> None:
         exit(1)
 
 
+class CommaSeparatedChoices(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        choices = self.choices or []
+        for value in values.split(','):
+            if value not in choices:
+                raise argparse.ArgumentError(self, f'invalid choice: {value}')
+        setattr(namespace, self.dest, values.split(','))
+
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -332,7 +341,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version', choices=list(versions.values()))
+    parser.add_argument('--version', dest='version', choices=list(versions.values()), action=CommaSeparatedChoices)
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
