@@ -194,9 +194,6 @@ def run(args: argparse.Namespace, start: float) -> None:
     postinstall = []
     stage = []
 
-    if not args.version:
-        args.version = os.popen(f'getMWVersion {envinfo["wikidbname"]}').read().strip()
-
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
@@ -315,14 +312,14 @@ def run(args: argparse.Namespace, start: float) -> None:
         exit(1)
 
 
-class CommaSeparatedChoices(argparse.Action):
+class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        choices = self.choices or parser.choices[self.dest]
-        items = values.split(',')
-        for item in items:
-            if item not in choices:
-                raise argparse.ArgumentError(self, f"invalid choice: {item!r} (choose from {', '.join(choices)})")
-        setattr(namespace, self.dest, items)
+        versions = values.split(',')
+        valid_versions = list(versions.values())
+        invalid_versions = set(versions) - set(valid_versions)
+        if invalid_versions:
+            parser.error(f'invalid version choice(s): {', '.join(invalid_versions)}')
+        setattr(namespace, self.dest, versions)
 
 
 if __name__ == '__main__':
@@ -342,7 +339,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--version', dest='version', choices=list(versions.values()), action=CommaSeparatedChoices)
+    parser.add_argument('--version', dest='version', action=VersionAction, default=[os.popen(f'getMWVersion {envinfo["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
