@@ -12,15 +12,21 @@ from deploy_mediawiki import (
 )
 
 
+@patch('os.path.exists', return_value=True)
 @patch('os.scandir')
-def test_get_valid_extensions(mock_scandir):
-    mock_scandir.return_value = [
+def test_get_valid_extensions(mock_scandir, mock_path_exists):
+    versions = ['1.35', '1.36']
+
+    mock_scandir.side_effect = lambda path: [
         MagicMock(name='Extension1', is_dir=lambda: True),
-        MagicMock(name='Extension2', is_dir=lambda: True),
+        MagicMock(name='Extension2', is_dir=lambda: True)
+    ] if path == f'/srv/mediawiki-staging/{versions[0]}/extensions/' else [
+        MagicMock(name='Extension3', is_dir=lambda: True),
+        MagicMock(name='Extension4', is_dir=lambda: True)
     ]
-    with patch('os.path.exists', return_value=True):
-        extensions = deploy_mediawiki.get_valid_extensions(['1.35', '1.36'])
-        assert extensions == ['Extension1', 'Extension2']
+
+    extensions = deploy_mediawiki.get_valid_extensions(versions)
+    assert extensions == ['Extension1', 'Extension2', 'Extension3', 'Extension4']
 
 
 @patch('os.scandir')
