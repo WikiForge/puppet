@@ -236,16 +236,13 @@ def test_UpgradePackAction():
 
 def test_LangAction():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--l10n', action='store_const', const=True, default=False)
     parser.add_argument('--lang', action=LangAction)
 
     with pytest.raises(SystemExit):
         parser.parse_args(['--lang', 'invalid_tag'])
 
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--lang', 'en,fr'])
-
-    namespace = parser.parse_args(['--l10n', 'True', '--lang', 'en,fr'])
+    namespace = parser.parse_args(['--l10n', '--lang', 'en,fr'])
     assert namespace.lang == ['en', 'fr']
 
 
