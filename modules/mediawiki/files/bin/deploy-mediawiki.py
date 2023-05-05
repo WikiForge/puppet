@@ -394,8 +394,8 @@ class UpgradeSkinsAction(argparse.Action):
 
 class UpgradePackAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
-        extensions = get_extensions_in_pack(value)
-        setattr(namespace, 'upgrade_extensions', extensions)
+        extensions_in_pack = get_extensions_in_pack(value)
+        setattr(namespace, 'upgrade_extensions', extensions_in_pack)
 
 
 class LangAction(argparse.Action):
