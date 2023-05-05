@@ -326,33 +326,6 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         exit(1)
 
 
-if __name__ == '__main__':
-    start = time.time()
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--pull', dest='pull')
-    parser.add_argument('--branch', dest='branch')
-    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
-    parser.add_argument('--config', dest='config', action='store_true')
-    parser.add_argument('--world', dest='world', action='store_true')
-    parser.add_argument('--landing', dest='landing', action='store_true')
-    parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10n', dest='l10n', action='store_true')
-    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
-    parser.add_argument('--no-log', dest='nolog', action='store_true')
-    parser.add_argument('--force', dest='force', action='store_true')
-    parser.add_argument('--upgrade-extensions', dest='upgrade_extensions')
-    parser.add_argument('--upgrade-skins', dest='upgrade_skins')
-    parser.add_argument('--files', dest='files')
-    parser.add_argument('--folders', dest='folders')
-    parser.add_argument('--lang', dest='lang', action=LangAction)
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
-    parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
-    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
-    parser.add_argument('--port', dest='port')
-
-    run(parser.parse_args(), start)
-
-
 class LangAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         if not hasattr(namespace, 'l10n') or not namespace.l10n:
@@ -387,3 +360,30 @@ class ServersAction(argparse.Action):
         if invalid_servers:
             parser.error(f'invalid server choice(s): {", ".join(invalid_servers)}')
         setattr(namespace, self.dest, input_servers)
+
+
+if __name__ == '__main__':
+    start = time.time()
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--pull', dest='pull')
+    parser.add_argument('--branch', dest='branch')
+    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
+    parser.add_argument('--config', dest='config', action='store_true')
+    parser.add_argument('--world', dest='world', action='store_true')
+    parser.add_argument('--landing', dest='landing', action='store_true')
+    parser.add_argument('--errorpages', dest='errorpages', action='store_true')
+    parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
+    parser.add_argument('--no-log', dest='nolog', action='store_true')
+    parser.add_argument('--force', dest='force', action='store_true')
+    parser.add_argument('--upgrade-extensions', dest='upgrade_extensions')
+    parser.add_argument('--upgrade-skins', dest='upgrade_skins')
+    parser.add_argument('--files', dest='files')
+    parser.add_argument('--folders', dest='folders')
+    parser.add_argument('--lang', dest='lang', action=LangAction)
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
+    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+    parser.add_argument('--port', dest='port')
+
+    run(parser.parse_args(), start)
