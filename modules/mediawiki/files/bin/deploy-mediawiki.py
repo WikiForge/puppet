@@ -228,8 +228,11 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if pull:
             for repo in pull:
                 try:
-                    if version and repo == 'world':
-                        repo = version
+                    if repo == 'world':
+                        if version:
+                            repo = version
+                        else:
+                            continue
                     stage.append(_construct_git_pull(repo, branch=args.branch))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
