@@ -252,7 +252,7 @@ def test_LangAction():
 def test_VersionsAction():
     with patch('os.popen') as mock_popen, \
          patch('os.path.exists') as mock_exists, \
-         patch.dict('mediawiki_deploy.versions', {'1.35': '1.35', '1.36': '1.36'}):
+         patch.dict('deploy_mediawiki.versions', {'1.35': '1.35', '1.36': '1.36'}):
         mock_popen.return_value.read.return_value = '{"1.35": "1.35", "1.36": "1.36"}'
         mock_exists.return_value = True
         parser = argparse.ArgumentParser()
