@@ -85,6 +85,13 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
     return packs.get(pack_name, [])
 
 
+def get_skins_in_pack(pack_name: str) -> list[str]:
+    packs = {
+        'bundled': ['MinervaNeue', 'MonoBook', 'Timeless', 'Vector'],
+    }
+    return packs.get(pack_name, [])
+
+
 def run_command(cmd: str) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
@@ -395,7 +402,9 @@ class UpgradeSkinsAction(argparse.Action):
 class UpgradePackAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
         extensions_in_pack = get_extensions_in_pack(value)
+        skins_in_pack = get_skins_in_pack(value)
         setattr(namespace, 'upgrade_extensions', extensions_in_pack)
+        setattr(namespace, 'upgrade_skins', skins_in_pack)
 
 
 class LangAction(argparse.Action):
