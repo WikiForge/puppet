@@ -24,7 +24,7 @@ def test_get_valid_extensions():
         [
             MagicMock(name='Extension3', is_dir=lambda: True),
             MagicMock(name='Extension4', is_dir=lambda: True),
-        ]
+        ],
     ]
     with patch('os.scandir', mock_scandir):
         extensions = deploy_mediawiki.get_valid_extensions(versions)
