@@ -1,7 +1,9 @@
+import importlib
+deploy_mediawiki = importlib.import_module('deploy_mediawiki')
+
 import argparse
 import pytest
 from unittest.mock import MagicMock, patch
-import deploy_mediawiki
 from deploy_mediawiki import (
     UpgradePackAction,
     LangAction,
