@@ -1,8 +1,15 @@
-import os
 import argparse
 import pytest
 from unittest.mock import patch, MagicMock
 import deploy_mediawiki
+from deploy_mediawiki import (
+    UpgradeExtensionsAction,
+    UpgradeSkinsAction,
+    UpgradePackAction,
+    LangAction,
+    VersionsAction,
+    ServersAction,
+)
 
 
 @patch('os.scandir')
