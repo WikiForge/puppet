@@ -15,8 +15,8 @@ from deploy_mediawiki import (
 @patch('os.scandir')
 def test_get_valid_extensions(mock_scandir):
     mock_scandir.return_value = [
-        MagicMock(name='MockDirEntry', is_dir=lambda: True, name='Extension1'),
-        MagicMock(name='MockDirEntry', is_dir=lambda: True, name='Extension2'),
+        MagicMock(name='Extension1', is_dir=lambda: True),
+        MagicMock(name='Extension2', is_dir=lambda: True),
     ]
     with patch('os.path.exists', return_value=True):
         extensions = deploy_mediawiki.get_valid_extensions(['1.35', '1.36'])
@@ -26,8 +26,8 @@ def test_get_valid_extensions(mock_scandir):
 @patch('os.scandir')
 def test_get_valid_skins(mock_scandir):
     mock_scandir.return_value = [
-        MagicMock(name='MockDirEntry', is_dir=lambda: True, name='Skin1'),
-        MagicMock(name='MockDirEntry', is_dir=lambda: True, name='Skin2'),
+        MagicMock(name='Skin1', is_dir=lambda: True),
+        MagicMock(name='Skin2', is_dir=lambda: True),
     ]
     with patch('os.path.exists', return_value=True):
         skins = deploy_mediawiki.get_valid_skins(['1.35', '1.36'])
