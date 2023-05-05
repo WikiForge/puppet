@@ -328,7 +328,7 @@ class UpgradeExtensionsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
-            parser.error('--versions is required when using --upgrade-extensions (--versions must be come before --upgrade-extensions)')
+            parser.error('--versions is required when using --upgrade-extensions (--versions must come before --upgrade-extensions)')
         input_extensions = values.split(',')
         valid_extensions = []
         for version in versions:
@@ -347,7 +347,7 @@ class UpgradeSkinsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
-            parser.error('--versions is required when using --upgrade-skins (--versions must be come before --upgrade-skins)')
+            parser.error('--versions is required when using --upgrade-skins (--versions must come before --upgrade-skins)')
         input_skins = values.split(',')
         valid_skins = []
         for version in versions:
