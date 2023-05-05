@@ -58,7 +58,7 @@ class mediawiki::deploy {
     file { '/usr/local/bin/deploy-mediawiki':
         ensure  => 'present',
         mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/deploy_mediawiki.py',
+        source  => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
         require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
     }
 
