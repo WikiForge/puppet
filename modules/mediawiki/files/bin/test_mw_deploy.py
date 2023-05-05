@@ -1,6 +1,6 @@
 import argparse
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch, call
 import deploy_mediawiki
 from deploy_mediawiki import (
     UpgradeExtensionsAction,
@@ -26,7 +26,7 @@ def test_get_valid_extensions(mock_scandir):
     assert extensions == ['Extension1', 'Extension2', 'Extension3', 'Extension4']
     mock_scandir.assert_has_calls([
         call('/srv/mediawiki-staging/1.35/extensions/'),
-        call('/srv/mediawiki-staging/1.36/extensions/')
+        call('/srv/mediawiki-staging/1.36/extensions/'),
     ])
 
 
