@@ -20,7 +20,9 @@ def test_get_valid_extensions():
     with patch('os.scandir') as mock_scandir:
         mock_cm1 = MagicMock()
         mock_cm1.__enter__.return_value = [MagicMock(name=name, is_dir=lambda: True) for name in extensions1]
-        mock_scandir.side_effect = [mock_cm1] * len(versions)
+        mock_cm2 = MagicMock()
+        mock_cm2.__enter__.return_value = [MagicMock(name=name, is_dir=lambda: True) for name in extensions2]
+        mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
         extensions = deploy_mediawiki.get_valid_extensions(versions)
         assert extensions == extensions1 + extensions2
