@@ -57,7 +57,7 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_valid_extensions(versions: list[str]) -> list:
+def get_valid_extensions(versions: list[str]) -> List:
     valid_extensions = []
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
@@ -66,13 +66,23 @@ def get_valid_extensions(versions: list[str]) -> list:
     return valid_extensions
 
 
-def get_valid_skins(versions: list[str]) -> list:
+def get_valid_skins(versions: list[str]) -> List:
     valid_skins = []
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
             valid_skins += [skin.name for skin in skins if skin.is_dir()]
     return valid_skins
+
+
+def get_extensions_in_pack(pack_name: str) -> List[str]:
+    packs = {
+        'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor']
+        'miraheze': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube']
+        'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
+        'wikiforge': ['WikiForgeMagic'],
+    }
+    return packs.get(pack_name, [])
 
 
 def run_command(cmd: str) -> int:
@@ -382,6 +392,12 @@ class UpgradeSkinsAction(argparse.Action):
         setattr(namespace, self.dest, input_skins)
 
 
+class UpgradePackAction(argparse.Action):
+    def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
+        extensions = get_extensions_in_pack(value)
+        setattr(namespace, 'upgrade_extensions', extensions)
+
+
 class LangAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         if not getattr(namespace, 'l10n', False):
@@ -439,6 +455,7 @@ if __name__ == '__main__':
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
+    parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'wikiforge'], help='extension pack to upgrade')
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
