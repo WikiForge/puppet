@@ -132,7 +132,10 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
     return ec
 
 
-def _get_staging_path(repo: str) -> str:
+def _get_staging_path(repo: str, version: str = '') -> str:
+    if version and ('extensions/' in repo or 'skins/' in repo):
+        return f'/srv/mediawiki-staging/{version}/{repo}'
+
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
@@ -159,12 +162,12 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo: str, branch: Optional[str] = None) -> str:
+def _construct_git_pull(repo: str, branch: Optional[str] = None, version: str = '') -> str:
     extrap = ' '
     if branch:
         extrap += f'origin {branch} '
 
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}--quiet'
 
 
 def _construct_upgrade_mediawiki_rm_staging(version: str) -> str:
@@ -220,6 +223,21 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
+        if version:
+            if args.upgrade_extensions:
+                pull_extensions = str(args.upgrade_extensions).split(',')
+            if pull_extensions:
+                for extension in pull_extensions:
+                    stage.append(_construct_git_pull(f'extensions/{extension}', version))
+                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
+
+            if args.upgrade_skins:
+                pull_skins = str(args.upgrade_skins).split(',')
+            if pull_skins:
+                for skin in pull_skins:
+                    stage.append(_construct_git_pull(f'skins/{skin}', version))
+                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -250,10 +268,6 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         non_zero_code(exitcodes)
         if args.l10n and version:  # setup l10n
             if args.lang:
-                for language in str(args.lang).split(','):
-                    if not tag_is_valid(language):
-                        raise ValueError(f'{language} is not a valid language.')
-
                 lang = f'--lang={args.lang}'
             else:
                 lang = ''
@@ -312,6 +326,45 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         exit(1)
 
 
+if __name__ == '__main__':
+    start = time.time()
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--pull', dest='pull')
+    parser.add_argument('--branch', dest='branch')
+    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
+    parser.add_argument('--config', dest='config', action='store_true')
+    parser.add_argument('--world', dest='world', action='store_true')
+    parser.add_argument('--landing', dest='landing', action='store_true')
+    parser.add_argument('--errorpages', dest='errorpages', action='store_true')
+    parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
+    parser.add_argument('--no-log', dest='nolog', action='store_true')
+    parser.add_argument('--force', dest='force', action='store_true')
+    parser.add_argument('--upgrade-extensions', dest='upgrade_extensions')
+    parser.add_argument('--upgrade-skins', dest='upgrade_skins')
+    parser.add_argument('--files', dest='files')
+    parser.add_argument('--folders', dest='folders')
+    parser.add_argument('--lang', dest='lang', action=LangAction)
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
+    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+    parser.add_argument('--port', dest='port')
+
+    run(parser.parse_args(), start)
+
+
+class LangAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        if not hasattr(namespace, 'l10n') or not namespace.l10n:
+            parser.error('--lang can not be used without --l10n')
+        invalid_langs = []
+        for language in values.split(','):
+            if not tag_is_valid(language)
+                invalid_langs.append(language)
+        if invalid_langs:
+            parser.error(f'invalid language choice(s): {", ".join(invalid_langs)}')
+
+
 class VersionsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         input_versions = values.split(',')
@@ -334,28 +387,3 @@ class ServersAction(argparse.Action):
         if invalid_servers:
             parser.error(f'invalid server choice(s): {", ".join(invalid_servers)}')
         setattr(namespace, self.dest, input_servers)
-
-
-if __name__ == '__main__':
-    start = time.time()
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--pull', dest='pull')
-    parser.add_argument('--branch', dest='branch')
-    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
-    parser.add_argument('--config', dest='config', action='store_true')
-    parser.add_argument('--world', dest='world', action='store_true')
-    parser.add_argument('--landing', dest='landing', action='store_true')
-    parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10n', dest='l10n', action='store_true')
-    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
-    parser.add_argument('--no-log', dest='nolog', action='store_true')
-    parser.add_argument('--force', dest='force', action='store_true')
-    parser.add_argument('--files', dest='files')
-    parser.add_argument('--folders', dest='folders')
-    parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
-    parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
-    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
-    parser.add_argument('--port', dest='port')
-
-    run(parser.parse_args(), start)
