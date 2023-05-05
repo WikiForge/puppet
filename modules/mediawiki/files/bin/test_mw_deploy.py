@@ -242,7 +242,7 @@ def test_LangAction():
     with pytest.raises(SystemExit):
         parser.parse_args(['--lang', 'invalid_tag'])
 
-    namespace = parser.parse_args(['--l10n', '--lang', 'en,fr'])
+    namespace = parser.parse_args(['--l10n', '--lang=en,fr'])
     assert namespace.lang == ['en', 'fr']
 
 
