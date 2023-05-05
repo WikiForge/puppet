@@ -132,6 +132,24 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
     return ec
 
 
+def get_valid_extensions(versions: list[str]) -> list:
+    valid_extensions = []
+    for version in versions:
+        skins_path = f'/srv/mediawiki-staging/{version}/extension/'
+        with os.scandir(extensions_path) as extensions:
+            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
+    return valid_extensions
+
+
+def get_valid_skins(versions: list[str]) -> list:
+    valid_skins = []
+    for version in versions:
+        skins_path = f'/srv/mediawiki-staging/{version}/skins/'
+        with os.scandir(skins_path) as skins:
+            valid_skins += [skin.name for skin in skins if skin.is_dir()]
+    return valid_skins
+
+
 def _get_staging_path(repo: str, version: str = '') -> str:
     if version and ('extensions/' in repo or 'skins/' in repo):
         return f'/srv/mediawiki-staging/{version}/{repo}'
@@ -182,8 +200,8 @@ def run(args: argparse.Namespace, start: float) -> None:
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
-        args.upgrade_extensions = 'all'
-        args.upgrade_skins = 'all'
+        args.upgrade_extensions = get_valid_extensions(args.versions)
+        args.upgrade_skins = get_valid_skins(args.versions)
     run_process(args=args, start=start)
     if args.world or args.l10n or args.extensionlist or args.reset_world or args.upgrade_extensions or args.upgrade_skins:
         for version in args.versions:
@@ -340,11 +358,7 @@ class UpgradeExtensionsAction(argparse.Action):
         if not versions:
             parser.error('--versions is required when using --upgrade-extensions (--versions must come before --upgrade-extensions)')
         input_extensions = values.split(',')
-        valid_extensions = []
-        for version in versions:
-            extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
-            with os.scandir(extensions_path) as extensions:
-                valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
+        valid_extensions = get_valid_extensions(versions)
         if 'all' in input_extensions:
             input_extensions = valid_extensions
         invalid_extensions = set(input_extensions) - set(valid_extensions)
@@ -359,11 +373,7 @@ class UpgradeSkinsAction(argparse.Action):
         if not versions:
             parser.error('--versions is required when using --upgrade-skins (--versions must come before --upgrade-skins)')
         input_skins = values.split(',')
-        valid_skins = []
-        for version in versions:
-            skins_path = f'/srv/mediawiki-staging/{version}/skins/'
-            with os.scandir(skins_path) as skins:
-                valid_skins += [skin.name for skin in skins if skin.is_dir()]
+        valid_skins = get_valid_skins(versions)
         if 'all' in input_skins:
             input_skins = valid_skins
         invalid_skins = set(input_skins) - set(valid_skins)
