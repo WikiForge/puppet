@@ -260,7 +260,7 @@ def test_VersionsAction():
         with pytest.raises(SystemExit):
             parser.parse_args(['--versions', 'invalid_version'])
 
-        namespace = parser.parse_args(['--versions', '1.35,1.36'])
+        namespace = parser.parse_args(['--versions', 'all'])
         assert namespace.versions == ['1.35', '1.36']
 
 
