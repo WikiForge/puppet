@@ -207,8 +207,8 @@ def test_UpgradeExtensionsAction():
     with pytest.raises(SystemExit):
         parser.parse_args(['--upgrade-extensions', 'invalid_extension'])
     with pytest.raises(SystemExit):
-        parser.parse_args(['--upgrade-extensions', 'invalid_extension', '--versions', '1.35'])
-    namespace = parser.parse_args(['--upgrade-extensions', 'Echo,VisualEditor', '--versions', '1.35'])
+        parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'invalid_extension'])
+    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'Echo,VisualEditor'])
     assert namespace.upgrade_extensions == ['Echo', 'VisualEditor']
 
 
@@ -219,8 +219,8 @@ def test_UpgradeSkinsAction():
     with pytest.raises(SystemExit):
         parser.parse_args(['--upgrade-skins', 'invalid_skin'])
     with pytest.raises(SystemExit):
-        parser.parse_args(['--upgrade-skins', 'invalid_skin', '--versions', '1.35'])
-    namespace = parser.parse_args(['--upgrade-skins', 'MonoBook,Vector', '--versions', '1.35'])
+        parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'invalid_skin'])
+    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'MonoBook,Vector'])
     assert namespace.upgrade_skins == ['MonoBook', 'Vector']
 
 
@@ -240,7 +240,7 @@ def test_LangAction():
     parser.add_argument('--lang', action=LangAction)
     with pytest.raises(SystemExit):
         parser.parse_args(['--lang', 'invalid_tag'])
-    namespace = parser.parse_args(['--lang', 'en,fr', '--l10n'])
+    namespace = parser.parse_args(['--l10n', '--lang', 'en,fr'])
     assert namespace.lang == ['en', 'fr']
 
 
@@ -258,5 +258,5 @@ def test_ServersAction():
     parser.add_argument('--servers', action=ServersAction)
     with pytest.raises(SystemExit):
         parser.parse_args(['--servers', 'invalid_server'])
-    namespace = parser.parse_args(['--servers', 'server1,server2'])
-    assert namespace.servers == ['server1', 'server2']
+    namespace = parser.parse_args(['--servers', 'mw1,mw2'])
+    assert namespace.servers == ['mw1', 'mw2']
