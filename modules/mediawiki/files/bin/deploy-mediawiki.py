@@ -135,7 +135,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
 def get_valid_extensions(versions: list[str]) -> list:
     valid_extensions = []
     for version in versions:
-        extensions_path = f'/srv/mediawiki-staging/{version}/extension/'
+        extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
             valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
     return valid_extensions
