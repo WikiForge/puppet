@@ -250,12 +250,16 @@ def test_LangAction():
 
 
 def test_VersionsAction():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--versions', action=VersionsAction)
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--versions', 'invalid_version'])
-    namespace = parser.parse_args(['--versions', '1.35,1.36'])
-    assert namespace.versions == ['1.35', '1.36']
+    with patch('os.popen') as mock_popen:
+        mock_popen.return_value.read.return_value = '{"1.35": "1.35", "1.36", "1.36"}'
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action=VersionsAction)
+
+        with pytest.raises(SystemExit):
+            parser.parse_args(['--versions', 'invalid_version'])
+
+        namespace = parser.parse_args(['--versions', '1.35,1.36'])
+        assert namespace.versions == ['1.35', '1.36']
 
 
 def test_ServersAction():
