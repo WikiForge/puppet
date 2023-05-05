@@ -179,8 +179,13 @@ def _construct_upgrade_mediawiki_run_puppet() -> str:
 
 
 def run(args: argparse.Namespace, start: float) -> None:
+    if args.upgrade_world and not args.reset_world:
+        args.world = True
+        args.pull = 'world'
+        args.upgrade_extensions = 'all'
+        args.upgrade_skins = 'all'
     run_process(args=args, start=start)
-    if args.world or args.l10n or args.extensionlist or args.upgrade or args.upgrade_extensions or args.upgrade_skins:
+    if args.world or args.l10n or args.extensionlist or args.reset_world or args.upgrade_extensions or args.upgrade_skins:
         for version in args.versions:
             run_process(args=args, start=start, version=version)
 
@@ -209,7 +214,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         else:
             print(text)
 
-        if args.upgrade:
+        if version and args.reset_world:
             stage.append(_construct_upgrade_mediawiki_rm_staging(version))
             stage.append(_construct_upgrade_mediawiki_run_puppet())
 
@@ -408,7 +413,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
-    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true', help='wipes world and runs puppet, alternatively use --versions=(versions) --world --pull=world --upgrade-extensions=all --upgrade-skins=all')
+    parser.add_argument('--reset-world', dest='reset_world', action='store_true')
+    parser.add_argument('--upgrade-world', dest='upgrade_world', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
