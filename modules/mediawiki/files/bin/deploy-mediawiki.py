@@ -359,7 +359,7 @@ class LangAction(argparse.Action):
             parser.error('--lang can not be used without --l10n')
         invalid_langs = []
         for language in values.split(','):
-            if not tag_is_valid(language)
+            if not tag_is_valid(language):
                 invalid_langs.append(language)
         if invalid_langs:
             parser.error(f'invalid language choice(s): {", ".join(invalid_langs)}')
