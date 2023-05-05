@@ -192,36 +192,12 @@ def test_construct_git_pull_branch() -> None:
     assert deploy_mediawiki._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
 
-def test_construct_upgrade_mediawiki_rm_staging() -> None:
-    assert deploy_mediawiki._construct_upgrade_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
+def test_construct_reset_mediawiki_rm_staging() -> None:
+    assert deploy_mediawiki._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
 
-def test_construct_upgrade_mediawiki_run_puppet() -> None:
-    assert deploy_mediawiki._construct_upgrade_mediawiki_run_puppet() == 'sudo puppet agent -tv'
-
-
-def test_UpgradeExtensionsAction():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--versions', action='store', default=None)
-    parser.add_argument('--upgrade-extensions', action=UpgradeExtensionsAction)
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--upgrade-extensions', 'invalid_extension'])
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'invalid_extension'])
-    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'Echo,VisualEditor'])
-    assert namespace.upgrade_extensions == ['Echo', 'VisualEditor']
-
-
-def test_UpgradeSkinsAction():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--versions', action='store', default=None)
-    parser.add_argument('--upgrade-skins', action=UpgradeSkinsAction)
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--upgrade-skins', 'invalid_skin'])
-    with pytest.raises(SystemExit):
-        parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'invalid_skin'])
-    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'MonoBook,Vector'])
-    assert namespace.upgrade_skins == ['MonoBook', 'Vector']
+def test_construct_reset_mediawiki_run_puppet() -> None:
+    assert deploy_mediawiki._construct_reset_mediawiki_run_puppet() == 'sudo puppet agent -tv'
 
 
 def test_UpgradePackAction():
