@@ -36,22 +36,16 @@ class puppetdb(
     Boolean $db_ssl = lookup('puppetdb::db_ssl', {'default_value' => true}),
     Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 ) {
-
-    package { 'default-jdk':
-        ensure => present,
-    }
+    ensure_packages('default-jdk')
 
     ## PuppetDB installation
-
-    package { 'puppetdb':
-        ensure  => present,
-        require => Apt::Source['puppetlabs'],
-    }
-
-    package { 'puppetdb-termini':
-        ensure  => present,
-        require => Apt::Source['puppetlabs'],
-    }
+    ensure_packages(
+        ['puppetdb', 'puppetdb-termini'],
+        {
+            ensure  => present,
+            require => Apt::Source['puppetlabs'],
+        },
+    )
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
     file { '/etc/puppetdb':
@@ -164,9 +158,7 @@ class puppetdb(
         },
     }
 
-    package { 'policykit-1':
-        ensure => present,
-    }
+    ensure_packages('policykit-1')
 
     service { 'puppetdb':
         ensure => running,

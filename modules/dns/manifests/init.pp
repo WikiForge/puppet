@@ -1,8 +1,6 @@
 # dns
 class dns {
-    package { 'gdnsd':
-        ensure  => installed,
-    }
+    ensure_packages('gdnsd')
 
     git::clone { 'dns':
         ensure    => latest,
