@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, TypedDict
+from typing import Optional, Union, TypedDict
 import os
 import time
 import requests
@@ -178,7 +178,7 @@ def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: Optional[str] = None, server: Optional[str] = None) -> str:
+def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool = True, local: bool = True, location: Optional[str] = None, server: Optional[str] = None) -> str:
     if time:
         params = '--inplace'
     else:
