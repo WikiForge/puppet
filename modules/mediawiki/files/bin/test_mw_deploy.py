@@ -1,6 +1,7 @@
 import argparse
 import pytest
-from unittest.mock import MagicMock, patch, call
+from contextlib import contextmanager
+from unittest.mock import MagicMock, Mock, patch
 import deploy_mediawiki
 from deploy_mediawiki import (
     UpgradeExtensionsAction,
@@ -12,22 +13,21 @@ from deploy_mediawiki import (
 )
 
 
-@patch('os.scandir')
-def test_get_valid_extensions(mock_scandir):
-    mock_scandir.side_effect = lambda path: [
-        MagicMock(name='Extension1', is_dir=lambda: True),
-        MagicMock(name='Extension2', is_dir=lambda: True),
-    ] if path == '/srv/mediawiki-staging/1.35/extensions/' else [
-        MagicMock(name='Extension3', is_dir=lambda: True),
-        MagicMock(name='Extension4', is_dir=lambda: True),
-    ]
+@contextmanager
+def mock_scandir(dir_path, files):
+    yield [Mock(name=f, is_dir=lambda: True) for f in files]
+
+
+def test_get_valid_extensions():
     versions = ['1.35', '1.36']
-    extensions = deploy_mediawiki.get_valid_extensions(versions)
-    assert extensions == ['Extension1', 'Extension2', 'Extension3', 'Extension4']
-    mock_scandir.assert_has_calls([
-        call('/srv/mediawiki-staging/1.35/extensions/'),
-        call('/srv/mediawiki-staging/1.36/extensions/'),
-    ])
+    extensions1 = ['Extension1', 'Extension2']
+    extensions2 = ['Extension3', 'Extension4']
+
+    with patch('os.scandir', side_effect=lambda path: mock_scandir(path, extensions1)
+        if path == f'/srv/mediawiki-staging/{versions[0]}/extensions/' else mock_scandir(path, extensions2)):
+        
+        extensions = deploy_mediawiki.get_valid_extensions(versions)
+        assert extensions == extensions1 + extensions2
 
 
 @patch('os.scandir')
