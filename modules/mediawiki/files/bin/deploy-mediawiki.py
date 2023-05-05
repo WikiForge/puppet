@@ -225,16 +225,12 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
         if version:
             if args.upgrade_extensions:
-                pull_extensions = str(args.upgrade_extensions).split(',')
-            if pull_extensions:
-                for extension in pull_extensions:
+                for extension in args.upgrade_extensions:
                     stage.append(_construct_git_pull(f'extensions/{extension}', version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
 
             if args.upgrade_skins:
-                pull_skins = str(args.upgrade_skins).split(',')
-            if pull_skins:
-                for skin in pull_skins:
+                for skin in args.upgrade_skins:
                     stage.append(_construct_git_pull(f'skins/{skin}', version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
 
@@ -326,10 +322,48 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         exit(1)
 
 
+class UpgradeExtensionsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        versions = getattr(namespace, 'versions', None)
+        if not versions:
+            parser.error('--versions is required when using --upgrade-extensions (--versions must be come before --upgrade-extensions)')
+        input_extensions = values.split(',')
+        valid_extensions = []
+        for version in versions:
+            extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
+            with os.scandir(extensions_path) as extensions:
+                valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
+        if 'all' in input_extensions:
+            input_extensions = valid_extensions
+        invalid_extensions = set(input_extensions) - set(valid_extensions)
+        if invalid_extensions:
+            parser.error(f'invalid extension choice(s): {", ".join(invalid_extensions)}')
+        setattr(namespace, self.dest, input_extensions)
+
+
+class UpgradeSkinsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        versions = getattr(namespace, 'versions', None)
+        if not versions:
+            parser.error('--versions is required when using --upgrade-skins (--versions must be come before --upgrade-skins)')
+        input_skins = values.split(',')
+        valid_skins = []
+        for version in versions:
+            skins_path = f'/srv/mediawiki-staging/{version}/skins/'
+            with os.scandir(skins_path) as skins:
+                valid_skins += [skin.name for skin in skins if skin.is_dir()]
+        if 'all' in input_skins:
+            input_skins = valid_skins
+        invalid_skins = set(input_skins) - set(valid_skins)
+        if invalid_skins:
+            parser.error(f'invalid skin choice(s): {", ".join(invalid_skins)}')
+        setattr(namespace, self.dest, input_skins)
+
+
 class LangAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
-        if not hasattr(namespace, 'l10n') or not namespace.l10n:
-            parser.error('--lang can not be used without --l10n')
+        if not getattr(namespace, 'l10n', False):
+            parser.error('--lang can not be used without --l10n (--l10n must come before --lang)')
         invalid_langs = []
         for language in values.split(','):
             if not tag_is_valid(language):
@@ -376,12 +410,12 @@ if __name__ == '__main__':
     parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
-    parser.add_argument('--upgrade-extensions', dest='upgrade_extensions')
-    parser.add_argument('--upgrade-skins', dest='upgrade_skins')
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction)
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction)
+    parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction)
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
