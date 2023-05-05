@@ -18,8 +18,8 @@ def get_sysctl(name):
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage:")
-        print("check_conntrack WARNING CRITICAL")
+        print('Usage:')
+        print('check_conntrack WARNING CRITICAL')
         sys.exit(-1)
 
     w = int(sys.argv[1])
@@ -36,16 +36,16 @@ def main():
 
     # check what is the value of full and act upon it
     if full >= c:
-        print("CRITICAL: nf_conntrack is %d %% full" % full)
+        print(f'CRITICAL: nf_conntrack is {full}% full')
         sys.exit(2)
     elif full >= w and full < c:
-        print("WARNING: nf_conntrack is %d %% full" % full)
+        print('WARNING: nf_conntrack is {full}% full')
         sys.exit(1)
     elif full < w:
-        print("OK: nf_conntrack is %d %% full" % full)
+        print('OK: nnf_conntrack is {full}% full')
         sys.exit(0)
     else:
-        print("UNKNOWN: error reading nf_conntrack")
+        print('UNKNOWN: error reading nf_conntrack')
         sys.exit(3)
 
 

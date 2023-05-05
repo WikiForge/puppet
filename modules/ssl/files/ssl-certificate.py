@@ -15,7 +15,8 @@ import sys
 os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
 
 # construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser(description='Script to generate LetsEncrypt certs or generate a CSR.')
+ap = argparse.ArgumentParser(
+    description='Script to generate LetsEncrypt certs or generate a CSR.')
 ap.add_argument('-c', '--csr', required=False,
                 action='store_true', default=False, help='generates a CSR')
 ap.add_argument('-d', '--domain', required=True,
@@ -98,7 +99,8 @@ class SslCertificate:
             print(f'CSR generated at: /root/ssl/{self.domain}.csr')
 
         if not self.quiet:
-            print('Not generating an SSL certificate. Use CSR below to send to the requestor')
+            print(
+                'Not generating an SSL certificate. Use CSR below to send to the requestor')
 
         os.system(f'/bin/cat /root/ssl/{self.domain}.csr')
 
@@ -108,81 +110,105 @@ class SslCertificate:
                 print('Generating Wildcard SSL certificate with LetsEncrypt')
 
             if self.no_existing_key:
-                out = os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                out = os.system(
+                    f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit(
+                        "Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
-                out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                out = os.system(
+                    f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit(
+                        "Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
 
             if not self.quiet:
-                print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+                print(
+                    f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
         else:
             if not self.quiet:
                 print('Generating SSL certificate with LetsEncrypt')
 
             if self.no_existing_key:
-                out = os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                out = os.system(
+                    f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit(
+                        "Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
-                out = os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                out = os.system(
+                    f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit(
+                        "Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
 
             if not self.quiet:
-                print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+                print(
+                    f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.wildcard:
             if not self.quiet:
                 print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-            os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
+            os.system(
+                'git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
-            os.system('git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
+            os.system(
+                'git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
             os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
             os.system('git -C /srv/ssl/ssl/ pull')
-            os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
-            os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
+            os.system(
+                f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
+            os.system(
+                f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
             with open('/srv/ssl/ssl/certs.yaml', 'a') as certs:
-                certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
+                certs.write(self.domain.translate(
+                    str.maketrans('', '', string.punctuation)) + ':\n')
                 certs.write(f"  url: '{self.domain}'\n")
                 certs.write("  ca: 'LetsEncrypt'\n")
                 certs.write('  disable_event: false\n')
 
             os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
-            os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
+            os.system(
+                f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
             os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private:
             print('Private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
-            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
+            os.system(
+                f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
 
     def renew_letsencrypt_certificate(self):
         self.newprivate = False
         if self.wildcard:
             if not self.quiet:
-                print(f'Re-generating a new wildcard SSL cert for {self.domain}')
+                print(
+                    f'Re-generating a new wildcard SSL cert for {self.domain}')
 
             if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
                     self.newprivate = True
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                    os.system(
+                        f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                    os.system(f'/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    os.system(
+                        f'/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                    os.system(
+                        f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
-                    os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    os.system(
+                        f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
                 self.newprivate = True
-                os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(
+                    f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
-                print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+                print(
+                    f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
         else:
             if not self.quiet:
                 print(f'Re-generating a new SSL cert for {self.domain}')
@@ -191,45 +217,60 @@ class SslCertificate:
                 if self.no_existing_key:
                     self.newprivate = True
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                    os.system(
+                        f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                    os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
+                    os.system(
+                        f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                    os.system(
+                        f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
-                    os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
+                    os.system(
+                        f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
             else:
                 self.newprivate = True
-                os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(
+                    f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
-                print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+                print(
+                    f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.quiet:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
+        os.system(
+            'git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
-        os.system('git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
+        os.system(
+            'git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system('git -C /srv/ssl/ssl/ pull')
-        os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
-        os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
-        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}"')
+        os.system(
+            f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
+        os.system(
+            f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
+        os.system(
+            f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}"')
         os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private and self.newprivate is True:
             print('New private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
-            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
+            os.system(
+                f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
-            print(f'Revoking LetsEncrypt certificate at /etc/letsencrypt/live/{self.domain}')
+            print(
+                f'Revoking LetsEncrypt certificate at /etc/letsencrypt/live/{self.domain}')
 
-        os.system(f'/usr/bin/certbot revoke --cert-path /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+        os.system(
+            f'/usr/bin/certbot revoke --cert-path /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.quiet:
-            print(f'Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{self.domain}')
+            print(
+                f'Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{self.domain}')
 
         os.system(f'/usr/bin/certbot delete --cert-name {self.domain}')
 

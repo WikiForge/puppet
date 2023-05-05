@@ -30,7 +30,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
     validDBLists = ('active',) + versionLists
 
-    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php',
+                   'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
     generate = None
 
@@ -43,7 +44,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if args.arguments == []:
                 args.arguments = False
         else:
-            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
+            print(
+                f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
             sys.exit(2)
     except IndexError:
         print('Not enough Arguments given.')
@@ -60,10 +62,12 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     script = args.script
     if not script.endswith('.php'):
         if float(args.version) < 1.40:
-            print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to enable MaintenanceRunner')
+            print(
+                'Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to enable MaintenanceRunner')
             sys.exit(2)
         if float(args.version) >= 1.40 and not args.confirm:
-            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
+            print(
+                f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
             print('WARNING: Use of classes is not well tested. Please use with caution.')
             if input(f"Type 'Y' to confirm (or any other key to stop - rerun without --version={args.version}): ").upper() != 'Y':
                 sys.exit(2)
@@ -133,7 +137,8 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--version', dest='version')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
-    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
+    parser.add_argument('--confirm', '--yes', '-y',
+                        dest='confirm', action='store_true')
 
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]

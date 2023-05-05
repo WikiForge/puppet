@@ -26,7 +26,7 @@ def log(config, message, project, author):
                          consumer_secret=config.wiki_consumer_secret,
                          access_token=config.wiki_access_token,
                          access_secret=config.wiki_access_secret
-                        )
+                         )
     if config.enable_projects:
         project = project.capitalize()
         pagename = config.wiki_page % project
@@ -58,7 +58,8 @@ def log(config, message, project, author):
     if header_date != [now.year, now.month, now.day]:
         lines.insert(position - 1, "")
         lines.insert(position - 1, logline)
-        lines.insert(position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
+        lines.insert(
+            position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
     else:
         lines.insert(position, logline)
     if config.wiki_category:
