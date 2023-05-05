@@ -34,15 +34,26 @@ def test_get_valid_extensions():
         assert extensions == extensions1 + extensions2
 
 
-@patch('os.scandir')
-def test_get_valid_skins(mock_scandir):
-    mock_scandir.return_value = [
-        MagicMock(name='Skin1', is_dir=lambda: True),
-        MagicMock(name='Skin2', is_dir=lambda: True),
-    ]
-    with patch('os.path.exists', return_value=True):
-        skins = deploy_mediawiki.get_valid_skins(['1.35', '1.36'])
-        assert skins == ['Skin1', 'Skin2']
+def test_get_valid_skins():
+    versions = ['1.35', '1.36']
+    skins1 = ['Skins1', 'Skins2']
+    skins2 = ['Skins3', 'Skins4']
+
+    with patch('os.scandir') as mock_scandir:
+        mock_cm1 = MagicMock()
+        mock_cm1.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in skins1]
+        for i, skin in enumerate(skins1):
+            setattr(mock_cm1.__enter__.return_value[i], 'name', skin)
+
+        mock_cm2 = MagicMock()
+        mock_cm2.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in skins2]
+        for i, skin in enumerate(skins2):
+            setattr(mock_cm2.__enter__.return_value[i], 'name', skin)
+
+        mock_scandir.side_effect = [mock_cm1, mock_cm2]
+
+        skins = deploy_mediawiki.get_valid_skins(versions)
+        assert skins == skins1 + skins2
 
 
 def test_get_extensions_in_pack():
