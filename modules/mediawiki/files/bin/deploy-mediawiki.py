@@ -57,7 +57,7 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_valid_extensions(versions: list[str]) -> List:
+def get_valid_extensions(versions: list[str]) -> list:
     valid_extensions = []
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
@@ -66,7 +66,7 @@ def get_valid_extensions(versions: list[str]) -> List:
     return valid_extensions
 
 
-def get_valid_skins(versions: list[str]) -> List:
+def get_valid_skins(versions: list[str]) -> list:
     valid_skins = []
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
@@ -75,7 +75,7 @@ def get_valid_skins(versions: list[str]) -> List:
     return valid_skins
 
 
-def get_extensions_in_pack(pack_name: str) -> List[str]:
+def get_extensions_in_pack(pack_name: str) -> list[str]:
     packs = {
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
         'miraheze': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
