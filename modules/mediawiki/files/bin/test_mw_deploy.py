@@ -3,8 +3,6 @@ import pytest
 from unittest.mock import MagicMock, patch
 import deploy_mediawiki
 from deploy_mediawiki import (
-    UpgradeExtensionsAction,
-    UpgradeSkinsAction,
     UpgradePackAction,
     LangAction,
     VersionsAction,
