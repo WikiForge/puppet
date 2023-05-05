@@ -219,7 +219,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if pull:
             for repo in pull:
                 try:
-                    if repo == 'world':
+                    if version and repo == 'world':
                         repo = version
                     stage.append(_construct_git_pull(repo, branch=args.branch))
                 except KeyError:
