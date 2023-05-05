@@ -4,12 +4,11 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 deploy_mediawiki = importlib.import_module('deploy-mediawiki')
-from deploy_mediawiki import (  # noqa: E402
-    UpgradePackAction,
-    LangAction,
-    VersionsAction,
-    ServersAction,
-)
+
+UpgradePackAction = deploy_mediawiki.UpgradePackAction
+LangAction = deploy_mediawiki.LangAction
+VersionsAction = deploy_mediawiki.VersionsAction
+ServersAction = deploy_mediawiki.ServersAction
 
 
 def test_get_valid_extensions():
