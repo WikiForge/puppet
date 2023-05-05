@@ -227,7 +227,7 @@ def test_LangAction():
 def test_VersionsAction():
     deploy_mediawiki.versions.clear()
     with patch('os.path.exists', return_value=True), \
-         patch.dict('deploy_mediawiki.versions', {'1.35': '1.35', '1.36': '1.36'}):
+         patch.dict(deploy_mediawiki.versions, {'1.35': '1.35', '1.36': '1.36'}):
         parser = argparse.ArgumentParser()
         parser.add_argument('--versions', action=VersionsAction)
 
