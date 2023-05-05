@@ -207,8 +207,8 @@ def test_UpgradeExtensionsAction():
     with pytest.raises(SystemExit):
         parser.parse_args(['--upgrade-extensions', 'invalid_extension'])
     with pytest.raises(SystemExit):
-        parser.parse_args(['--versions=1.35', '--upgrade-extensions', 'invalid_extension'])
-    namespace = parser.parse_args(['--versions=1.35', '--upgrade-extensions', 'Echo,VisualEditor'])
+        parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'invalid_extension'])
+    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-extensions', 'Echo,VisualEditor'])
     assert namespace.upgrade_extensions == ['Echo', 'VisualEditor']
 
 
@@ -219,8 +219,8 @@ def test_UpgradeSkinsAction():
     with pytest.raises(SystemExit):
         parser.parse_args(['--upgrade-skins', 'invalid_skin'])
     with pytest.raises(SystemExit):
-        parser.parse_args(['--versions=1.35', '--upgrade-skins', 'invalid_skin'])
-    namespace = parser.parse_args(['--versions=1.35', '--upgrade-skins', 'MonoBook,Vector'])
+        parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'invalid_skin'])
+    namespace = parser.parse_args(['--versions', '1.35', '--upgrade-skins', 'MonoBook,Vector'])
     assert namespace.upgrade_skins == ['MonoBook', 'Vector']
 
 
@@ -251,7 +251,7 @@ def test_LangAction():
 
 def test_VersionsAction():
     deploy_mediawiki.versions.clear()
-    with patch('os.path.exists', return_value=True) as mock_exists, \
+    with patch('os.path.exists', return_value=True), \
          patch.dict('deploy_mediawiki.versions', {'1.35': '1.35', '1.36': '1.36'}):
         parser = argparse.ArgumentParser()
         parser.add_argument('--versions', action=VersionsAction)
