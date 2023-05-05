@@ -251,16 +251,16 @@ def test_LangAction():
 
 def test_VersionsAction():
     deploy_mediawiki.versions.clear()
-    with patch('os.popen') as mock_popen, \
-         patch('os.path.exists') as mock_exists, \
+    with patch('os.path.exists', return_value=True) as mock_exists, \
          patch.dict('deploy_mediawiki.versions', {'1.35': '1.35', '1.36': '1.36'}):
-        mock_popen.return_value.read.return_value = '{"1.35": "1.35", "1.36": "1.36"}'
-        mock_exists.return_value = True
         parser = argparse.ArgumentParser()
         parser.add_argument('--versions', action=VersionsAction)
 
         with pytest.raises(SystemExit):
             parser.parse_args(['--versions', 'invalid_version'])
+
+        namespace = parser.parse_args(['--versions', '1.35'])
+        assert namespace.versions == ['1.35']
 
         namespace = parser.parse_args(['--versions', 'all'])
         assert namespace.versions == ['1.35', '1.36']
