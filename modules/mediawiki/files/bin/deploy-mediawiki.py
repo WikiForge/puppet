@@ -213,7 +213,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
     run_process(args=args, start=start)
-    if args.world or args.l10n or args.extensionlist or args.reset_world or args.upgrade_extensions or args.upgrade_skins:
+    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins:
         for version in args.versions:
             run_process(args=args, start=start, version=version)
 
@@ -296,7 +296,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
             for folder in folders:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
-        if args.extensionlist and version:  # when adding skins/exts
+        if args.extension_list and version:  # when adding skins/exts
             rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
@@ -336,7 +336,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     if args.folders and not version:
         for folder in str(args.folders).split(','):
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
-    if args.extensionlist and version:
+    if args.extension_list and version:
         rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.json')
     if args.l10n and version:
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
@@ -446,7 +446,7 @@ if __name__ == '__main__':
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
-    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
+    parser.add_argument('--extension-list', dest='extension_list', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
     parser.add_argument('--files', dest='files')
