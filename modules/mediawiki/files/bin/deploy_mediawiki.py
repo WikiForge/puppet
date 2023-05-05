@@ -408,13 +408,16 @@ class UpgradePackAction(argparse.Action):
 
 
 class LangAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+    def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
+        if not getattr(namespace, 'l10n', False):
+            parser.error('--lang can not be used without --l10n (--l10n must come before --lang)')
         invalid_langs = []
-        for language in values.split(','):
+        for language in value.split(','):
             if not tag_is_valid(language):
                 invalid_langs.append(language)
         if invalid_langs:
             parser.error(f'invalid language choice(s): {", ".join(invalid_langs)}')
+        setattr(namespace, 'lang', value)
 
 
 class VersionsAction(argparse.Action):
