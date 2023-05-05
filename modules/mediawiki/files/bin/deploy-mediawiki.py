@@ -57,6 +57,24 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
+def get_valid_extensions(versions: list[str]) -> list:
+    valid_extensions = []
+    for version in versions:
+        extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
+        with os.scandir(extensions_path) as extensions:
+            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
+    return valid_extensions
+
+
+def get_valid_skins(versions: list[str]) -> list:
+    valid_skins = []
+    for version in versions:
+        skins_path = f'/srv/mediawiki-staging/{version}/skins/'
+        with os.scandir(skins_path) as skins:
+            valid_skins += [skin.name for skin in skins if skin.is_dir()]
+    return valid_skins
+
+
 def run_command(cmd: str) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
@@ -130,24 +148,6 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
             return 0
     print(f'Finished {path} deploys.')
     return ec
-
-
-def get_valid_extensions(versions: list[str]) -> list:
-    valid_extensions = []
-    for version in versions:
-        extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
-        with os.scandir(extensions_path) as extensions:
-            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
-    return valid_extensions
-
-
-def get_valid_skins(versions: list[str]) -> list:
-    valid_skins = []
-    for version in versions:
-        skins_path = f'/srv/mediawiki-staging/{version}/skins/'
-        with os.scandir(skins_path) as skins:
-            valid_skins += [skin.name for skin in skins if skin.is_dir()]
-    return valid_skins
 
 
 def _get_staging_path(repo: str, version: str = '') -> str:
