@@ -18,10 +18,10 @@ def test_get_valid_extensions(mock_scandir):
 
     mock_scandir.side_effect = lambda path: [
         MagicMock(name='Extension1', is_dir=lambda: True),
-        MagicMock(name='Extension2', is_dir=lambda: True)
+        MagicMock(name='Extension2', is_dir=lambda: True),
     ] if path == f'/srv/mediawiki-staging/{versions[0]}/extensions/' else [
         MagicMock(name='Extension3', is_dir=lambda: True),
-        MagicMock(name='Extension4', is_dir=lambda: True)
+        MagicMock(name='Extension4', is_dir=lambda: True),
     ]
 
     extensions = deploy_mediawiki.get_valid_extensions(versions)
