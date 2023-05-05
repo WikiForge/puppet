@@ -131,13 +131,13 @@ class Chain:
             lines.append('+{str(rule)}')
         return lines
 
-    def header(self, obj=None):
+    def header(self, obj = None):
         """Return a formated header"""
         if obj is not None:
-            return self._header.format(name=obj.name, policy=obj.policy)
-        return self._header.format(name=self.name, policy=self.policy)
+            return self._header.format(name = obj.name, policy = obj.policy)
+        return self._header.format(name = self.name, policy = self.policy)
 
-    @property
+    @ property
     def rules(self):
         """Return all rules"""
         return self._rules
@@ -147,7 +147,7 @@ class Rule:
     """class to parse an iptables rule"""
 
     # pylint: disable=too-many-instance-attributes
-    argument_switch = {
+    argument_switch={
         '-A': 'chain',
         '-p': 'protocol',
         '--protocol': 'protocol',
@@ -170,31 +170,31 @@ class Rule:
     }
 
     def __init__(self, raw):
-        self._raw = raw
-        self._raw_words = raw.split()
-        self.chain = None
-        self.source = None
-        self.destination = None
-        self.protocol = None
-        self.dport = None
-        self.sport = None
-        self.match = None
-        self.state = None
-        self.comments = []
-        self.limit = None
-        self.limit_burst = None
-        self.pkt_type = None
-        self.jump = None
+        self._raw=raw
+        self._raw_words=raw.split()
+        self.chain=None
+        self.source=None
+        self.destination=None
+        self.protocol=None
+        self.dport=None
+        self.sport=None
+        self.match=None
+        self.state=None
+        self.comments=[]
+        self.limit=None
+        self.limit_burst=None
+        self.pkt_type=None
+        self.jump=None
         self._parse()
 
     def __hash__(self):
         return hash(str(self))
 
     def __str__(self):
-        output = [f'-A {self.chain}']
+        output=[f'-A {self.chain}']
         for token, value in vars(self).items():
             if isinstance(value, str):
-                value = [value]
+                value=[value]
             if token.startswith('_raw') or token == 'chain' or not isinstance(value, list):
                 continue
             output += [f'--{token.replace('_', '-')} {element}' for element in value]
@@ -211,7 +211,7 @@ class Rule:
                 return False
         return True
 
-    @staticmethod
+    @ staticmethod
     def _resolve_port(port):
         """convert a port name to a number e.g. ssh -> 22"""
         # return ranges like 6800:7100
@@ -230,44 +230,46 @@ class Rule:
                     continue
                 if word == '--comment':
                     # We can have multiple comments so this is an array
-                    self.comments.append(get_quoted_string(self._raw_words, idx + 1))
+                    self.comments.append(
+                        get_quoted_string(self._raw_words, idx + 1))
                     continue
-                vars(self)[self.argument_switch.get(word)] = self._raw_words[idx + 1]
+                vars(self)[self.argument_switch.get(
+                    word)]=self._raw_words[idx + 1]
 
         # perform a bit of normalisation
         if self.match == 'state':
-            self.state = self.state.split(',').sort()
+            self.state=self.state.split(',').sort()
         if self.limit is not None:
-            self.limit = self.limit.replace('second', 'sec')
+            self.limit=self.limit.replace('second', 'sec')
         if self.protocol is not None:
-            self.protocol = self.protocol.replace('icmpv6', 'ipv6-icmp')
+            self.protocol=self.protocol.replace('icmpv6', 'ipv6-icmp')
         if self.source is not None:
-            self.source = ip_network(self.source)
+            self.source=ip_network(self.source)
         if self.destination is not None:
-            self.destination = ip_network(self.destination)
+            self.destination=ip_network(self.destination)
         if self.dport is not None:
-            self.dport = Rule._resolve_port(self.dport)
+            self.dport=Rule._resolve_port(self.dport)
         if self.sport is not None:
-            self.sport = Rule._resolve_port(self.sport)
+            self.sport=Rule._resolve_port(self.sport)
 
 
 class Parser:
     """A class to parse the output of iptabls-save and ferm -nl"""
 
-    parser_methods = {
+    parser_methods={
     '*': 'table',
     ':': 'chain',
     '-': 'rule',
     }
 
-    def __init__(self, lines, ignored_chain_prefixes=(),
-                 ignored_comment_prefixs=(), autoparse=True):
-        self._lines = lines
-        self._table = None
-        self._chain = None
-        self.ignored_chain_prefixes = ignored_chain_prefixes
-        self.ignored_comment_prefixs = ignored_comment_prefixs
-        self._tables = Tables()
+    def __init__(self, lines, ignored_chain_prefixes = (),
+                 ignored_comment_prefixs = (), autoparse = True):
+        self._lines=lines
+        self._table=None
+        self._chain=None
+        self.ignored_chain_prefixes=ignored_chain_prefixes
+        self.ignored_comment_prefixs=ignored_comment_prefixs
+        self._tables=Tables()
         if autoparse:
             self.parse()
 
@@ -277,7 +279,7 @@ class Parser:
     def __str__(self):
         return str(self.tables)
 
-    @property
+    @ property
     def tables(self):
         """Return all tables"""
         return self._tables
@@ -287,9 +289,10 @@ class Parser:
         for line in self._lines.splitlines():
             if not line:
                 continue
-            first_char = line[0]
+            first_char=line[0]
             if first_char in self.parser_methods:
-                getattr(self, f'_parse_{self.parser_methods[first_char]}')(line)
+                getattr(self, f'_parse_{self.parser_methods[first_char]}')(
+                    line)
 
     def diff(self, parser):
         """return a diff between self and parser
@@ -299,7 +302,7 @@ class Parser:
         return:
             list: a list of strings representing the difference between self and parser
         """
-        lines = []
+        lines=[]
         for missing in set(parser.tables.keys()) - set(self.tables.keys()):
             lines.append(f'-*{missing}')
         for additional in set(self.tables.keys()) - set(parser.tables.keys()):
@@ -311,21 +314,21 @@ class Parser:
 
     def _parse_table(self, line):
         self._table = Table(line[1:])
-        self._tables[self._table.name] = self._table
-        self._chain = None
+        self._tables[self._table.name]=self._table
+        self._chain=None
 
     def _parse_chain(self, line):
-        parts = line.split()
+        parts=line.split()
         if parts[0][1:].startswith(self.ignored_chain_prefixes):
             return
         if parts[1] == '-':
-            parts[1] = None
+            parts[1]=None
         self._chain = Chain(parts[0][1:], parts[1])
         self._table.add(self._chain)
 
     def _parse_rule(self, line):
-        chain = line.split()[1]
-        rule = Rule(line)
+        chain=line.split()[1]
+        rule=Rule(line)
         if chain.startswith(self.ignored_chain_prefixes):
             return
         if rule.jump and rule.jump.startswith(self.ignored_chain_prefixes):
@@ -333,36 +336,42 @@ class Parser:
         if rule.comments and any(comment for comment in rule.comments
                                  if comment.startswith(self.ignored_comment_prefixs)):
             return
-        self._chain = self._table.chains[chain]
+        self._chain=self._table.chains[chain]
         self._chain.add(Rule(line))
 
 
 def get_args():
     """Parse arguments"""
-    parser = ArgumentParser(description=__doc__)
-    parser.add_argument('-v', '--verbose', action='store_true')
+    parser=ArgumentParser(description = __doc__)
+    parser.add_argument('-v', '--verbose', action = 'store_true')
     return parser.parse_args()
 
 
 def main():
     """Main entry point"""
-    args = get_args()
+    args=get_args()
 
     # calico creates dynamic rules in chains prefixed with cali-
     # as well as the following chains  KUBE-SERVICES, KUBE-FIREWALL and KUBE-FORWARD
     # docker creates DOCKER and DOCKER_USER
-    ignored_chain_prefix = ('DOCKER', 'cali-', 'KUBE-')
-    ignored_comment_prefixs = ('cali:')
+    ignored_chain_prefix=('DOCKER', 'cali-', 'KUBE-')
+    ignored_comment_prefixs=('cali:')
 
-    iptables = check_output(['/sbin/iptables-save'])
-    ferm = check_output(["/usr/sbin/ferm", "-nl", "--domain", "ip", "/etc/ferm/ferm.conf"])
-    ip6tables = check_output(['/sbin/ip6tables-save'])
-    ferm6 = check_output(["/usr/sbin/ferm", "-nl", "--domain", "ip6", "/etc/ferm/ferm.conf"])
+    iptables=check_output(['/sbin/iptables-save'])
+    ferm=check_output(["/usr/sbin/ferm", "-nl", "--domain",
+                      "ip", "/etc/ferm/ferm.conf"])
+    ip6tables=check_output(['/sbin/ip6tables-save'])
+    ferm6=check_output(["/usr/sbin/ferm", "-nl", "--domain",
+                       "ip6", "/etc/ferm/ferm.conf"])
 
-    ferm_parsed = Parser(ferm.decode(), ignored_chain_prefix, ignored_comment_prefixs)
-    iptables_parsed = Parser(iptables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
-    ferm6_parsed = Parser(ferm6.decode(), ignored_chain_prefix, ignored_comment_prefixs)
-    ip6tables_parsed = Parser(ip6tables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
+    ferm_parsed=Parser(ferm.decode(), ignored_chain_prefix,
+                       ignored_comment_prefixs)
+    iptables_parsed=Parser(
+        iptables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
+    ferm6_parsed=Parser(ferm6.decode(), ignored_chain_prefix,
+                        ignored_comment_prefixs)
+    ip6tables_parsed=Parser(
+        ip6tables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
 
     if ferm6_parsed != ip6tables_parsed:
         if args.verbose:

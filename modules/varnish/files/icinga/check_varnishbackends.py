@@ -41,25 +41,34 @@ def runcommand(command, exit_on_fail=True):
 
 
 def main(argv):
-    o = argparse.ArgumentParser(conflict_handler="resolve", description="Nagios plugin to check varnish backend health.")
-    o.add_argument('-H', '--host', action='store', dest='host', default='127.0.0.1', help='The ip varnishadm is listening on')
-    o.add_argument('-P', '--port', action='store', dest='port', default=6082, help='The port varnishadm is listening on')
-    o.add_argument('-s', '--secret', action='store', dest='secret', default='/etc/varnish/secret', help='The path to the secret file')
-    o.add_argument('-p', '--path', action='store', dest='path', default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
+    o = argparse.ArgumentParser(
+        conflict_handler="resolve", description="Nagios plugin to check varnish backend health.")
+    o.add_argument('-H', '--host', action='store', dest='host',
+                   default='127.0.0.1', help='The ip varnishadm is listening on')
+    o.add_argument('-P', '--port', action='store', dest='port',
+                   default=6082, help='The port varnishadm is listening on')
+    o.add_argument('-s', '--secret', action='store', dest='secret',
+                   default='/etc/varnish/secret', help='The path to the secret file')
+    o.add_argument('-p', '--path', action='store', dest='path',
+                   default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
 
     options = o.parse_args()
-    command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
+    command = runcommand(
+        "%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
     backends = command.split(b"\n")
     backends_healthy, backends_sick = [], []
     for line in backends:
         if line.startswith(b"vcl") and line.find(b"test") == -1:
             if (line.find(b"Healthy") != -1) or (line.find(b"healthy") != -1) or (line.find(b"good") != -1):
-                backends_healthy.append(re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
+                backends_healthy.append(
+                    re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
             else:
-                backends_sick.append(re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
+                backends_sick.append(
+                    re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
 
     if backends_sick:
-        print(("%s backends are down.  %s" % (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))
+        print(("%s backends are down.  %s" %
+              (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))
         sys.exit(2)
 
     if not backends_sick and not backends_healthy:

@@ -15,11 +15,16 @@ from fabric import Connection
 from datetime import datetime
 from py7zr import SevenZipFile
 
-parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiForge backups from PCA.')
-parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-static', 'mediawiki-xml'], help='Type of backup to handle using the action')
-parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
-parser.add_argument('--database', dest='database', help='Specific database to download or backup')
+parser = argparse.ArgumentParser(
+    description='Provides backup and download functionality for WikiForge backups from PCA.')
+parser.add_argument('action', choices=[
+                    'backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql',
+                    'mediawiki-static', 'mediawiki-xml'], help='Type of backup to handle using the action')
+parser.add_argument('--date', dest='date',
+                    help='Date for backup to download', metavar='YYYY-MM-DD')
+parser.add_argument('--database', dest='database',
+                    help='Specific database to download or backup')
 args = parser.parse_args()
 
 
@@ -29,22 +34,25 @@ def pca_connection():
 
 def pca_web(method: str, url: str, expiry: int):
     pca_password = "<%= @pca_password %>"
-    json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": pca_password.split('.')[1], "domain": { "id": "default" }, "password": pca_password.split('.')[2] } } }, "scope": { "project": { "id": "162389f5fb5c40329ef10e20ff94616b", "domain": { "id": "default" } } } } }
+    json_data = {"auth": {"identity": {"methods": ["password"], "password": {"user": {"name": pca_password.split('.')[1], "domain": {"id": "default"}, "password": pca_password.split('.')[2]}}}, "scope": {
+        "project": {"id": "162389f5fb5c40329ef10e20ff94616b", "domain": {"id": "default"}}}}}
 
-    token = requests.post(f'https://auth.cloud.ovh.us/v3/auth/tokens', json=json_data, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
-    headers = { 'X-AUTH-TOKEN': token }
-    
+    token = requests.post(f'https://auth.cloud.ovh.us/v3/auth/tokens', json=json_data,
+                          headers={'Content-Type': 'application/json'}).headers.get('X-Subject-Token')
+    headers = {'X-AUTH-TOKEN': token}
+
     if method == 'GET':
         return requests.get(url, headers=headers)
     elif method == 'POST':
         if expiry > 0:
             headers['X-Delete-After'] = f'{expiry*604800}'
-        
+
         return requests.post(url, headers=headers)
     elif method == 'HEAD':
         return requests.head(url, headers=headers)
     else:
-        raise Exception('Method is not currently implemented in WikiForge-Backup')
+        raise Exception(
+            'Method is not currently implemented in WikiForge-Backup')
 
 
 def backup_private(dt: str):
@@ -53,7 +61,8 @@ def backup_private(dt: str):
     tar.close()
 
     pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/private/{dt}.tar.gz', 4)
+    pca_web(
+        'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/private/{dt}.tar.gz', 4)
 
     os.remove('private.tar.gz')
 
@@ -64,13 +73,15 @@ def backup_sslkeys(dt: str):
     tar.close()
 
     pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sslkeys/{dt}.tar.gz', 4)
+    pca_web(
+        'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sslkeys/{dt}.tar.gz', 4)
 
     os.remove('sslkeys.tar.gz')
 
 
 def backup_phorge(dt: str):
-    os.system('/srv/phorge/phorge/bin/storage dump --compress --output backup.tar.gz')
+    os.system(
+        '/srv/phorge/phorge/bin/storage dump --compress --output backup.tar.gz')
     tar = tarfile.open('phorge.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
     os.remove('backup.tar.gz')
@@ -78,7 +89,8 @@ def backup_phorge(dt: str):
     tar.close()
 
     pca_connection().put('phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/phorge/{dt}.tar.gz', 4)
+    pca_web(
+        'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/phorge/{dt}.tar.gz', 4)
 
     os.remove('phorge.tar.gz')
 
@@ -86,9 +98,11 @@ def backup_phorge(dt: str):
 def backup_sql(dt: str, database: str):
     if database is None:
         os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
-        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
+        dbs = [file for file in os.listdir(
+            '/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
     else:
-        os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}.backup')
+        os.system(
+            f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}.backup')
         dbs = [database]
 
     for db in dbs:
@@ -99,18 +113,21 @@ def backup_sql(dt: str, database: str):
         tar.close()
 
         pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/{db}/{dt}.tar.gz', 5)
+        pca_web(
+            'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/{db}/{dt}.tar.gz', 5)
 
         os.remove(f'{db}.tar.gz')
 
 
 def backup_mediawiki_static(dt: str, database: str):
     if database is None:
-        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
+        dbs = json.load(
+            open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
     else:
         dbs = [database]
 
-    excluded_dirs = {'archive', 'deleted', 'dumps', 'lockdir', 'sitemaps', 'temp', 'thumb'}
+    excluded_dirs = {'archive', 'deleted', 'dumps',
+                     'lockdir', 'sitemaps', 'temp', 'thumb'}
 
     for db in dbs:
         with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
@@ -119,27 +136,34 @@ def backup_mediawiki_static(dt: str, database: str):
 
                 for file in files:
                     file_path = os.path.join(root, file)
-                    archive_path = os.path.relpath(file_path, f'/mnt/mediawiki-static/{db}')
+                    archive_path = os.path.relpath(
+                        file_path, f'/mnt/mediawiki-static/{db}')
                     archive.write(file_path, archive_path)
 
-        pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
+        pca_connection().put(
+            f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
+        pca_web(
+            'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
 
         os.remove(f'/mnt/mediawiki-static/{db}.7z')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
     if database is None:
-        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
+        dbs = json.load(
+            open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
     else:
         dbs = [database]
 
     for db in dbs:
         version = os.popen(f'getMWVersion {db}').read().strip()
-        os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=7 --wiki={db}')
+        os.system(
+            f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=7 --wiki={db}')
 
-        pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
+        pca_connection().put(
+            f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
+        pca_web(
+            'POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
 
         os.remove(f'/srv/backups/{db}.xml.7z')
 
@@ -166,18 +190,21 @@ def backup(source: str, database: str):
 
 
 def download_pca(file: str):
-    check_header = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-State')
-    
+    check_header = pca_web(
+        'HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-State')
+
     if check_header == 'sealed':
         print(f'{file} is unable to be downloaded as the file is sealed. Please unfreeze the file using the unfreeze command.')
     elif check_header == 'unsealing':
-        unseal_time = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+        unseal_time = pca_web(
+            'HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
         print(f'{file} is unable to be downloaded as the file is being unsealed. Please try again in {unseal_time}s.')
     else:
         try:
             pca_connection().get(file)
         except:
-            print('Unable to download file! Please raise this on Phorge if this is a repeat issue.')
+            print(
+                'Unable to download file! Please raise this on Phorge if this is a repeat issue.')
 
 
 def download(source: str, dt: str, database: str):
@@ -195,9 +222,10 @@ def download(source: str, dt: str, database: str):
 
 
 def find_backups(source: str, database: str):
-    all_backups = pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{source}', 0)
+    all_backups = pca_web(
+        'GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{source}', 0)
     backups_list = list(all_backups.text.split("\n"))
-    
+
     if source in ['database', 'mediawiki-static', 'mediawiki-xml']:
         for backup_item in backups_list:
             if backup_item.split('/')[0] == database:
@@ -215,9 +243,12 @@ def unfreeze_backup(source: str, dt: str, database: str):
     elif source in ['mediawiki-static', 'mediawiki-xml']:
         file = f'{source}/{database}/{dt}.7z'
 
-    pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
-    available_in = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+    pca_web(
+        'GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
+    available_in = pca_web(
+        'HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
     print(f'{file} has been unfrozen. It will be available to download in {int(available_in)/60} minutes.')
+
 
 if __name__ == '__main__':
 

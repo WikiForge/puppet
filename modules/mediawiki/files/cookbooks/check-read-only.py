@@ -3,7 +3,8 @@
 from requests import get
 from sys import exit
 headers = {'host': 'meta.wikiforge.net'}
-response = get('https://localhost/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=False).json()
+response = get('https://localhost/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json',
+               headers=headers, verify=False).json()
 if not response['query']['general']['readonly']:
     print('Site is READ-WRITE')
     exit(0)
