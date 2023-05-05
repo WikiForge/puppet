@@ -228,11 +228,13 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 for extension in args.upgrade_extensions:
                     stage.append(_construct_git_pull(f'extensions/{extension}', version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
+                    rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
                     stage.append(_construct_git_pull(f'skins/{skin}', version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+                    rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
