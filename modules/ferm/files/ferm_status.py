@@ -53,7 +53,7 @@ class Table:
         return self.name == obj.name and self.chains == obj.chains
 
     def __str__(self):
-        lines = ['*{}'.format(self.name)]
+        lines = [f'*{self.name}']
         return '\n'.join(lines + [str(chain) for chain in self.chains.values()])
 
     def add(self, chain):
@@ -74,11 +74,11 @@ class Table:
         """
         lines = []
         for missing in set(table.chains.keys()) - set(self.chains.keys()):
-            lines.append('-:{}'.format(missing))
+            lines.append(f'-:{missing}')
         for additional in set(self.chains.keys()) - set(table.chains.keys()):
-            lines.append('+:{}'.format(additional))
+            lines.append(f'+:{additional}')
         for name, chain in self.chains.items():
-            if name in table.chains.keys():
+            if name in table.chains:
                 lines += chain.diff(table.chains[name])
         return lines
 
@@ -98,10 +98,7 @@ class Chain:
         self._rules = []
 
     def __eq__(self, obj):
-        for token, value in vars(self).items():
-            if value != vars(obj)[token]:
-                return False
-        return True
+        return all(not value != vars(obj)[token] for token, value in vars(self).items())
 
     def __str__(self):
         return '\n'.join([self.header()] + [str(rule) for rule in self.rules])
@@ -125,13 +122,13 @@ class Chain:
         lines = []
         if self.policy != chain.policy:
             lines.append([
-                '-{}'.format(self.header()),
-                '+{}'.format(self.header(chain)),
+                f'-{self.header()}'),
+                f'+{self.header(chain)}'),
             ])
         for rule in set(self.rules) - set(chain.rules):
-            lines.append('-{}'.format(str(rule)))
+            lines.append('-{str(rule)}')
         for rule in set(chain.rules) - set(self.rules):
-            lines.append('+{}'.format(str(rule)))
+            lines.append('+{str(rule)}')
         return lines
 
     def header(self, obj=None):
@@ -194,13 +191,13 @@ class Rule:
         return hash(str(self))
 
     def __str__(self):
-        output = ['-A {}'.format(self.chain)]
+        output = [f'-A {self.chain}']
         for token, value in vars(self).items():
             if isinstance(value, str):
                 value = [value]
             if token.startswith('_raw') or token == 'chain' or not isinstance(value, list):
                 continue
-            output += ['--{} {}'.format(token.replace('_', '-'), element) for element in value]
+            output += [f'--{token.replace('_', '-')} {element}' for element in value]
         return ' '.join(output)
 
     def __repr__(self):
@@ -227,7 +224,7 @@ class Rule:
 
     def _parse(self):
         for idx, word in enumerate(self._raw_words):
-            if word in self.argument_switch.keys():
+            if word in self.argument_switch:
                 # don't track -m (tcp|udp)
                 if word in ['-m', '--match'] and self._raw_words[idx + 1] in ['tcp', 'udp']:
                     continue
@@ -258,9 +255,9 @@ class Parser:
     """A class to parse the output of iptabls-save and ferm -nl"""
 
     parser_methods = {
-        '*': 'table',
-        ':': 'chain',
-        '-': 'rule',
+    '*': 'table',
+    ':': 'chain',
+    '-': 'rule',
     }
 
     def __init__(self, lines, ignored_chain_prefixes=(),
@@ -292,7 +289,7 @@ class Parser:
                 continue
             first_char = line[0]
             if first_char in self.parser_methods:
-                getattr(self, '_parse_{}'.format(self.parser_methods[first_char]))(line)
+                getattr(self, f'_parse_{self.parser_methods[first_char]}')(line)
 
     def diff(self, parser):
         """return a diff between self and parser
@@ -304,9 +301,9 @@ class Parser:
         """
         lines = []
         for missing in set(parser.tables.keys()) - set(self.tables.keys()):
-            lines.append('-*{}'.format(missing))
+            lines.append(f'-*{missing}')
         for additional in set(self.tables.keys()) - set(parser.tables.keys()):
-            lines.append('+*{}'.format(additional))
+            lines.append(f'+*{additional}')
         for name, table in self.tables.items():
             if name in parser.tables:
                 lines += table.diff(parser.tables[name])
@@ -358,25 +355,24 @@ def main():
     ignored_comment_prefixs = ('cali:')
 
     iptables = check_output(['/sbin/iptables-save'])
-    ferm = check_output('/usr/sbin/ferm -nl --domain ip /etc/ferm/ferm.conf'.split())
+    ferm = check_output(["/usr/sbin/ferm", "-nl", "--domain", "ip", "/etc/ferm/ferm.conf"])
     ip6tables = check_output(['/sbin/ip6tables-save'])
-    ferm6 = check_output('/usr/sbin/ferm -nl --domain ip6 /etc/ferm/ferm.conf'.split())
+    ferm6 = check_output(["/usr/sbin/ferm", "-nl", "--domain", "ip6", "/etc/ferm/ferm.conf"])
 
     ferm_parsed = Parser(ferm.decode(), ignored_chain_prefix, ignored_comment_prefixs)
     iptables_parsed = Parser(iptables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
     ferm6_parsed = Parser(ferm6.decode(), ignored_chain_prefix, ignored_comment_prefixs)
     ip6tables_parsed = Parser(ip6tables.decode(), ignored_chain_prefix, ignored_comment_prefixs)
 
-    ret_code = 0
     if ferm6_parsed != ip6tables_parsed:
-        ret_code = 1
         if args.verbose:
-            print('ipv6:\n{}'.format(ip6tables_parsed.diff(ferm6_parsed)))
+            print(f'ipv6:\n{ip6tables_parsed.diff(ferm6_parsed)}')
+        return 1
     if ferm_parsed != iptables_parsed:
-        ret_code = 1
         if args.verbose:
-            print('ipv4:\n{}'.format(iptables_parsed.diff(ferm_parsed)))
-    return ret_code
+            print(f'ipv4:\n{iptables_parsed.diff(ferm_parsed)}')
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
