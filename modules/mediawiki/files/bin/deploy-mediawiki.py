@@ -5,6 +5,7 @@ from typing import Optional, TypedDict
 import os
 import time
 import requests
+import signal
 import socket
 import json
 from sys import exit
@@ -49,6 +50,14 @@ ENVIRONMENTS: EnvironmentList = {
 del prod
 del test
 HOSTNAME = socket.gethostname().split('.')[0]
+
+
+def signal_handler(sig, frame):  # noqa: U100
+    print('Deploy canceled by user (Ctrl+C).')
+    exit(2)
+
+
+signal.signal(signal.SIGINT, signal_handler)
 
 
 def get_environment_info() -> Environment:
