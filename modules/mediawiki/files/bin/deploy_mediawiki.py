@@ -205,11 +205,11 @@ def _construct_git_pull(repo: str, branch: Optional[str] = None, version: str = 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}--quiet'
 
 
-def _construct_upgrade_mediawiki_rm_staging(version: str) -> str:
+def _construct_reset_mediawiki_rm_staging(version: str) -> str:
     return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path(version)}'
 
 
-def _construct_upgrade_mediawiki_run_puppet() -> str:
+def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
@@ -250,8 +250,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
             print(text)
 
         if version and args.reset_world:
-            stage.append(_construct_upgrade_mediawiki_rm_staging(version))
-            stage.append(_construct_upgrade_mediawiki_run_puppet())
+            stage.append(_construct_reset_mediawiki_rm_staging(version))
+            stage.append(_construct_reset_mediawiki_run_puppet())
 
         pull = []
         if args.pull:
