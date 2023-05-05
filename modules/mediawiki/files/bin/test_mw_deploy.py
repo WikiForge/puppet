@@ -14,21 +14,16 @@ from deploy_mediawiki import (
 
 def test_get_valid_extensions():
     versions = ['1.35', '1.36']
+    extensions1 = ['Extension1', 'Extension2']
+    extensions2 = ['Extension3', 'Extension4']
 
-    mock_scandir = MagicMock()
-    mock_scandir.side_effect = [
-        [
-            MagicMock(name='Extension1', is_dir=lambda: True),
-            MagicMock(name='Extension2', is_dir=lambda: True),
-        ],
-        [
-            MagicMock(name='Extension3', is_dir=lambda: True),
-            MagicMock(name='Extension4', is_dir=lambda: True),
-        ],
-    ]
-    with patch('os.scandir', mock_scandir):
+    with patch('os.scandir') as mock_scandir:
+        mock_cm1 = MagicMock()
+        mock_cm1.__enter__.return_value = [MagicMock(name=name, is_dir=lambda: True) for name in extensions1]
+        mock_scandir.side_effect = [mock_cm1] * len(versions)
+
         extensions = deploy_mediawiki.get_valid_extensions(versions)
-        assert extensions == ['Extension1', 'Extension2', 'Extension3', 'Extension4']
+        assert extensions == extensions1 + extensions2
 
 
 @patch('os.scandir')
