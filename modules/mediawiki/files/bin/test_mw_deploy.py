@@ -19,9 +19,15 @@ def test_get_valid_extensions():
 
     with patch('os.scandir') as mock_scandir:
         mock_cm1 = MagicMock()
-        mock_cm1.__enter__.return_value = [MagicMock(is_dir=lambda: True, name=name) for name in extensions1]
+        mock_cm1.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in extensions1]
+        for i, ext in enumerate(extensions1):
+            setattr(mock_cm1.__enter__.return_value[i], 'name', ext)
+
         mock_cm2 = MagicMock()
-        mock_cm2.__enter__.return_value = [MagicMock(is_dir=lambda: True, name=name) for name in extensions2]
+        mock_cm2.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in extensions2]
+        for i, ext in enumerate(extensions2):
+            setattr(mock_cm2.__enter__.return_value[i], 'name', ext)
+
         mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
         extensions = deploy_mediawiki.get_valid_extensions(versions)
