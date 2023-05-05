@@ -409,8 +409,6 @@ class UpgradePackAction(argparse.Action):
 
 class LangAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
-        if not getattr(namespace, 'l10n', False):
-            parser.error('--lang can not be used without --l10n (--l10n must come before --lang)')
         invalid_langs = []
         for language in values.split(','):
             if not tag_is_valid(language):
