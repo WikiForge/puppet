@@ -14,18 +14,20 @@ from deploy_mediawiki import (
 
 @patch('os.scandir')
 def test_get_valid_extensions(mock_scandir):
-    versions = ['1.35', '1.36']
-
     mock_scandir.side_effect = lambda path: [
         MagicMock(name='Extension1', is_dir=lambda: True),
         MagicMock(name='Extension2', is_dir=lambda: True),
-    ] if path == f'/srv/mediawiki-staging/{versions[0]}/extensions/' else [
+    ] if path == '/srv/mediawiki-staging/1.35/extensions/' else [
         MagicMock(name='Extension3', is_dir=lambda: True),
         MagicMock(name='Extension4', is_dir=lambda: True),
     ]
-
+    versions = ['1.35', '1.36']
     extensions = deploy_mediawiki.get_valid_extensions(versions)
     assert extensions == ['Extension1', 'Extension2', 'Extension3', 'Extension4']
+    mock_scandir.assert_has_calls([
+        call('/srv/mediawiki-staging/1.35/extensions/'),
+        call('/srv/mediawiki-staging/1.36/extensions/')
+    ])
 
 
 @patch('os.scandir')
