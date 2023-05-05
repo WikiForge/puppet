@@ -12,9 +12,8 @@ from deploy_mediawiki import (
 )
 
 
-@patch('os.path.exists', return_value=True)
 @patch('os.scandir')
-def test_get_valid_extensions(mock_scandir, mock_path_exists):
+def test_get_valid_extensions(mock_scandir):
     versions = ['1.35', '1.36']
 
     mock_scandir.side_effect = lambda path: [
