@@ -219,6 +219,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if pull:
             for repo in pull:
                 try:
+                    if repo == 'world':
+                        repo = version
                     stage.append(_construct_git_pull(repo, branch=args.branch))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
@@ -403,7 +405,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
-    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true')
+    parser.add_argument('--upgrade-world', dest='upgrade', action='store_true', help='wipes world and runs puppet, alternatively use --world --pull=world --versions=(versions) --upgrade-extensions=all --upgrade-skins=all')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
