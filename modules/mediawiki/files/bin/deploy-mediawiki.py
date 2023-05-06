@@ -290,8 +290,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     rsync = []
     rebuild = []
     postinstall = []
-    newschema = []
     stage = []
+    newschema = []
+    tagsinfo = []
 
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
@@ -334,7 +335,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
-                        print('Tags: ' + ', '.join(sorted(tags)))
+                        tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
@@ -345,7 +346,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
-                        print('Tags: ' + ', '.join(sorted(tags)))
+                        tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
@@ -427,6 +428,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     else:
         fintext += ' - SUCCESS'
     fintext += f' in {str(int(time.time() - start))}s'
+    if tagsinfo:
+        print('TAGS:')
+        for info in tagsinfo:
+            print(info)
     if newschema:
         print('WARNING: NEW SCHEMA CHANGES DETECTED:')
         for schema in newschema:
