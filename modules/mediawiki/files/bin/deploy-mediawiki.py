@@ -332,7 +332,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
                     for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
-                        newschema.append(f'/srv/mediawiki-staging/{version}/{extension}/{file}')
+                        newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
                         print('Tags: ' + ', '.join(sorted(tags)))
@@ -343,7 +343,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
                     for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
-                        newschema.append(f'/srv/mediawiki-staging/{version}/{skin}/{file}')
+                        newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
                         print('Tags: ' + ', '.join(sorted(tags)))
