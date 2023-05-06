@@ -262,7 +262,7 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
 
 
 def _construct_git_reset_revert(repo: str, version: str = '') -> str:
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard HEAD@{{1}} --quiet'
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard HEAD@{{1}}'
 
 
 def _construct_reset_mediawiki_rm_staging(version: str) -> str:
@@ -354,8 +354,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                         if not args.skip_confirm and extension not in warnings:
                             warnings[extension] = True
-                            if input(f'WARNING: the upgrade to extension, {extension} contains schema changes. Type Y to confirm.').upper() != 'Y':
-                                exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                            print(f'WARNING: the upgrade to extension, {extension} contains schema changes.')
+                            if input('Type Y to confirm: ').upper() != 'Y':
+                                exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                print('reverted')
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
                         if tags:
@@ -367,8 +369,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                         if not args.skip_confirm and skin not in warnings:
                             warnings[skin] = True
-                            if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
+                            print(f'WARNING: the upgrade to skin, {skin} contains schema changes.')
+                            if input('Type Y to confirm: ').upper() != 'Y':
                                 exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                print('reverted')
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
                         if tags:
