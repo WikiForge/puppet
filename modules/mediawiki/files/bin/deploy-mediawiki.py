@@ -100,34 +100,32 @@ def get_change_tag_map() -> dict[re.Pattern, str]:
     build_regex = re.compile(r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$')
     codechange_regex = re.compile(
         rf'(?!.*{build_regex.pattern})'
-        r'^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$'
+        r'^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$',
     )
     schema_regex = re.compile(r'^.*?\.sql$')
     i18n_regex = re.compile(r'^.*?i18n/.*?\.json$')
-    tag_map = {
+    return {
         codechange_regex: 'code change',
         schema_regex: 'schema change',
         build_regex: 'build',
         i18n_regex: 'i18n',
     }
-    return tag_map
 
 
 def get_changed_files(path: str, version: str) -> list[str]:
     repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
 
     changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null').readlines()
-    changed_files = [file.strip() for file in changed_files]
-    return changed_files
+    return [file.strip() for file in changed_files]
 
 
-def get_changed_files_type(path: str, version: str, type: str) -> set[str]:
+def get_changed_files_type(path: str, version: str, change_type: str) -> set[str]:
     tag_map = get_change_tag_map()
     changed_files = get_changed_files(path, version)
     files = set()
     for file in changed_files:
         for regex, tag in tag_map.items():
-            if tag != type:
+            if tag != change_type:
                 continue
             if regex.match(file):
                 files.add(file)
