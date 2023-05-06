@@ -191,6 +191,18 @@ def test_construct_git_pull_branch() -> None:
     assert deploy_mediawiki._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
 
+def test_construct_git_pull_skin() -> None:
+    assert deploy_mediawiki._construct_git_pull('skins/Vector', version=version) == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
+
+
+def test_construct_git_pull_extension_sm() -> None:
+    assert deploy_mediawiki._construct_git_pull('extensions/VisualEditor', submodules=True, version=version) == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
+
+
+def test_construct_git_pull_branch_sm() -> None:
+    assert deploy_mediawiki._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+
+
 def test_construct_reset_mediawiki_rm_staging() -> None:
     assert deploy_mediawiki._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
