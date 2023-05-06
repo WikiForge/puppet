@@ -115,12 +115,10 @@ def get_change_tag_map() -> dict[re.Pattern, str]:
 
 def get_changed_files(path: str, version: str) -> list[str]:
     repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
-    num_commits = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git rev-list HEAD | wc -l').read().strip()
 
-    if int(num_commits) > 1:
-        changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD --quiet | sed "s|^[ab]/||"').readlines()
-        changed_files = [file.strip() for file in changed_files]
-    return changed_files or []
+    changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null').readlines()
+    changed_files = [file.strip() for file in changed_files]
+    return changed_files
 
 
 def get_changed_files_type(path: str, version: str, type: str) -> set[str]:
@@ -338,7 +336,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
-                        tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+                        if tags:
+                            tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
@@ -349,7 +348,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
-                        tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+                        if tags:
+                            tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
