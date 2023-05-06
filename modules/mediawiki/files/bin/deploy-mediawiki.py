@@ -3,6 +3,7 @@
 import argparse
 from typing import Optional, Union, TypedDict
 import os
+import re
 import time
 import requests
 import socket
@@ -93,6 +94,55 @@ def get_skins_in_pack(pack_name: str) -> list[str]:
         'universalomega': ['Cosmos', 'Monaco'],
     }
     return packs.get(pack_name, [])
+
+
+def get_change_tag_map() -> dict[re.Pattern, str]:
+    codechange_regex = re.compile(r'^.*?\.(php|js|css|less|scss|vue|lua|mustache|d\.ts|extension(-repo|-client)?\.json|skin\.json)$')
+    schema_regex = re.compile(r'^.*?\.sql$')
+    build_regex = re.compile(r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$')
+    i18n_regex = re.compile(r'^.*?i18n/.*?\.json$')
+    tag_map = {
+        codechange_regex: 'code change',
+        schema_regex: 'schema change',
+        build_regex: 'build',
+        i18n_regex: 'i18n',
+    }
+    return tag_map
+
+
+def get_changed_files(path: str, version: str) -> list[str]:
+    repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
+    changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD | sed "s|^[ab]/||"').readlines()
+    changed_files = [file.strip() for file in changed_files]
+    return changed_files
+
+
+def get_changed_files_type(path: str, version: str, type: str) -> set[str]:
+    tag_map = get_change_tag_map()
+    changed_files = get_changed_files(path, version)
+    files = set()
+    for file in changed_files:
+        for regex, tag in tag_map.items():
+            if tag != type:
+                continue
+            if regex.match(file):
+                if tag == 'code change' and build_regex.match(file):
+                    continue
+                files.add(file)
+    return files
+
+
+def get_change_tags(path: str, version: str) -> set[str]:
+    tag_map = get_change_tag_map()
+    changed_files = get_changed_files(path, version)
+    tags = set()
+    for file in changed_files:
+        for regex, tag in tag_map.items():
+            if regex.match(file):
+                if tag == 'code change' and build_regex.match(file):
+                    continue
+                tags.add(tag)
+    return tags
 
 
 def run_command(cmd: str) -> int:
@@ -241,6 +291,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     rsync = []
     rebuild = []
     postinstall = []
+    newschema = []
     stage = []
 
     for arg in vars(args).items():
@@ -280,12 +331,22 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+                    for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
+                        newschema.append(f'/srv/mediawiki-staging/{version}/{extension}/{file}')
+                    if args.show_tags:
+                        tags = get_change_tags(f'extensions/{extension}', version)
+                        print('Tags: ' + ', '.join(sorted(tags)))
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
                     stage.append(_construct_git_pull(f'skins/{skin}', version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                    for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
+                        newschema.append(f'/srv/mediawiki-staging/{version}/{skin}/{file}')
+                    if args.show_tags:
+                        tags = get_change_tags(f'skins/{skin}', version)
+                        print('Tags: ' + ', '.join(sorted(tags)))
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
@@ -367,6 +428,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     else:
         fintext += ' - SUCCESS'
     fintext += f' in {str(int(time.time() - start))}s'
+    if newschema:
+        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+        for schema in newschema:
+            print(schema)
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
@@ -469,6 +534,7 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
     parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
