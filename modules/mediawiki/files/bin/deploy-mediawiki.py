@@ -354,7 +354,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                         if not args.skip_confirm and extension not in warnings:
                             warnings[extension] = True
-                            if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
+                            if input(f'WARNING: the upgrade to extension, {extension} contains schema changes. Type Y to confirm.').upper() != 'Y':
                                 exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
