@@ -115,9 +115,12 @@ def get_change_tag_map() -> dict[re.Pattern, str]:
 
 def get_changed_files(path: str, version: str) -> list[str]:
     repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
-    changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD | sed "s|^[ab]/||"').readlines()
-    changed_files = [file.strip() for file in changed_files]
-    return changed_files
+    num_commits = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git rev-list HEAD | wc -l').read().strip()
+
+    if int(num_commits) > 1:
+        changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD --quiet | sed "s|^[ab]/||"').readlines()
+        changed_files = [file.strip() for file in changed_files]
+    return changed_files or []
 
 
 def get_changed_files_type(path: str, version: str, type: str) -> set[str]:
@@ -331,7 +334,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
-                    for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
+                    for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
@@ -342,7 +345,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     stage.append(_construct_git_pull(f'skins/{skin}', version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
-                    for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
+                    for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
