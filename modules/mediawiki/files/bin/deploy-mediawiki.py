@@ -80,6 +80,8 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
         'miraheze': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
+        'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
+        'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
         'wikiforge': ['WikiForgeMagic'],
     }
     return packs.get(pack_name, [])
@@ -88,6 +90,7 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
 def get_skins_in_pack(pack_name: str) -> list[str]:
     packs = {
         'bundled': ['MinervaNeue', 'MonoBook', 'Timeless', 'Vector'],
+        'universalomega': ['Cosmos', 'Monaco'],
     }
     return packs.get(pack_name, [])
 
@@ -197,8 +200,11 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo: str, branch: Optional[str] = None, version: str = '') -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, version: str = '') -> str:
     extrap = ' '
+    if submodules:
+        extrap += '--recurse-submodules '
+
     if branch:
         extrap += f'origin {branch} '
 
@@ -271,7 +277,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    stage.append(_construct_git_pull(f'extensions/{extension}', version=version))
+                    stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
 
@@ -465,7 +471,7 @@ if __name__ == '__main__':
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
-    parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'wikiforge'], help='pack of extensions/skins to upgrade')
+    parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
