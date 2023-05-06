@@ -352,7 +352,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 for extension in args.upgrade_extensions:
                     for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
-                        if not args.skip_confirm and warnings[extension] is None:
+                        if not args.skip_confirm and extension not in warnings:
                             warnings[extension] = True
                             if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
                                 exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
@@ -365,7 +365,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 for skin in args.upgrade_skins:
                     for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
-                        if not args.skip_confirm and warnings[skin] is None:
+                        if not args.skip_confirm and skin not in warnings:
                             warnings[skin] = True
                             if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
                                 exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
