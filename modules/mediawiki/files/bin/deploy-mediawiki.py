@@ -261,6 +261,10 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}--quiet'
 
 
+def _construct_git_reset_revert(repo: str, version: str = '') -> str:
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard HEAD@{{1}} --quiet'
+
+
 def _construct_reset_mediawiki_rm_staging(version: str) -> str:
     return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path(version)}'
 
@@ -294,6 +298,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     stage = []
     newschema = []
     tagsinfo = []
+    warnings = {}
 
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
@@ -332,8 +337,25 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+
+            if args.upgrade_skins:
+                for skin in args.upgrade_skins:
+                    stage.append(_construct_git_pull(f'skins/{skin}', version=version))
+                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+                    rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+
+        for cmd in stage:  # setup env, git pull etc
+            exitcodes.append(run_command(cmd))
+
+        if version:
+            if args.upgrade_extensions:
+                for extension in args.upgrade_extensions:
                     for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
+                        if not args.skip_confirm and warnings[extension] is None:
+                            warnings[extension] = True
+                            if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
+                                exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
                     if args.show_tags:
                         tags = get_change_tags(f'extensions/{extension}', version)
                         if tags:
@@ -341,18 +363,17 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    stage.append(_construct_git_pull(f'skins/{skin}', version=version))
-                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                    rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
                     for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
                         newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
+                        if not args.skip_confirm and warnings[skin] is None:
+                            warnings[skin] = True
+                            if input(f'WARNING: the upgrade to skin, {skin} contains schema changes. Type Y to confirm.').upper() != 'Y':
+                                exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
                     if args.show_tags:
                         tags = get_change_tags(f'skins/{skin}', version)
                         if tags:
                             tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
 
-        for cmd in stage:  # setup env, git pull etc
-            exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
@@ -542,6 +563,7 @@ if __name__ == '__main__':
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
+    parser.add_argument('--skip-confirm', dest='skip_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
     parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
