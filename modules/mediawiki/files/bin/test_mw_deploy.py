@@ -12,7 +12,7 @@ ServersAction = deploy_mediawiki.ServersAction
 
 
 def test_get_valid_extensions():
-    versions = ['1.35', '1.36']
+    versions = ['version1', 'version2']
     extensions1 = ['Extension1', 'Extension2']
     extensions2 = ['Extension3', 'Extension4']
 
@@ -34,7 +34,7 @@ def test_get_valid_extensions():
 
 
 def test_get_valid_skins():
-    versions = ['1.35', '1.36']
+    versions = ['version1', 'version2']
     skins1 = ['Skins1', 'Skins2']
     skins2 = ['Skins3', 'Skins4']
 
@@ -227,18 +227,18 @@ def test_LangAction():
 def test_VersionsAction():
     deploy_mediawiki.versions.clear()
     with patch('os.path.exists', return_value=True), \
-         patch.dict(deploy_mediawiki.versions, {'1.35': '1.35', '1.36': '1.36'}):
+         patch.dict(deploy_mediawiki.versions, {'version1': 'version1', 'version2': 'version2'}):
         parser = argparse.ArgumentParser()
         parser.add_argument('--versions', action=VersionsAction)
 
         with pytest.raises(SystemExit):
             parser.parse_args(['--versions', 'invalid_version'])
 
-        namespace = parser.parse_args(['--versions', '1.35'])
-        assert namespace.versions == ['1.35']
+        namespace = parser.parse_args(['--versions', 'version1'])
+        assert namespace.versions == ['version1']
 
         namespace = parser.parse_args(['--versions', 'all'])
-        assert namespace.versions == ['1.35', '1.36']
+        assert namespace.versions == ['version1', 'version2']
 
 
 def test_ServersAction():
