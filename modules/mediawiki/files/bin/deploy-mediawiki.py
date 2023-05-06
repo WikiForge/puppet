@@ -97,9 +97,12 @@ def get_skins_in_pack(pack_name: str) -> list[str]:
 
 
 def get_change_tag_map() -> dict[re.Pattern, str]:
-    codechange_regex = re.compile(r'^.*?\.(php|js|css|less|scss|vue|lua|mustache|d\.ts|extension(-repo|-client)?\.json|skin\.json)$')
-    schema_regex = re.compile(r'^.*?\.sql$')
     build_regex = re.compile(r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$')
+    codechange_regex = re.compile(
+        rf'(?!.*{build_regex.pattern})'
+        r'^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$'
+    )
+    schema_regex = re.compile(r'^.*?\.sql$')
     i18n_regex = re.compile(r'^.*?i18n/.*?\.json$')
     tag_map = {
         codechange_regex: 'code change',
@@ -126,8 +129,6 @@ def get_changed_files_type(path: str, version: str, type: str) -> set[str]:
             if tag != type:
                 continue
             if regex.match(file):
-                if tag == 'code change' and build_regex.match(file):
-                    continue
                 files.add(file)
     return files
 
@@ -139,8 +140,6 @@ def get_change_tags(path: str, version: str) -> set[str]:
     for file in changed_files:
         for regex, tag in tag_map.items():
             if regex.match(file):
-                if tag == 'code change' and build_regex.match(file):
-                    continue
                 tags.add(tag)
     return tags
 
