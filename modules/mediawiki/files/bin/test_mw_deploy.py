@@ -38,7 +38,9 @@ class TestTagFunctions(unittest.TestCase):
         self.assertCountEqual(changed_files, self.changed_files)
         mock_popen.assert_called_with(f'git -C {self.repo_dir} --no-pager --git-dir={self.repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null')
 
-    def test_get_changed_files_type(self):
+    @patch('os.popen')
+    def test_get_changed_files_type(self, mock_popen):
+        mock_popen.return_value.readlines.return_value = self.changed_files
         codechange_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'code change')
         schema_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'schema change')
         build_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'build')
@@ -52,7 +54,9 @@ class TestTagFunctions(unittest.TestCase):
         self.assertCountEqual(build_files, self.expected_build_files)
         self.assertCountEqual(i18n_files, self.expected_i18n_files)
 
-    def test_get_change_tags(self):
+    @patch('os.popen')
+    def test_get_change_tags(self, mock_popen):
+        mock_popen.return_value.readlines.return_value = self.changed_files
         tags = deploy_mediawiki.get_change_tags(self.path, self.version)
         self.assertIsInstance(tags, set)
         self.assertTrue(all(isinstance(tag, str) for tag in tags))
