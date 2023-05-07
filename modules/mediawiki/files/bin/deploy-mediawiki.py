@@ -332,7 +332,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    result = run_command(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
+                    result = os.system(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     exitcodes.append(result)
                     if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
@@ -353,7 +353,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    result = run_command(_construct_git_pull(f'skins/{skin}', version=version))
+                    result = os.system(_construct_git_pull(f'skins/{skin}', version=version))
                     exitcodes.append(result)
                     if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
                         for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
