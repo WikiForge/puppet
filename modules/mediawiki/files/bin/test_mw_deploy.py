@@ -1,6 +1,8 @@
 import importlib
 import argparse
+import re
 import pytest
+import unittest
 from unittest.mock import MagicMock, patch
 
 deploy_mediawiki = importlib.import_module('deploy-mediawiki')
@@ -9,6 +11,60 @@ UpgradePackAction = deploy_mediawiki.UpgradePackAction
 LangAction = deploy_mediawiki.LangAction
 VersionsAction = deploy_mediawiki.VersionsAction
 ServersAction = deploy_mediawiki.ServersAction
+
+
+class TestTagFunctions(unittest.TestCase):
+    def setUp(self):
+        self.path = 'test/path'
+        self.version = 'version'
+        self.repo_dir = '/srv/mediawiki-staging/version/test/path'
+        self.changed_files = ['tests/test1.js', 'resources/test1.js', 'src/main.php', 'test.sql', 'sql/test.sql', 'composer.lock', 'i18n/messages.json']
+        self.expected_codechange_files = {'resources/test1.js', 'src/main.php'}
+        self.expected_schema_files = {'test.sql', 'sql/test.sql'}
+        self.expected_build_files = {'tests/test1.js', 'composer.lock'}
+        self.expected_i18n_files = {'i18n/messages.json'}
+
+
+    def test_get_change_tag_map(self):
+        tag_map = deploy_mediawiki.get_change_tag_map()
+        self.assertIsInstance(tag_map, dict)
+        self.assertTrue(all(isinstance(pattern, type(re.compile(''))) for pattern in tag_map.keys()))
+        self.assertTrue(all(isinstance(tag, str) for tag in tag_map.values()))
+
+
+    @patch('os.popen')
+    def test_get_changed_files(self, mock_popen):
+        mock_popen.return_value.readlines.return_value = self.changed_files
+        changed_files = deploy_mediawiki.get_changed_files(self.path, self.version)
+        self.assertIsInstance(changed_files, list)
+        self.assertCountEqual(changed_files, self.changed_files)
+        mock_popen.assert_called_with(f'git -C {self.repo_dir} --no-pager --git-dir={self.repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null')
+
+
+    def test_get_changed_files_type(self):
+        codechange_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'code change')
+        schema_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'schema change')
+        build_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'build')
+        i18n_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'i18n')
+        self.assertIsInstance(codechange_files, set)
+        self.assertIsInstance(schema_files, set)
+        self.assertIsInstance(build_files, set)
+        self.assertIsInstance(i18n_files, set)
+        self.assertCountEqual(codechange_files, self.expected_codechange_files)
+        self.assertCountEqual(schema_files, self.expected_schema_files)
+        self.assertCountEqual(build_files, self.expected_build_files)
+        self.assertCountEqual(i18n_files, self.expected_i18n_files)
+
+
+    def test_get_change_tags(self):
+        tags = deploy_mediawiki.get_change_tags(self.path, self.version)
+        self.assertIsInstance(tags, set)
+        self.assertTrue(all(isinstance(tag, str) for tag in tags))
+        self.assertCountEqual(tags, {'code change', 'schema change', 'build', 'i18n'})
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 def test_get_valid_extensions():
