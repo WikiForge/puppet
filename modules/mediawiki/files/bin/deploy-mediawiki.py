@@ -538,7 +538,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         exit(1)
 
 
-class UpgradeExtensionsAction(argparse.Action):
+class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
@@ -553,7 +553,7 @@ class UpgradeExtensionsAction(argparse.Action):
         setattr(namespace, self.dest, sorted(input_extensions))
 
 
-class UpgradeSkinsAction(argparse.Action):
+class UpgradeSkinsAction(argparse.Action):  # pragma: no cover
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
