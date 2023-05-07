@@ -102,7 +102,10 @@ def get_change_tag_map() -> dict[re.Pattern, str]:
         rf'(?!.*{build_regex.pattern})'
         r'^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$',
     )
-    schema_regex = re.compile(r'^.*?\.sql$')
+    schema_regex = re.compile(
+        rf'(?!.*{build_regex.pattern})'
+        r'^.*?\.sql$',
+    )
     i18n_regex = re.compile(r'^.*?i18n/.*?\.json$')
     return {
         codechange_regex: 'code change',
@@ -315,6 +318,13 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         else:
             print(text)
 
+        if version:
+            runner = ''
+            runner_staging = ''
+            if '.' in version and float(version) >= 1.40:
+                runner = f'/srv/mediawiki/{version}/maintenance/run.php '
+                runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
+
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
             stage.append(_construct_reset_mediawiki_run_puppet())
@@ -337,6 +347,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
+                    if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
+                        print(f'{extension} does not exist for {version}. Skipping...')
+                        continue
                     process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
@@ -383,6 +396,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
+                    if not os.path.exists(_get_staging_path(f'skins/{skin}', version)):
+                        print(f'{skin} does not exist for {version}. Skipping...')
+                        continue
                     process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
@@ -436,7 +452,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     option = version
                     os.chdir(_get_staging_path(version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php /srv/mediawiki-staging/{version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}/srv/mediawiki-staging/{version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -450,19 +466,18 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extension_list and version:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes)
         if args.l10n and version:  # setup l10n
+            lang = ''
             if args.lang:
                 lang = f'--lang={args.lang}'
-            else:
-                lang = ''
 
-            postinstall.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
