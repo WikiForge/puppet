@@ -114,7 +114,6 @@ def get_change_tag_map() -> dict[re.Pattern, str]:
 
 def get_changed_files(path: str, version: str) -> list[str]:
     repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
-
     changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null').readlines()
     return [file.strip() for file in changed_files]
 
