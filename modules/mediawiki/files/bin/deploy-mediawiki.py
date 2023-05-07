@@ -299,7 +299,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     postinstall = []
     stage = []
     newschema = []
-    tagsinfo = []
+    tagsinfo = []  # type: list[str]
     warnings = {}
 
     for arg in vars(args).items():
