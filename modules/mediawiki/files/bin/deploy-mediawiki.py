@@ -374,7 +374,6 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
-
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
