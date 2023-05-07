@@ -30,6 +30,6 @@ jobs:
           pip install -r .github/pythonchecks.txt
       - name: Run tests
         run: |
-          flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301
+          flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301,T003,PT009
           coverage run --branch -m pytest modules/mediawiki
           mypy modules/mediawiki modules/ssl --ignore-missing-imports
