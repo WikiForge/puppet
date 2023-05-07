@@ -257,7 +257,9 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
         extrap += f'origin {branch} '
 
     if quiet:
-        extrap += f'--quiet'
+        extrap += '--quiet'
+    else:
+        extrap += '2> /dev/null'
 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}'
 
