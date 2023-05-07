@@ -350,7 +350,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
                                 warnings[extension] = True
-                                print(f'WARNING: upgrade contains schema changes.')
+                                print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
                                         exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
@@ -387,7 +387,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
                                 warnings[skin] = True
-                                print(f'WARNING: upgrade contains schema changes.')
+                                print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
                                         exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
