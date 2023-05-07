@@ -358,6 +358,14 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                 except KeyboardInterrupt:
                                     run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
                                     print('reverted')
+                                    if tagsinfo:
+                                        print('TAGS:')
+                                        for info in tagsinfo:
+                                            print(info)
+                                    if newschema:
+                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+                                        for schema in newschema:
+                                            print(schema)
                                     print('Operation aborted by user')
                                     exit(1)
                         if args.show_tags:
@@ -395,7 +403,15 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                 except KeyboardInterrupt:
                                     run_command(_construct_git_reset_revert(f'skins/{skin}', version))
                                     print('reverted')
-                                    print('Operation aborted by user')
+                                    if tagsinfo:
+                                        print('TAGS:')
+                                        for info in tagsinfo:
+                                            print(info)
+                                    if newschema:
+                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+                                        for schema in newschema:
+                                            print(schema)
+                                        print('Operation aborted by user')
                                     exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'skins/{skin}', version)
