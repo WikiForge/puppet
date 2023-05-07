@@ -332,9 +332,11 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    result = os.system(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
-                    exitcodes.append(result)
-                    if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
+                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
+                    output = process.read().strip()
+                    exitcode = os.waitstatus_to_exitcode(process.close())
+                    exitcodes.append(exitcode)
+                    if exitcode == 0 and output != 'Already up to date.':
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
@@ -353,9 +355,11 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    result = os.system(_construct_git_pull(f'skins/{skin}', version=version))
-                    exitcodes.append(result)
-                    if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
+                    process = os.popen(_construct_git_pull(f'skins/{skin}', version=version))
+                    output = process.read().strip()
+                    exitcode = os.waitstatus_to_exitcode(process.close())
+                    exitcodes.append(exitcode)
+                    if exitcode == 0 and output != 'Already up to date.':
                         for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
