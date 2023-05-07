@@ -372,8 +372,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             tags = get_change_tags(f'extensions/{extension}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
-                        rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
-                        rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
                     elif exitcode == 0:
                         print(f'{extension} already up to date. Skipping...')
                     else:
@@ -417,8 +418,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             tags = get_change_tags(f'skins/{skin}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
-                        rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                        rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
                     elif exitcode == 0:
                         print(f'{skin} already up to date. Skipping...')
                     else:
