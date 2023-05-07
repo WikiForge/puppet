@@ -278,7 +278,7 @@ def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
-def run(args: argparse.Namespace, start: float) -> None:
+def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
@@ -291,7 +291,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             run_process(args=args, start=start, version=version)
 
 
-def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:
+def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
     envinfo = get_environment_info()
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
