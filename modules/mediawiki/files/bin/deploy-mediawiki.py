@@ -58,7 +58,7 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_valid_extensions(versions: list[str]) -> list:
+def get_valid_extensions(versions: list[str]) -> list[str]:
     valid_extensions = []
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
@@ -67,7 +67,7 @@ def get_valid_extensions(versions: list[str]) -> list:
     return sorted(valid_extensions)
 
 
-def get_valid_skins(versions: list[str]) -> list:
+def get_valid_skins(versions: list[str]) -> list[str]:
     valid_skins = []
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
@@ -347,7 +347,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {extension}')
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
-                            if not args.skip_confirm and extension not in warnings:
+                            if not args.skip_schema_confirm and extension not in warnings:
                                 warnings[extension] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
@@ -393,7 +393,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {skin}')
                         for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
-                            if not args.skip_confirm and skin not in warnings:
+                            if not args.skip_schema_confirm and skin not in warnings:
                                 warnings[skin] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
@@ -618,7 +618,7 @@ if __name__ == '__main__':
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
-    parser.add_argument('--skip-confirm', dest='skip_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
+    parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
     parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
