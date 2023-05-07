@@ -332,49 +332,48 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
+                    result = run_command(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
+                    exitcodes.append(result)
+                    if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
+                        for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
+                            newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
+                            if not args.skip_confirm and extension not in warnings:
+                                warnings[extension] = True
+                                print(f'WARNING: the upgrade to extension, {extension}, contains schema changes.')
+                                if input('Type Y to confirm: ').upper() != 'Y':
+                                    exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                    print('reverted')
+                        if args.show_tags:
+                            tags = get_change_tags(f'extensions/{extension}', version)
+                            if tags:
+                                tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    stage.append(_construct_git_pull(f'skins/{skin}', version=version))
+                    result = run_command(_construct_git_pull(f'skins/{skin}', version=version))
+                    exitcodes.append(result)
+                    if result.returncode == 0 and result.stdout.strip() != 'Already up to date.':
+                        for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
+                            newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
+                            if not args.skip_confirm and skin not in warnings:
+                                warnings[skin] = True
+                                print(f'WARNING: the upgrade to skin, {skin}, contains schema changes.')
+                                if input('Type Y to confirm: ').upper() != 'Y':
+                                    exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                    print('reverted')
+                        if args.show_tags:
+                            tags = get_change_tags(f'skins/{skin}', version)
+                            if tags:
+                                tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
-
-        if version:
-            if args.upgrade_extensions:
-                for extension in args.upgrade_extensions:
-                    for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
-                        newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
-                        if not args.skip_confirm and extension not in warnings:
-                            warnings[extension] = True
-                            print(f'WARNING: the upgrade to extension, {extension}, contains schema changes.')
-                            if input('Type Y to confirm: ').upper() != 'Y':
-                                exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
-                                print('reverted')
-                    if args.show_tags:
-                        tags = get_change_tags(f'extensions/{extension}', version)
-                        if tags:
-                            tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
-
-            if args.upgrade_skins:
-                for skin in args.upgrade_skins:
-                    for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
-                        newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
-                        if not args.skip_confirm and skin not in warnings:
-                            warnings[skin] = True
-                            print(f'WARNING: the upgrade to skin, {skin}, contains schema changes.')
-                            if input('Type Y to confirm: ').upper() != 'Y':
-                                exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
-                                print('reverted')
-                    if args.show_tags:
-                        tags = get_change_tags(f'skins/{skin}', version)
-                        if tags:
-                            tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
 
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
