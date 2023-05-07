@@ -350,10 +350,16 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
                                 warnings[extension] = True
-                                print(f'WARNING: the upgrade to extension, {extension}, contains schema changes.')
-                                if input('Type Y to confirm: ').upper() != 'Y':
-                                    exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                print(f'WARNING: upgrade contains schema changes.')
+                                try:
+                                    if input('Type Y to confirm: ').upper() != 'Y':
+                                        exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                        print('reverted')
+                                except KeyboardInterrupt:
+                                    run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
                                     print('reverted')
+                                    print('Operation aborted by user')
+                                    exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'extensions/{extension}', version)
                             if tags:
@@ -381,10 +387,16 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
                                 warnings[skin] = True
-                                print(f'WARNING: the upgrade to skin, {skin}, contains schema changes.')
-                                if input('Type Y to confirm: ').upper() != 'Y':
-                                    exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                print(f'WARNING: upgrade contains schema changes.')
+                                try:
+                                    if input('Type Y to confirm: ').upper() != 'Y':
+                                        exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                        print('reverted')
+                                except KeyboardInterrupt:
+                                    run_command(_construct_git_reset_revert(f'skins/{skin}', version))
                                     print('reverted')
+                                    print('Operation aborted by user')
+                                    exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'skins/{skin}', version)
                             if tags:
