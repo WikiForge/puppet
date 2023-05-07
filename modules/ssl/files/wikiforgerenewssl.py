@@ -1,7 +1,11 @@
 import os
 import argparse
 import subprocess
+import logging
+from filelock import FileLock
 from datetime import datetime, timedelta
+
+logging.basicConfig(filename='/var/log/ssl/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
 
 
 def get_ssl_domains(ssl_dir):
@@ -40,7 +44,6 @@ def should_renew(domain, days_left, no_confirm):
 class SSLRenewer:
     def __init__(self, ssl_dir, no_confirm):
         self.ssl_dir = ssl_dir
-        self.days_before_expiry = days_before_expiry
         self.no_confirm = no_confirm
 
     def run(self):
@@ -49,12 +52,24 @@ class SSLRenewer:
             expiry_date = get_cert_expiry_date(domain)
             days_left = days_until_expiry(expiry_date)
             if should_renew(domain, days_left, self.no_confirm):
-                subprocess.call(['/root/ssl-certificate', '-d', domain])
+                filename = '/tmp/tmp_file.lock'
+                lock = FileLock(filename)
+                lock_acquired = False
+                while not lock_acquired:
+                    with lock:
+                        lock.acquire()
+                        try:
+                            subprocess.call(['/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'])
+                            logging.info(f'Renewed SSL certificate: {domain}')
+                            lock_acquired = True
+                        finally:
+                            lock.release()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Renews LetsEncrypt SSL certificates')
     parser.add_argument('--no-confirm', action='store_true', help='Renew certificates without asking for confirmation')
     args = parser.parse_args()
+
     ssl_renewer = SSLRenewer('/etc/letsencrypt/live', args.no_confirm)
     ssl_renewer.run()
