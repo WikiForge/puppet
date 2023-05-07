@@ -64,7 +64,7 @@ def get_valid_extensions(versions: list[str]) -> list:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
             valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
-    return valid_extensions
+    return sorted(valid_extensions)
 
 
 def get_valid_skins(versions: list[str]) -> list:
@@ -73,7 +73,7 @@ def get_valid_skins(versions: list[str]) -> list:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
             valid_skins += [skin.name for skin in skins if skin.is_dir()]
-    return valid_skins
+    return sorted(valid_skins)
 
 
 def get_extensions_in_pack(pack_name: str) -> list[str]:
@@ -505,7 +505,7 @@ class UpgradeExtensionsAction(argparse.Action):
         invalid_extensions = set(input_extensions) - set(valid_extensions)
         if invalid_extensions:
             parser.error(f'invalid extension choice(s): {", ".join(invalid_extensions)}')
-        setattr(namespace, self.dest, input_extensions)
+        setattr(namespace, self.dest, sorted(input_extensions))
 
 
 class UpgradeSkinsAction(argparse.Action):
@@ -520,15 +520,15 @@ class UpgradeSkinsAction(argparse.Action):
         invalid_skins = set(input_skins) - set(valid_skins)
         if invalid_skins:
             parser.error(f'invalid skin choice(s): {", ".join(invalid_skins)}')
-        setattr(namespace, self.dest, input_skins)
+        setattr(namespace, self.dest, sorted(input_skins))
 
 
 class UpgradePackAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
         extensions_in_pack = get_extensions_in_pack(value)
         skins_in_pack = get_skins_in_pack(value)
-        setattr(namespace, 'upgrade_extensions', extensions_in_pack)
-        setattr(namespace, 'upgrade_skins', skins_in_pack)
+        setattr(namespace, 'upgrade_extensions', sorted(extensions_in_pack))
+        setattr(namespace, 'upgrade_skins', sorted(skins_in_pack))
 
 
 class LangAction(argparse.Action):
