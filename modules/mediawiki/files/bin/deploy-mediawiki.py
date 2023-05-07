@@ -345,7 +345,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {extension}')
-                        for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
+                        for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
                                 warnings[extension] = True
@@ -390,7 +390,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {skin}')
-                        for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
+                        for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
                                 warnings[skin] = True
