@@ -195,12 +195,28 @@ def test_construct_git_pull_skin() -> None:
     assert deploy_mediawiki._construct_git_pull('skins/Vector', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
 
 
+def test_construct_git_pull_skin_no_quiet() -> None:
+    assert deploy_mediawiki._construct_git_pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull 2> /dev/null'
+
+
 def test_construct_git_pull_extension_sm() -> None:
     assert deploy_mediawiki._construct_git_pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
 
 
+def test_construct_git_pull_extension_sm_no_quiet() -> None:
+    assert deploy_mediawiki._construct_git_pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules 2> /dev/null'
+
+
 def test_construct_git_pull_branch_sm() -> None:
     assert deploy_mediawiki._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+
+
+def test_construct_git_pull_branch_sm_no_quiet() -> None:
+    assert deploy_mediawiki._construct_git_pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test 2> /dev/null'
+
+
+def test_construct_git_reset_revert() -> None:
+    assert deploy_mediawiki._construct_git_reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
 
 
 def test_construct_reset_mediawiki_rm_staging() -> None:
