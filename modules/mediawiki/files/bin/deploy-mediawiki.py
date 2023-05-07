@@ -248,7 +248,7 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, version: str = '') -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, quiet: bool = True, version: str = '') -> str:
     extrap = ' '
     if submodules:
         extrap += '--recurse-submodules '
@@ -256,7 +256,10 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
     if branch:
         extrap += f'origin {branch} '
 
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}--quiet'
+    if quiet:
+        extrap += f'--quiet'
+
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}'
 
 
 def _construct_git_reset_revert(repo: str, version: str = '') -> str:
@@ -332,7 +335,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
+                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
@@ -358,7 +361,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    process = os.popen(_construct_git_pull(f'skins/{skin}', version=version))
+                    process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
