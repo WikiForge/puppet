@@ -18,11 +18,11 @@ class TestTagFunctions(unittest.TestCase):
         self.path = 'test/path'
         self.version = 'version'
         self.repo_dir = '/srv/mediawiki-staging/version/test/path'
-        self.changed_files = ['tests/test1.js', 'resources/test1.js', 'src/main.php', 'test.sql', 'sql/test.sql', 'composer.lock', 'i18n/messages.json']
-        self.expected_codechange_files = {'resources/test1.js', 'src/main.php'}
+        self.changed_files = ['tests/test1.js', 'tests/test.sql', 'resources/test1.js', 'src/main.php', 'extension.json', 'extension-client.json', 'extension-repo.json', 'skin.json', 'test.sql', 'sql/test.sql', 'composer.lock', 'i18n/en.json', 'i18n/fr.json']
+        self.expected_codechange_files = {'resources/test1.js', 'src/main.php', 'extension.json', 'extension-client.json', 'extension-repo.json', 'skin.json'}
         self.expected_schema_files = {'test.sql', 'sql/test.sql'}
-        self.expected_build_files = {'tests/test1.js', 'composer.lock'}
-        self.expected_i18n_files = {'i18n/messages.json'}
+        self.expected_build_files = {'tests/test1.js', 'tests/test.sql', 'composer.lock'}
+        self.expected_i18n_files = {'i18n/en.json', 'i18n/fr.json'}
 
     def test_get_change_tag_map(self):
         tag_map = deploy_mediawiki.get_change_tag_map()
