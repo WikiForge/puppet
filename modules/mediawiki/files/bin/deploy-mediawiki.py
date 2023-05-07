@@ -346,7 +346,6 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {extension}')
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
-                            newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
                                 warnings[extension] = True
                                 print('WARNING: upgrade contains schema changes.')
@@ -354,6 +353,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                     if input('Type Y to confirm: ').upper() != 'Y':
                                         exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
                                         print('reverted')
+                                        continue
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                                 except KeyboardInterrupt:
                                     run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
                                     print('reverted')
@@ -371,13 +372,12 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             tags = get_change_tags(f'extensions/{extension}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+                        rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
+                        rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
                     elif exitcode == 0:
                         print(f'{extension} already up to date. Skipping...')
                     else:
                         print(f'Failed to upgrade {extension} (exit code: {exitcode}).')
-
-                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
-                    rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
@@ -391,7 +391,6 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if exitcode == 0 and output != 'Already up to date.':
                         print(f'Upgrading {skin}')
                         for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
-                            newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
                                 warnings[skin] = True
                                 print('WARNING: upgrade contains schema changes.')
@@ -399,6 +398,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                     if input('Type Y to confirm: ').upper() != 'Y':
                                         exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
                                         print('reverted')
+                                        continue
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                                 except KeyboardInterrupt:
                                     run_command(_construct_git_reset_revert(f'skins/{skin}', version))
                                     print('reverted')
@@ -410,19 +411,18 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                         print('WARNING: NEW SCHEMA CHANGES DETECTED:')
                                         for schema in newschema:
                                             print(schema)
-                                        print('Operation aborted by user')
+                                    print('Operation aborted by user')
                                     exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'skins/{skin}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+                        rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+                        rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
                     elif exitcode == 0:
                         print(f'{skin} already up to date. Skipping...')
                     else:
                         print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
-
-                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                    rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
