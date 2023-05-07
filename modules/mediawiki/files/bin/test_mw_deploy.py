@@ -24,13 +24,11 @@ class TestTagFunctions(unittest.TestCase):
         self.expected_build_files = {'tests/test1.js', 'composer.lock'}
         self.expected_i18n_files = {'i18n/messages.json'}
 
-
     def test_get_change_tag_map(self):
         tag_map = deploy_mediawiki.get_change_tag_map()
         self.assertIsInstance(tag_map, dict)
         self.assertTrue(all(isinstance(pattern, type(re.compile(''))) for pattern in tag_map.keys()))
         self.assertTrue(all(isinstance(tag, str) for tag in tag_map.values()))
-
 
     @patch('os.popen')
     def test_get_changed_files(self, mock_popen):
@@ -39,7 +37,6 @@ class TestTagFunctions(unittest.TestCase):
         self.assertIsInstance(changed_files, list)
         self.assertCountEqual(changed_files, self.changed_files)
         mock_popen.assert_called_with(f'git -C {self.repo_dir} --no-pager --git-dir={self.repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null')
-
 
     def test_get_changed_files_type(self):
         codechange_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'code change')
@@ -54,7 +51,6 @@ class TestTagFunctions(unittest.TestCase):
         self.assertCountEqual(schema_files, self.expected_schema_files)
         self.assertCountEqual(build_files, self.expected_build_files)
         self.assertCountEqual(i18n_files, self.expected_i18n_files)
-
 
     def test_get_change_tags(self):
         tags = deploy_mediawiki.get_change_tags(self.path, self.version)
