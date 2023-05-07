@@ -59,7 +59,7 @@ class SSLRenewer:
                     with lock:
                         lock.acquire()
                         try:
-                            subprocess.call(['/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'])
+                            subprocess.call(['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'])
                             logging.info(f'Renewed SSL certificate: {domain}')
                             lock_acquired = True
                         finally:
