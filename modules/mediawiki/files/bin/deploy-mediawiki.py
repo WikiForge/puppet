@@ -279,6 +279,7 @@ def run(args: argparse.Namespace, start: float) -> None:
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
+        args.ignoretime = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
     run_process(args=args, start=start)
