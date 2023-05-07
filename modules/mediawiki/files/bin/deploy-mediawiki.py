@@ -345,6 +345,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
+                        print(f'Upgrading {extension}')
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
                             if not args.skip_confirm and extension not in warnings:
@@ -357,6 +358,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             tags = get_change_tags(f'extensions/{extension}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+                    elif exitcode == 0:
+                        print(f'{extension} already up to date. Skipping...')
+                    else:
+                        print(f'Failed to upgrade {extension} (exit code: {exitcode}).')
 
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
@@ -371,6 +376,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
+                        print(f'Upgrading {skin}')
                         for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
                             newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
                             if not args.skip_confirm and skin not in warnings:
@@ -383,6 +389,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                             tags = get_change_tags(f'skins/{skin}', version)
                             if tags:
                                 tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+                    elif exitcode == 0:
+                        print(f'{skin} already up to date. Skipping...')
+                    else:
+                        print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
 
                     rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
