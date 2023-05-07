@@ -334,7 +334,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 for extension in args.upgrade_extensions:
                     process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
                     output = process.read().strip()
-                    exitcode = os.waitstatus_to_exitcode(process.close())
+                    status = process.close()
+                    exitcode = 0
+                    if status:
+                        exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'code change'):
@@ -357,7 +360,10 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 for skin in args.upgrade_skins:
                     process = os.popen(_construct_git_pull(f'skins/{skin}', version=version))
                     output = process.read().strip()
-                    exitcode = os.waitstatus_to_exitcode(process.close())
+                    status = process.close()
+                    exitcode = 0
+                    if status:
+                        exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
                     if exitcode == 0 and output != 'Already up to date.':
                         for file in get_changed_files_type(f'skins/{skin}', version, 'code change'):
