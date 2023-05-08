@@ -13,11 +13,8 @@ import logging
 from filelock import FileLock
 from datetime import datetime
 
-log_directory = '/var/log/ssl'
-if not os.path.exists(log_directory):
-    os.makedirs(log_directory)
-
-logging.basicConfig(filename=f'{log_directory}/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
+if os.path.exists('/var/log/ssl'):
+    logging.basicConfig(filename='/var/log/ssl/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
 
 
 def get_ssl_domains(ssl_dir):
@@ -95,7 +92,8 @@ class SSLRenewer:
                             command = ['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains
                             subprocess.call(command)
                             print(f'Executed renew command: {" ".join(command)}')
-                            logging.info(f'Renewed SSL certificate, {domain}, with command: {" ".join(command)}')
+                            if os.path.exists('/var/log/ssl'):
+                                logging.info(f'Renewed SSL certificate, {domain}, with command: {" ".join(command)}')
                             lock_acquired = True
                         finally:
                             lock.release()
