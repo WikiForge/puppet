@@ -110,5 +110,7 @@ class TestSSLRenewer(unittest.TestCase):
         mock_check_output.return_value = mock_output
         self.assertEqual(get_secondary_domains('/etc/letsencrypt/live', 'test.com'), ['www.test.com', 'subdomain.test.com'])
 
-    def test_get_cert_expiry_date(self):
+    @patch('subprocess.check_output')
+    def test_get_cert_expiry_date(self, mock_check_output):
+        mock_check_output.return_value = f'notAfter={self.expiry_date}'.encode('utf-8')
         self.assertEqual(get_cert_expiry_date('test.com'), self.expiry_date)
