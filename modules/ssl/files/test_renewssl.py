@@ -112,5 +112,6 @@ class TestSSLRenewer(unittest.TestCase):
 
     @patch('subprocess.check_output')
     def test_get_cert_expiry_date(self, mock_check_output):
-        mock_check_output.return_value = f'notAfter={self.expiry_date.strftime("%b %d %H:%M:%S %Y GMT")}'.encode('utf-8')
-        self.assertEqual(get_cert_expiry_date('test.com'), self.expiry_date)
+        expiry_date = f'{self.expiry_date.strftime("%b %d %H:%M:%S %Y")} GMT'
+        mock_check_output.return_value = f'notAfter={expiry_date}'.encode('utf-8')
+        self.assertEqual(get_cert_expiry_date('test.com'), expiry_date)
