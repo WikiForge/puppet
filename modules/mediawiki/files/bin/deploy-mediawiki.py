@@ -624,7 +624,7 @@ if __name__ == '__main__':
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--l10n', '--i18n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extension_list', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
