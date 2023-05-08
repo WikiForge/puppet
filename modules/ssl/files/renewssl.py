@@ -13,7 +13,11 @@ import logging
 from filelock import FileLock
 from datetime import datetime
 
-logging.basicConfig(filename='/var/log/ssl/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
+log_directory = '/var/log/ssl'
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+
+logging.basicConfig(filename=f'{log_directory}/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
 
 
 def get_ssl_domains(ssl_dir):
