@@ -6,7 +6,7 @@ class ssl::web {
 
     file { '/usr/local/bin/renew-ssl':
         ensure => present,
-        source => 'puppet:///modules/ssl/wikiforgerenewssl.py',
+        source => 'puppet:///modules/ssl/renewssl.py',
         mode   => '0755',
     }
 
