@@ -47,7 +47,10 @@ def get_cert_expiry_date(domain):
 
 def days_until_expiry(expiry_date):
     """Returns the number of days until the specified expiry date"""
-    return (expiry_date - datetime.now()).days
+    days = (expiry_date - datetime.now()).days
+    if expiry_date.time() < datetime.now().time():
+        days += 1
+    return days
 
 
 def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
