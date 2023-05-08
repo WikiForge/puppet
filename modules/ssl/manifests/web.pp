@@ -10,6 +10,14 @@ class ssl::web {
         mode   => '0755',
     }
 
+    file { '/var/log/ssl':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0750',
+        before => File['/usr/local/bin/renew-ssl'],
+    }
+
     cron { 'check_renew_ssl':
         ensure  => present,
         command => '/usr/local/bin/renew-ssl --days-before-expiry=14 --only-days --no-confirm',
