@@ -53,9 +53,9 @@ def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
     if days_before_expiry and days_left <= days_before_expiry and no_confirm:
         return True
-    for domain in [domain] + get_secondary_domains('/etc/letsencrypt/live', domain):
-        if '*' in domain:
-            print(f'{domain} is a wildcard. Please renew manually. Skipping...')
+    for cert in [domain] + get_secondary_domains('/etc/letsencrypt/live', domain):
+        if '*' in cert:
+            print(f'Wildcard certificate found: {cert}. Must be manually renewed within the next {days_left} days.')
             return False
     if only_days:
         return False
