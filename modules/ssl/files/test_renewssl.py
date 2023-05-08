@@ -86,8 +86,18 @@ class TestSSLRenewer(unittest.TestCase):
         mock_input.return_value = 'n'
         self.assertFalse(should_renew('test.com', 7, None, False, False))
 
+    @patch('renewssl.get_ssl_domains')
+    @patch('subprocess.check_output')
     @patch('subprocess.call')
-    def test_run_renews_certificate(self, mock_call):
+    def test_run_renews_certificate(self, mock_call, mock_check_output, mock_get_ssl_domains):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
+        mock_get_ssl_domains.return_value = ['test.com']
         self.ssl_renewer.run()
         mock_call.assert_called_with(['sudo', '/root/ssl-certificate', '--domain', 'test.com', '--renew', '--private', '--overwrite'])
 
