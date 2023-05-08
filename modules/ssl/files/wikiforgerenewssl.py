@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import logging
 from filelock import FileLock
-from datetime import datetime, timedelta
+from datetime import datetime
 
 logging.basicConfig(filename='/var/log/ssl/wikiforge-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
 
@@ -34,23 +34,20 @@ def get_cert_expiry_date(domain):
     cert_path = f'/etc/letsencrypt/live/{domain}/cert.pem'
     cert_expiry_date = subprocess.check_output(['openssl', 'x509', '-enddate', '-noout', '-in', cert_path])
     cert_expiry_date = cert_expiry_date.decode('utf-8').strip()[9:]
-    cert_expiry_date = datetime.strptime(cert_expiry_date, '%b %d %H:%M:%S %Y %Z')
-    return cert_expiry_date
+    return datetime.strptime(cert_expiry_date, '%b %d %H:%M:%S %Y %Z')
 
 
 def days_until_expiry(expiry_date):
     """Returns the number of days until the specified expiry date"""
-    days_until_expiry = (expiry_date - datetime.now()).days
-    return days_until_expiry
+    return (expiry_date - datetime.now()).days
 
 
 def should_renew(domain, days_left, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
     if days_left <= 15 or no_confirm:
         return True
-    else:
-        answer = input(f'The SSL certificate for {domain} is due to expire in {days_left} days. Do you want to renew it now? (y/n): ')
-        return answer.lower() in ('y', 'yes')
+    answer = input(f'The SSL certificate for {domain} is due to expire in {days_left} days. Do you want to renew it now? (y/n): ')
+    return answer.lower() in ('y', 'yes')
 
 
 class SSLRenewer:
