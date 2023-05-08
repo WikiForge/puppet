@@ -48,7 +48,16 @@ class TestSSLRenewer(unittest.TestCase):
     def test_days_until_expiry(self):
         self.assertEqual(days_until_expiry(self.expiry_date), 30)
 
-    def test_get_secondary_domains(self):
+    @patch('subprocess.check_output')
+    def test_get_secondary_domains(self, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name: 
+                    DNS:test.com, DNS:www.test.com, DNS:subdomain.test.com
+            """
+        mock_check_output.return_value = mock_output
+
         self.assertEqual(get_secondary_domains('/etc/letsencrypt/live', 'test.com'), ['www.test.com', 'subdomain.test.com'])
 
     def test_get_cert_expiry_date(self):
