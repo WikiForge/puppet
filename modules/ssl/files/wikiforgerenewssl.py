@@ -23,7 +23,7 @@ def get_secondary_domains(ssl_dir, domain):
     cert_path = os.path.join(ssl_dir, domain, 'cert.pem')
     output = subprocess.check_output(['openssl', 'x509', '-in', cert_path, '-noout', '-text'])
     output = output.decode('utf-8')
-    secondary_domains = re.findall(r'DNS:([^,\n]*)', secondary_domains)
+    secondary_domains = re.findall(r'DNS:([^,\n]*)', output)
     if domain in secondary_domains:
         del secondary_domains[domain]
     return secondary_domains
