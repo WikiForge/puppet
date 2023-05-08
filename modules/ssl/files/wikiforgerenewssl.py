@@ -22,7 +22,7 @@ def get_secondary_domains(ssl_dir, domain):
     """Returns a list of all SSL secondary domains that is also for the same certificate"""
     cert_path = os.path.join(ssl_dir, domain, 'cert.pem')
     secondary_domains = subprocess.check_output(['openssl', 'x509', '-in', cert_path, '-noout', '-text']).decode('utf-8')
-    return re.findall(r'DNS:([^,]*)', secondary_domains)
+    return re.findall(r'DNS:([^,\n]*)', secondary_domains)
 
 
 def get_cert_expiry_date(domain):
@@ -68,7 +68,7 @@ class SSLRenewer:
                         lock.acquire()
                         try:
                             secondary_domains = []
-                            secondary_domains = ['--secondary', get_secondary_domains(self.ssl_dir, domain)]
+                            secondary_domains = ['--secondary', ' '.join(get_secondary_domains(self.ssl_dir, domain))]
                             # subprocess.call(['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains)
                             print(' '.join(['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains))
                             logging.info(f'Renewed SSL certificate: {domain}')
