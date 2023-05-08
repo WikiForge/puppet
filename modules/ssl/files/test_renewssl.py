@@ -1,0 +1,47 @@
+import unittest
+from unittest.mock import patch
+from datetime import datetime, timedelta
+from renewssl import SSLRenewer, should_renew
+
+
+class TestSSLRenewer(unittest.TestCase):
+    def setUp(self):
+        self.ssl_renewer = SSLRenewer('/etc/letsencrypt/live', 7, False, True)
+        self.today = datetime.now()
+        self.expiry_date = self.today + timedelta(days=30)
+
+    def test_should_renew_with_days_left(self):
+        self.assertTrue(should_renew('test.com', 7, 14, False, True))
+
+    def test_should_renew_with_only_days(self):
+        self.assertFalse(should_renew('test.com', 14, 7, True, True))
+
+    def test_should_renew_with_wildcard_domain(self):
+        self.assertFalse(should_renew('*.test.com', 7, 14, False, True))
+
+    @patch('builtins.input', return_value='y')
+    def test_should_renew_with_confirmation(self, mock_input):
+        self.assertTrue(should_renew('test.com', 7, None, False, False))
+
+    @patch('builtins.input', return_value='n')
+    def test_should_not_renew_with_confirmation(self, mock_input):
+        self.assertFalse(should_renew('test.com', 7, None, False, False))
+
+    @patch('subprocess.call')
+    def test_run_renews_certificate(self, mock_call):
+        self.ssl_renewer.run()
+        mock_call.assert_called_with(['sudo', '/root/ssl-certificate', '--domain', 'test.com', '--renew', '--private', '--overwrite'])
+
+    @patch('subprocess.call')
+    def test_run_does_not_renew_certificate(self, mock_call):
+        self.ssl_renewer.run()
+        mock_call.assert_not_called()
+
+    def test_days_until_expiry(self):
+        self.assertEqual(days_until_expiry(self.expiry_date), 30)
+
+    def test_get_secondary_domains(self):
+        self.assertEqual(get_secondary_domains('/etc/letsencrypt/live', 'test.com'), ['www.test.com', 'subdomain.test.com'])
+
+    def test_get_cert_expiry_date(self):
+        self.assertEqual(get_cert_expiry_date('test.com'), self.expiry_date)
