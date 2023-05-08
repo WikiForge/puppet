@@ -51,7 +51,7 @@ def days_until_expiry(expiry_date):
 
 def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
-    if days_left <= days_before_expiry and no_confirm:
+    if days_before_expiry and days_left <= days_before_expiry and no_confirm:
         return True
     if only_days:
         return False
@@ -86,9 +86,8 @@ class SSLRenewer:
                                 secondary_domains = ['--secondary', ' '.join(get_secondary_domains(self.ssl_dir, domain))]
                             command = ['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains
                             subprocess.call(command)
-                            running_command = ' '.join(command)
-                            print(f'Executed renew command: {command}')
-                            logging.info(f'Renewed SSL certificate, {domain}, with command: {command}')
+                            print(f'Executed renew command: {" ".join(command)}')
+                            logging.info(f'Renewed SSL certificate, {domain}, with command: {" ".join(command)}')
                             lock_acquired = True
                         finally:
                             lock.release()
