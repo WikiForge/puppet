@@ -16,22 +16,73 @@ class TestSSLRenewer(unittest.TestCase):
         self.today = datetime.now()
         self.expiry_date = self.today + timedelta(days=30)
 
-    def test_should_renew_with_days_left(self):
+    @patch('subprocess.check_output')
+    def test_should_renew_with_days_left(self, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
         self.assertTrue(should_renew('test.com', 7, 14, False, True))
 
-    def test_should_renew_with_only_days(self):
+    @patch('subprocess.check_output')
+    def test_should_renew_with_only_days(self, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
         self.assertFalse(should_renew('test.com', 14, 7, True, True))
 
-    def test_should_renew_with_wildcard_domain(self):
+    @patch('subprocess.check_output')
+    def test_should_renew_with_wildcard_domain(self, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=*.test.com
+                X509v3 Subject Alternative Name:
+                    DNS:*.test.com
+            """
+        mock_check_output.return_value = mock_output
         self.assertFalse(should_renew('*.test.com', 7, 14, False, True))
 
+    @patch('subprocess.check_output')
+    def test_should_renew_with_wildcard_secondary_domain(self, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com, DNS:www.test.com, DNS:*.test.com
+            """
+        mock_check_output.return_value = mock_output
+        self.assertFalse(should_renew('test.com', 7, 14, False, True))
+
+    @patch('subprocess.check_output')
     @patch('builtins.input')
-    def test_should_renew_with_confirmation(self, mock_input):
+    def test_should_renew_with_confirmation(self, mock_input, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
         mock_input.return_value = 'y'
         self.assertTrue(should_renew('test.com', 7, None, False, False))
 
+    @patch('subprocess.check_output')
     @patch('builtins.input')
-    def test_should_not_renew_with_confirmation(self, mock_input):
+    def test_should_not_renew_with_confirmation(self, mock_input, mock_check_output):
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
         mock_input.return_value = 'n'
         self.assertFalse(should_renew('test.com', 7, None, False, False))
 
@@ -57,7 +108,6 @@ class TestSSLRenewer(unittest.TestCase):
                     DNS:test.com, DNS:www.test.com, DNS:subdomain.test.com
             """
         mock_check_output.return_value = mock_output
-
         self.assertEqual(get_secondary_domains('/etc/letsencrypt/live', 'test.com'), ['www.test.com', 'subdomain.test.com'])
 
     def test_get_cert_expiry_date(self):
