@@ -3,6 +3,7 @@
 import argparse
 from typing import Optional, Union, TypedDict
 import os
+import re
 import time
 import requests
 import socket
@@ -57,22 +58,22 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_valid_extensions(versions: list[str]) -> list:
+def get_valid_extensions(versions: list[str]) -> list[str]:
     valid_extensions = []
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
             valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
-    return valid_extensions
+    return sorted(valid_extensions)
 
 
-def get_valid_skins(versions: list[str]) -> list:
+def get_valid_skins(versions: list[str]) -> list[str]:
     valid_skins = []
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
             valid_skins += [skin.name for skin in skins if skin.is_dir()]
-    return valid_skins
+    return sorted(valid_skins)
 
 
 def get_extensions_in_pack(pack_name: str) -> list[str]:
@@ -93,6 +94,55 @@ def get_skins_in_pack(pack_name: str) -> list[str]:
         'universalomega': ['Cosmos', 'Monaco'],
     }
     return packs.get(pack_name, [])
+
+
+def get_change_tag_map() -> dict[re.Pattern, str]:
+    build_regex = re.compile(r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$')
+    codechange_regex = re.compile(
+        rf'(?!.*{build_regex.pattern})'
+        r'^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$',
+    )
+    schema_regex = re.compile(
+        rf'(?!.*{build_regex.pattern})'
+        r'^.*?\.sql$',
+    )
+    i18n_regex = re.compile(r'^.*?i18n/.*?\.json$')
+    return {
+        codechange_regex: 'code change',
+        schema_regex: 'schema change',
+        build_regex: 'build',
+        i18n_regex: 'i18n',
+    }
+
+
+def get_changed_files(path: str, version: str) -> list[str]:
+    repo_dir = os.path.join('/srv/mediawiki-staging', version, path)
+    changed_files = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null').readlines()
+    return [file.strip() for file in changed_files]
+
+
+def get_changed_files_type(path: str, version: str, change_type: str) -> set[str]:
+    tag_map = get_change_tag_map()
+    changed_files = get_changed_files(path, version)
+    files = set()
+    for file in changed_files:
+        for regex, tag in tag_map.items():
+            if tag != change_type:
+                continue
+            if regex.match(file):
+                files.add(file)
+    return files
+
+
+def get_change_tags(path: str, version: str) -> set[str]:
+    tag_map = get_change_tag_map()
+    changed_files = get_changed_files(path, version)
+    tags = set()
+    for file in changed_files:
+        for regex, tag in tag_map.items():
+            if regex.match(file):
+                tags.add(tag)
+    return tags
 
 
 def run_command(cmd: str) -> int:
@@ -200,7 +250,7 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, version: str = '') -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, quiet: bool = True, version: str = '') -> str:
     extrap = ' '
     if submodules:
         extrap += '--recurse-submodules '
@@ -208,7 +258,16 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
     if branch:
         extrap += f'origin {branch} '
 
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}--quiet'
+    if quiet:
+        extrap += '--quiet'
+    else:
+        extrap += '2> /dev/null'
+
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} pull{extrap}'
+
+
+def _construct_git_reset_revert(repo: str, version: str = '') -> str:
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard HEAD@{{1}}'
 
 
 def _construct_reset_mediawiki_rm_staging(version: str) -> str:
@@ -219,10 +278,11 @@ def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
-def run(args: argparse.Namespace, start: float) -> None:
+def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
+        args.ignoretime = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
     run_process(args=args, start=start)
@@ -231,7 +291,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             run_process(args=args, start=start, version=version)
 
 
-def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:
+def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
     envinfo = get_environment_info()
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
@@ -242,6 +302,9 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     rebuild = []
     postinstall = []
     stage = []
+    newschema = []
+    tagsinfo = []  # type: list[str]
+    warnings = {}
 
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
@@ -254,6 +317,13 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
             os.system(f'/usr/local/bin/logsalmsg {text}')
         else:
             print(text)
+
+        if version:
+            runner = ''
+            runner_staging = ''
+            if '.' in version and float(version) >= 1.40:
+                runner = f'/srv/mediawiki/{version}/maintenance/run.php '
+                runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
 
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
@@ -277,15 +347,101 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         if version:
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    stage.append(_construct_git_pull(f'extensions/{extension}', submodules=True, version=version))
-                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
-                    rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+                    if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
+                        print(f'{extension} does not exist for {version}. Skipping...')
+                        continue
+                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
+                    output = process.read().strip()
+                    status = process.close()
+                    exitcode = 0
+                    if status:
+                        exitcode = os.waitstatus_to_exitcode(status)
+                    exitcodes.append(exitcode)
+                    if exitcode == 0 and output != 'Already up to date.':
+                        print(f'Upgrading {extension}')
+                        for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
+                            if not args.skip_schema_confirm and extension not in warnings:
+                                warnings[extension] = True
+                                print('WARNING: upgrade contains schema changes.')
+                                try:
+                                    if input('Type Y to confirm: ').upper() != 'Y':
+                                        exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                        print('reverted')
+                                        continue
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
+                                except KeyboardInterrupt:
+                                    run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
+                                    print('reverted')
+                                    if tagsinfo:
+                                        print('TAGS:')
+                                        for info in tagsinfo:
+                                            print(info)
+                                    if newschema:
+                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+                                        for schema in newschema:
+                                            print(schema)
+                                    print('Operation aborted by user')
+                                    exit(1)
+                        if args.show_tags:
+                            tags = get_change_tags(f'extensions/{extension}', version)
+                            if tags:
+                                tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+                    elif exitcode == 0:
+                        print(f'{extension} already up to date. Skipping...')
+                    else:
+                        print(f'Failed to upgrade {extension} (exit code: {exitcode}).')
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    stage.append(_construct_git_pull(f'skins/{skin}', version=version))
-                    rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                    rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                    if not os.path.exists(_get_staging_path(f'skins/{skin}', version)):
+                        print(f'{skin} does not exist for {version}. Skipping...')
+                        continue
+                    process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
+                    output = process.read().strip()
+                    status = process.close()
+                    exitcode = 0
+                    if status:
+                        exitcode = os.waitstatus_to_exitcode(status)
+                    exitcodes.append(exitcode)
+                    if exitcode == 0 and output != 'Already up to date.':
+                        print(f'Upgrading {skin}')
+                        for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
+                            if not args.skip_schema_confirm and skin not in warnings:
+                                warnings[skin] = True
+                                print('WARNING: upgrade contains schema changes.')
+                                try:
+                                    if input('Type Y to confirm: ').upper() != 'Y':
+                                        exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                        print('reverted')
+                                        continue
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
+                                except KeyboardInterrupt:
+                                    run_command(_construct_git_reset_revert(f'skins/{skin}', version))
+                                    print('reverted')
+                                    if tagsinfo:
+                                        print('TAGS:')
+                                        for info in tagsinfo:
+                                            print(info)
+                                    if newschema:
+                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+                                        for schema in newschema:
+                                            print(schema)
+                                    print('Operation aborted by user')
+                                    exit(1)
+                        if args.show_tags:
+                            tags = get_change_tags(f'skins/{skin}', version)
+                            if tags:
+                                tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                    elif exitcode == 0:
+                        print(f'{skin} already up to date. Skipping...')
+                    else:
+                        print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
@@ -296,7 +452,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     option = version
                     os.chdir(_get_staging_path(version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php /srv/mediawiki-staging/{version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}/srv/mediawiki-staging/{version}/extensions/WikiForgeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -310,19 +466,18 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extension_list and version:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes)
         if args.l10n and version:  # setup l10n
+            lang = ''
             if args.lang:
                 lang = f'--lang={args.lang}'
-            else:
-                lang = ''
 
-            postinstall.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
@@ -367,6 +522,14 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     else:
         fintext += ' - SUCCESS'
     fintext += f' in {str(int(time.time() - start))}s'
+    if tagsinfo:
+        print('TAGS:')
+        for info in tagsinfo:
+            print(info)
+    if newschema:
+        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+        for schema in newschema:
+            print(schema)
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
@@ -375,7 +538,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
         exit(1)
 
 
-class UpgradeExtensionsAction(argparse.Action):
+class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
@@ -387,10 +550,10 @@ class UpgradeExtensionsAction(argparse.Action):
         invalid_extensions = set(input_extensions) - set(valid_extensions)
         if invalid_extensions:
             parser.error(f'invalid extension choice(s): {", ".join(invalid_extensions)}')
-        setattr(namespace, self.dest, input_extensions)
+        setattr(namespace, self.dest, sorted(input_extensions))
 
 
-class UpgradeSkinsAction(argparse.Action):
+class UpgradeSkinsAction(argparse.Action):  # pragma: no cover
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         versions = getattr(namespace, 'versions', None)
         if not versions:
@@ -402,15 +565,15 @@ class UpgradeSkinsAction(argparse.Action):
         invalid_skins = set(input_skins) - set(valid_skins)
         if invalid_skins:
             parser.error(f'invalid skin choice(s): {", ".join(invalid_skins)}')
-        setattr(namespace, self.dest, input_skins)
+        setattr(namespace, self.dest, sorted(input_skins))
 
 
 class UpgradePackAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):  # noqa: U100
         extensions_in_pack = get_extensions_in_pack(value)
         skins_in_pack = get_skins_in_pack(value)
-        setattr(namespace, 'upgrade_extensions', extensions_in_pack)
-        setattr(namespace, 'upgrade_skins', skins_in_pack)
+        setattr(namespace, 'upgrade_extensions', sorted(extensions_in_pack))
+        setattr(namespace, 'upgrade_skins', sorted(skins_in_pack))
 
 
 class LangAction(argparse.Action):
@@ -461,7 +624,7 @@ if __name__ == '__main__':
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--l10n', '--i18n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extension_list', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
@@ -469,6 +632,8 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
     parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
+    parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
     parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
