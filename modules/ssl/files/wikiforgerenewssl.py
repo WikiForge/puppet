@@ -89,7 +89,7 @@ class SSLRenewer:
                             if get_secondary_domains(self.ssl_dir, domain):
                                 secondary_domains = ['--secondary', ' '.join(get_secondary_domains(self.ssl_dir, domain))]
                             command = ['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains
-                            # subprocess.call(command)
+                            subprocess.call(command)
                             print(f'Executed renew command: {" ".join(command)}')
                             logging.info(f'Renewed SSL certificate, {domain}, with command: {" ".join(command)}')
                             lock_acquired = True
