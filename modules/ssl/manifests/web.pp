@@ -12,7 +12,7 @@ class ssl::web {
 
     cron { 'check_renew_ssl':
         ensure  => present,
-        command => '/usr/local/bin/renew-ssl',
+        command => '/usr/local/bin/renew-ssl --days-before-expiry=14 --only-days --no-confirm',
         user    => 'root',
         minute  => '0',
         hour    => '0',
