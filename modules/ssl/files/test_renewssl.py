@@ -105,8 +105,22 @@ class TestSSLRenewer(unittest.TestCase):
         self.ssl_renewer.run()
         mock_call.assert_called_with(['sudo', '/root/ssl-certificate', '--domain', 'test.com', '--renew', '--private', '--overwrite'])
 
+    @patch('renewssl.get_cert_expiry_date')
+    @patch('renewssl.get_ssl_domains')
+    @patch('subprocess.check_output')
     @patch('subprocess.call')
-    def test_run_does_not_renew_certificate(self, mock_call):
+    def test_run_does_not_renew_certificate(self, mock_call, mock_check_output, mock_get_ssl_domains, mock_get_cert_expiry_date):
+        expiry_date = self.today + timedelta(days=10)
+        expiry_date = f'{expiry_date.strftime("%b %d %H:%M:%S %Y")} GMT'
+        mock_output = b"""
+            Certificate:
+                Subject: CN=test.com
+                X509v3 Subject Alternative Name:
+                    DNS:test.com
+            """
+        mock_check_output.return_value = mock_output
+        mock_get_ssl_domains.return_value = ['test.com']
+        mock_get_cert_expiry_date.return_value = datetime.strptime(expiry_date, '%b %d %H:%M:%S %Y %Z')
         self.ssl_renewer.run()
         mock_call.assert_not_called()
 
