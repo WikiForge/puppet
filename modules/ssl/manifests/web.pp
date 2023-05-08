@@ -10,7 +10,7 @@ class ssl::web {
         mode   => '0755',
     }
 
-    cron { 'purge_checkuser':
+    cron { 'check_renew_ssl':
         ensure  => present,
         command => '/usr/local/bin/renew-ssl',
         user    => 'root',
