@@ -53,7 +53,7 @@ class TestSSLRenewer(unittest.TestCase):
         mock_output = b"""
             Certificate:
                 Subject: CN=test.com
-                X509v3 Subject Alternative Name: 
+                X509v3 Subject Alternative Name:
                     DNS:test.com, DNS:www.test.com, DNS:subdomain.test.com
             """
         mock_check_output.return_value = mock_output
