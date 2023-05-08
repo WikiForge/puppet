@@ -51,7 +51,7 @@ def days_until_expiry(expiry_date):
 
 def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
-    if days_left <= days_before_expiry and only_days:
+    if days_left <= days_before_expiry and no_confirm:
         return True
     if only_days:
         return False
