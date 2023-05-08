@@ -21,8 +21,12 @@ def get_ssl_domains(ssl_dir):
 def get_secondary_domains(ssl_dir, domain):
     """Returns a list of all SSL secondary domains that is also for the same certificate"""
     cert_path = os.path.join(ssl_dir, domain, 'cert.pem')
-    secondary_domains = subprocess.check_output(['openssl', 'x509', '-in', cert_path, '-noout', '-text']).decode('utf-8')
-    return re.findall(r'DNS:([^,\n]*)', secondary_domains)
+    output = subprocess.check_output(['openssl', 'x509', '-in', cert_path, '-noout', '-text'])
+    output = output.decode('utf-8')
+    secondary_domains = re.findall(r'DNS:([^,\n]*)', secondary_domains)
+    if domain in secondary_domains:
+        del secondary_domains[domain]
+    return secondary_domains
 
 
 def get_cert_expiry_date(domain):
