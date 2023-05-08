@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 
 # Automatically renew LetsEncrypt SSL certificates
-# expiring within 15 days or manually renew others.
+# expiring within a specified time or manually renew others.
 #
 # Universal Omega 2023
 
