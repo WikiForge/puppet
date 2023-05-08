@@ -53,6 +53,10 @@ def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
     if days_before_expiry and days_left <= days_before_expiry and no_confirm:
         return True
+    for domain in [domain] + get_secondary_domains('/etc/letsencrypt/live', domain):
+        if '*' in domain:
+            print(f'{domain} is a wildcard. Please renew manually. Skipping...')
+            return False
     if only_days:
         return False
     if no_confirm:
@@ -85,7 +89,7 @@ class SSLRenewer:
                             if get_secondary_domains(self.ssl_dir, domain):
                                 secondary_domains = ['--secondary', ' '.join(get_secondary_domains(self.ssl_dir, domain))]
                             command = ['sudo', '/root/ssl-certificate', '--domain', domain, '--renew', '--private', '--overwrite'] + secondary_domains
-                            subprocess.call(command)
+                            # subprocess.call(command)
                             print(f'Executed renew command: {" ".join(command)}')
                             logging.info(f'Renewed SSL certificate, {domain}, with command: {" ".join(command)}')
                             lock_acquired = True
