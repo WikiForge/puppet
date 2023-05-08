@@ -1,5 +1,6 @@
 .DS_Store
 *.pyc
 modules/mediawiki/files/bin/.coverage
+modules/ssl/files/.coverage
 Htmlcov/*
 .coverage
