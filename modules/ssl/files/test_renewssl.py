@@ -1,7 +1,13 @@
 import unittest
 from unittest.mock import patch
 from datetime import datetime, timedelta
-from renewssl import SSLRenewer, should_renew
+from renewssl import (
+    SSLRenewer,
+    days_until_expiry,
+    get_cert_expiry_date,
+    get_secondary_domains,
+    should_renew,
+)
 
 
 class TestSSLRenewer(unittest.TestCase):
@@ -19,12 +25,14 @@ class TestSSLRenewer(unittest.TestCase):
     def test_should_renew_with_wildcard_domain(self):
         self.assertFalse(should_renew('*.test.com', 7, 14, False, True))
 
-    @patch('builtins.input', return_value='y')
+    @patch('builtins.input')
     def test_should_renew_with_confirmation(self, mock_input):
+        mock_input.return_value = 'y'
         self.assertTrue(should_renew('test.com', 7, None, False, False))
 
-    @patch('builtins.input', return_value='n')
+    @patch('builtins.input')
     def test_should_not_renew_with_confirmation(self, mock_input):
+        mock_input.return_value = 'n'
         self.assertFalse(should_renew('test.com', 7, None, False, False))
 
     @patch('subprocess.call')
