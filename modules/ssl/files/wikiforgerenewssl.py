@@ -49,17 +49,23 @@ def days_until_expiry(expiry_date):
     return (expiry_date - datetime.now()).days
 
 
-def should_renew(domain, days_left, no_confirm):
+def should_renew(domain, days_left, days_before_expiry, only_days, no_confirm):
     """Returns True if the SSL certificate should be renewed"""
-    if days_left <= 15 or no_confirm:
+    if days_left <= days_before_expiry and only_days:
+        return True
+    if only_days:
+        return False
+    if no_confirm:
         return True
     answer = input(f'The SSL certificate for {domain} is due to expire in {days_left} days. Do you want to renew it now? (y/n): ')
     return answer.lower() in ('y', 'yes')
 
 
 class SSLRenewer:
-    def __init__(self, ssl_dir, no_confirm):
+    def __init__(self, ssl_dir, days_before_expiry, only_days, no_confirm):
         self.ssl_dir = ssl_dir
+        self.days_before_expiry = days_before_expiry
+        self.only_days = only_days
         self.no_confirm = no_confirm
 
     def run(self):
@@ -67,7 +73,7 @@ class SSLRenewer:
         for domain in get_ssl_domains(self.ssl_dir):
             expiry_date = get_cert_expiry_date(domain)
             days_left = days_until_expiry(expiry_date)
-            if should_renew(domain, days_left, self.no_confirm):
+            if should_renew(domain, days_left, self.days_before_expiry, self.only_days, self.no_confirm):
                 filename = '/tmp/tmp_file.lock'
                 lock = FileLock(filename)
                 lock_acquired = False
@@ -88,7 +94,9 @@ class SSLRenewer:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Renews LetsEncrypt SSL certificates')
     parser.add_argument('--no-confirm', action='store_true', help='Renew certificates without asking for confirmation')
+    parser.add_argument('--only-days', action='store_true', help='Only renew certificates expiring within days specified by --days-before-expiry')
+    parser.add_argument('--days-before-expiry', type=int, help='Number of days before expiry to renew certs without a prompt for')
     args = parser.parse_args()
 
-    ssl_renewer = SSLRenewer('/etc/letsencrypt/live', args.no_confirm)
+    ssl_renewer = SSLRenewer('/etc/letsencrypt/live', args.days_before_expiry, args.only_days, args.no_confirm)
     ssl_renewer.run()
