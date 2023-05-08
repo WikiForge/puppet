@@ -25,7 +25,7 @@ def get_secondary_domains(ssl_dir, domain):
     output = output.decode('utf-8')
     secondary_domains = re.findall(r'DNS:([^,\n]*)', output)
     if domain in secondary_domains:
-        del secondary_domains[domain]
+        secondary_domains.remove(domain)
     return secondary_domains
 
 
