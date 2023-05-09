@@ -40,7 +40,7 @@ class TestArchiveUploader(unittest.TestCase):
             'description': '',
             'mediatype': 'web',
             'subject': 'wikiforge;wikiteam',
-            'title': 'test_title'
+            'title': 'test_title',
         }, verbose=True, queue_derive=False)
 
         os.remove(f.name)
