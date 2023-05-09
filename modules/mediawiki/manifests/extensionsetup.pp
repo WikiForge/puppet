@@ -68,12 +68,12 @@ define mediawiki::extensionsetup (
 
         if $params['latest'] {
             exec { "MediaWiki-${branch} ${name} Sync":
-                command     => "/usr/local/bin/deploy-mediawiki --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)} --no-log",
+                command     => "/usr/local/bin/mwdeploy --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)} --no-log",
                 cwd         => '/srv/mediawiki-staging',
                 refreshonly => true,
                 user        => 'www-data',
                 subscribe   => Git::Clone["MediaWiki-${branch} ${name}"],
-                require     => File['/usr/local/bin/deploy-mediawiki'],
+                require     => File['/usr/local/bin/mwdeploy'],
             }
         }
     }
