@@ -41,7 +41,7 @@ class TestArchiveUploader(unittest.TestCase):
             mediatype='web',
             subject='wikiforge;wikiteam',
         )
-    
+
         self.uploader.upload()
 
         mock_item.upload.assert_called_once_with(f.name, metadata={
