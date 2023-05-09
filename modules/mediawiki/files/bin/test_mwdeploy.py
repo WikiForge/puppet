@@ -4,13 +4,13 @@ import re
 import pytest
 import unittest
 from unittest.mock import MagicMock, patch
-
-deploy_mediawiki = importlib.import_module('deploy-mediawiki')
-
-UpgradePackAction = deploy_mediawiki.UpgradePackAction
-LangAction = deploy_mediawiki.LangAction
-VersionsAction = deploy_mediawiki.VersionsAction
-ServersAction = deploy_mediawiki.ServersAction
+import mwdeploy
+from mwdeploy import (
+    UpgradePackAction,
+    LangAction,
+    VersionsAction,
+    ServersAction,
+)
 
 
 class TestTagFunctions(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestTagFunctions(unittest.TestCase):
         self.expected_i18n_files = {'i18n/en.json', 'i18n/fr.json', 'test/i18n/test/en.json', 'test/i18n/test/fr.json'}
 
     def test_get_change_tag_map(self):
-        tag_map = deploy_mediawiki.get_change_tag_map()
+        tag_map = mwdeploy.get_change_tag_map()
         self.assertIsInstance(tag_map, dict)
         self.assertTrue(all(isinstance(pattern, type(re.compile(''))) for pattern in tag_map.keys()))
         self.assertTrue(all(isinstance(tag, str) for tag in tag_map.values()))
@@ -33,7 +33,7 @@ class TestTagFunctions(unittest.TestCase):
     @patch('os.popen')
     def test_get_changed_files(self, mock_popen):
         mock_popen.return_value.readlines.return_value = self.changed_files
-        changed_files = deploy_mediawiki.get_changed_files(self.path, self.version)
+        changed_files = mwdeploy.get_changed_files(self.path, self.version)
         self.assertIsInstance(changed_files, list)
         self.assertCountEqual(changed_files, self.changed_files)
         mock_popen.assert_called_with(f'git -C {self.repo_dir} --no-pager --git-dir={self.repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null')
@@ -41,10 +41,10 @@ class TestTagFunctions(unittest.TestCase):
     @patch('os.popen')
     def test_get_changed_files_type(self, mock_popen):
         mock_popen.return_value.readlines.return_value = self.changed_files
-        codechange_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'code change')
-        schema_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'schema change')
-        build_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'build')
-        i18n_files = deploy_mediawiki.get_changed_files_type(self.path, self.version, 'i18n')
+        codechange_files = mwdeploy.get_changed_files_type(self.path, self.version, 'code change')
+        schema_files = mwdeploy.get_changed_files_type(self.path, self.version, 'schema change')
+        build_files = mwdeploy.get_changed_files_type(self.path, self.version, 'build')
+        i18n_files = mwdeploy.get_changed_files_type(self.path, self.version, 'i18n')
         self.assertIsInstance(codechange_files, set)
         self.assertIsInstance(schema_files, set)
         self.assertIsInstance(build_files, set)
@@ -57,7 +57,7 @@ class TestTagFunctions(unittest.TestCase):
     @patch('os.popen')
     def test_get_change_tags(self, mock_popen):
         mock_popen.return_value.readlines.return_value = self.changed_files
-        tags = deploy_mediawiki.get_change_tags(self.path, self.version)
+        tags = mwdeploy.get_change_tags(self.path, self.version)
         self.assertIsInstance(tags, set)
         self.assertTrue(all(isinstance(tag, str) for tag in tags))
         self.assertCountEqual(tags, {'code change', 'schema change', 'build', 'i18n'})
@@ -85,7 +85,7 @@ def test_get_valid_extensions():
 
         mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
-        extensions = deploy_mediawiki.get_valid_extensions(versions)
+        extensions = mwdeploy.get_valid_extensions(versions)
         assert extensions == extensions1 + extensions2
 
 
@@ -107,44 +107,44 @@ def test_get_valid_skins():
 
         mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
-        skins = deploy_mediawiki.get_valid_skins(versions)
+        skins = mwdeploy.get_valid_skins(versions)
         assert skins == skins1 + skins2
 
 
 def test_get_extensions_in_pack():
-    extensions = deploy_mediawiki.get_extensions_in_pack('mleb')
+    extensions = mwdeploy.get_extensions_in_pack('mleb')
     assert extensions == ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector']
 
 
 def test_get_skins_in_pack():
-    skins = deploy_mediawiki.get_skins_in_pack('bundled')
+    skins = mwdeploy.get_skins_in_pack('bundled')
     assert skins == ['MinervaNeue', 'MonoBook', 'Timeless', 'Vector']
 
 
 def test_non_zero_ec_only_one_zero() -> None:
-    assert not deploy_mediawiki.non_zero_code([0], leave=False)
+    assert not mwdeploy.non_zero_code([0], leave=False)
 
 
 def test_non_zero_ec_multi_zero() -> None:
-    assert not deploy_mediawiki.non_zero_code([0, 0], leave=False)
+    assert not mwdeploy.non_zero_code([0, 0], leave=False)
 
 
 def test_non_zero_ec_zero_one() -> None:
-    assert deploy_mediawiki.non_zero_code([1, 0], leave=False)
+    assert mwdeploy.non_zero_code([1, 0], leave=False)
 
 
 def test_non_zero_ec_one_one() -> None:
-    assert deploy_mediawiki.non_zero_code([1, 1], leave=False)
+    assert mwdeploy.non_zero_code([1, 1], leave=False)
 
 
 def test_non_zero_ec_only_one_one() -> None:
-    assert deploy_mediawiki.non_zero_code([1], leave=False)
+    assert mwdeploy.non_zero_code([1], leave=False)
 
 
 def test_check_up_no_debug_host() -> None:
     failed = False
     try:
-        deploy_mediawiki.check_up(nolog=True)
+        mwdeploy.check_up(nolog=True)
     except Exception as e:
         assert str(e) == 'Host or Debug must be specified'
         failed = True
@@ -152,25 +152,25 @@ def test_check_up_no_debug_host() -> None:
 
 
 def test_check_up_debug() -> None:
-    assert deploy_mediawiki.check_up(nolog=True, Debug='mw1')
+    assert mwdeploy.check_up(nolog=True, Debug='mw1')
 
 
 def test_check_up_debug_fail() -> None:
-    assert not deploy_mediawiki.check_up(nolog=True, Debug='mw1', domain='httpstat.us/500', force=True)
+    assert not mwdeploy.check_up(nolog=True, Debug='mw1', domain='httpstat.us/500', force=True)
 
 
 def test_get_staging_path() -> None:
-    assert deploy_mediawiki._get_staging_path('version') == '/srv/mediawiki-staging/version/'
+    assert mwdeploy._get_staging_path('version') == '/srv/mediawiki-staging/version/'
 
 
 def test_get_deployed_path() -> None:
-    assert deploy_mediawiki._get_deployed_path('version') == '/srv/mediawiki/version/'
+    assert mwdeploy._get_deployed_path('version') == '/srv/mediawiki/version/'
 
 
 def test_construct_rsync_no_location_local() -> None:
     failed = False
     try:
-        deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/')
+        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/')
     except Exception as e:
         assert str(e) == 'Location must be specified for local rsync.'
         failed = True
@@ -180,7 +180,7 @@ def test_construct_rsync_no_location_local() -> None:
 def test_construct_rsync_no_server_remote() -> None:
     failed = False
     try:
-        deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False)
+        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False)
     except Exception as e:
         assert str(e) == 'Error constructing command. Either server was missing or /srv/mediawiki/version/ != /srv/mediawiki/version/'
         failed = True
@@ -190,7 +190,7 @@ def test_construct_rsync_no_server_remote() -> None:
 def test_construct_rsync_conflict_options_remote() -> None:
     failed = False
     try:
-        deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False, server='meta')
+        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False, server='meta')
     except Exception as e:
         assert str(e) == 'Error constructing command. Either server was missing or garbage != /srv/mediawiki/version/'
         failed = True
@@ -200,7 +200,7 @@ def test_construct_rsync_conflict_options_remote() -> None:
 def test_construct_rsync_conflict_options_no_server_remote() -> None:
     failed = False
     try:
-        deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False)
+        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False)
     except Exception as e:
         assert str(e) == 'Error constructing command. Either server was missing or garbage != /srv/mediawiki/version/'
         failed = True
@@ -208,79 +208,79 @@ def test_construct_rsync_conflict_options_no_server_remote() -> None:
 
 
 def test_construct_rsync_local_dir_update() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --update -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --update -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
 
 
 def test_construct_rsync_local_file_update() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --update --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --update --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
 
 
 def test_construct_rsync_remote_dir_update() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.wikiforge.net:/srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.wikiforge.net:/srv/mediawiki/version/'
 
 
 def test_construct_rsync_remote_file_update() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.wikiforge.net:/srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.wikiforge.net:/srv/mediawiki/version/test.txt'
 
 
 def test_construct_rsync_local_dir_time() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --inplace -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --inplace -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
 
 
 def test_construct_rsync_local_file_time() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --inplace --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --inplace --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
 
 
 def test_construct_rsync_remote_dir_time() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.wikiforge.net:/srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.wikiforge.net:/srv/mediawiki/version/'
 
 
 def test_construct_rsync_remote_file_time() -> None:
-    assert deploy_mediawiki._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.wikiforge.net:/srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.wikiforge.net:/srv/mediawiki/version/test.txt'
 
 
 def test_construct_git_pull() -> None:
-    assert deploy_mediawiki._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
+    assert mwdeploy._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
 
 
 def test_construct_git_pull_branch() -> None:
-    assert deploy_mediawiki._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+    assert mwdeploy._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
 
 def test_construct_git_pull_skin() -> None:
-    assert deploy_mediawiki._construct_git_pull('skins/Vector', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
+    assert mwdeploy._construct_git_pull('skins/Vector', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
 
 
 def test_construct_git_pull_skin_no_quiet() -> None:
-    assert deploy_mediawiki._construct_git_pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull 2> /dev/null'
+    assert mwdeploy._construct_git_pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull 2> /dev/null'
 
 
 def test_construct_git_pull_extension_sm() -> None:
-    assert deploy_mediawiki._construct_git_pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
+    assert mwdeploy._construct_git_pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
 
 
 def test_construct_git_pull_extension_sm_no_quiet() -> None:
-    assert deploy_mediawiki._construct_git_pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules 2> /dev/null'
+    assert mwdeploy._construct_git_pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules 2> /dev/null'
 
 
 def test_construct_git_pull_branch_sm() -> None:
-    assert deploy_mediawiki._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+    assert mwdeploy._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
 
 
 def test_construct_git_pull_branch_sm_no_quiet() -> None:
-    assert deploy_mediawiki._construct_git_pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test 2> /dev/null'
+    assert mwdeploy._construct_git_pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test 2> /dev/null'
 
 
 def test_construct_git_reset_revert() -> None:
-    assert deploy_mediawiki._construct_git_reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
+    assert mwdeploy._construct_git_reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
 
 
 def test_construct_reset_mediawiki_rm_staging() -> None:
-    assert deploy_mediawiki._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
+    assert mwdeploy._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
 
 def test_construct_reset_mediawiki_run_puppet() -> None:
-    assert deploy_mediawiki._construct_reset_mediawiki_run_puppet() == 'sudo puppet agent -tv'
+    assert mwdeploy._construct_reset_mediawiki_run_puppet() == 'sudo puppet agent -tv'
 
 
 def test_UpgradePackAction():
@@ -309,9 +309,9 @@ def test_LangAction():
 
 
 def test_VersionsAction():
-    deploy_mediawiki.versions.clear()
+    mwdeploy.versions.clear()
     with patch('os.path.exists', return_value=True), \
-         patch.dict(deploy_mediawiki.versions, {'version1': 'version1', 'version2': 'version2'}):
+         patch.dict(mwdeploy.versions, {'version1': 'version1', 'version2': 'version2'}):
         parser = argparse.ArgumentParser()
         parser.add_argument('--versions', action=VersionsAction)
 
