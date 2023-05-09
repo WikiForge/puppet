@@ -20,7 +20,7 @@ def test_get_command_extension():
 
 
 @patch.dict(os.environ, {'LOGNAME': 'test'})
-def test_get_command_extension_list(mock_logname):  # noqa: U100
+def test_get_command_extension_list():
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
@@ -75,7 +75,7 @@ def test_get_command_extension_runner():
 
 
 @patch.dict(os.environ, {'LOGNAME': 'test'})
-def test_get_command_extension_list_runner(mock_logname):  # noqa: U100
+def test_get_command_extension_list_runner():
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
