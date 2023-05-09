@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 from iaupload import ArchiveUploader
 
@@ -29,7 +29,7 @@ class TestArchiveUploader(unittest.TestCase):
         mock_get_item.return_value = mock_item
 
         now = datetime.now()
-        mtime = (now - timedelta(days=1)).timestamp()
+        mtime = now.timestamp()
         os.utime(f.name, (mtime, mtime))
 
         mock_args = MagicMock()
