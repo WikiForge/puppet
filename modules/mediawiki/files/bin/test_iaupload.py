@@ -1,6 +1,5 @@
 import unittest
 import tempfile
-import sys
 import os
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
@@ -32,8 +31,8 @@ class TestArchiveUploader(unittest.TestCase):
         mtime = (now - timedelta(days=1)).timestamp()
         os.utime(f.name, (mtime, mtime))
 
-        sys.argv[1:] = ['--title', 'test_title', '--file', f.name]
-        self.uploader.upload()
+        self.uploader.parser.parse_args(['--title', 'test_title', '--file', f.name])
+        self.uploader.upload(self.uploader)
 
         mock_item.upload.assert_called_once_with(f.name, metadata={
             'collection': 'opensource',
