@@ -35,6 +35,10 @@ class TestArchiveUploader(unittest.TestCase):
         mock_args = MagicMock()
         mock_args.title = 'test_title'
         mock_args.file = f.name
+        mock_args.collection = 'opensource'
+        mock_args.description = ''
+        mock_args.mediatype = 'web'
+        mock_args.subject = 'wikiforge;wikiteam'
         mock_parse_args.return_value = mock_args
 
         self.uploader.upload()
