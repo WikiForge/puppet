@@ -1,3 +1,4 @@
+import argparse
 import unittest
 import tempfile
 import os
@@ -19,8 +20,9 @@ class TestArchiveUploader(unittest.TestCase):
         self.assertEqual(args.mediatype, 'web')
         self.assertEqual(args.subject, 'wikiforge;wikiteam')
 
+    @patch('iaupload.ArchiveUploader.parser.parse_args')
     @patch('internetarchive.get_item')
-    def test_upload(self, mock_get_item):
+    def test_upload(self, mock_get_item, mock_parse_args):
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(b'test data')
 
@@ -31,8 +33,16 @@ class TestArchiveUploader(unittest.TestCase):
         mtime = (now - timedelta(days=1)).timestamp()
         os.utime(f.name, (mtime, mtime))
 
-        self.uploader.parser.parse_args(['--title', 'test_title', '--file', f.name])
-        self.uploader.upload(self.uploader)
+        mock_parse_args.return_value = argparse.Namespace(
+            title='test_title',
+            file=f.name,
+            collection='opensource',
+            description='',
+            mediatype='web',
+            subject='wikiforge;wikiteam',
+        )
+    
+        self.uploader.upload()
 
         mock_item.upload.assert_called_once_with(f.name, metadata={
             'collection': 'opensource',
