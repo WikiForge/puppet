@@ -10,9 +10,6 @@ from iaupload import ArchiveUploader
 class TestArchiveUploader(unittest.TestCase):
     def setUp(self):
         self.uploader = ArchiveUploader()
-        self.uploader.parser = argparse.ArgumentParser()
-        self.uploader.parser.add_argument('--title', required=True)
-        self.uploader.parser.add_argument('--file', required=True)
 
     def test_args(self):
         args = self.uploader.parser.parse_args(['--title', 'test_title', '--file', '/path/to/test_file'])
@@ -23,9 +20,9 @@ class TestArchiveUploader(unittest.TestCase):
         self.assertEqual(args.mediatype, 'web')
         self.assertEqual(args.subject, 'wikiforge;wikiteam')
 
-    @patch('iaupload.ArchiveUploader.parser.parse_args')
+    @patch('iaupload.ArchiveUploader')
     @patch('internetarchive.get_item')
-    def test_upload(self, mock_get_item, mock_parse_args):
+    def test_upload(self, mock_get_item, mock_archive_uploader):
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(b'test data')
 
@@ -36,7 +33,7 @@ class TestArchiveUploader(unittest.TestCase):
         mtime = (now - timedelta(days=1)).timestamp()
         os.utime(f.name, (mtime, mtime))
 
-        mock_parse_args.return_value = argparse.Namespace(
+        mock_archive_uploader.parser.parse_args.return_value = argparse.Namespace(
             title='test_title',
             file=f.name,
             collection='opensource',
