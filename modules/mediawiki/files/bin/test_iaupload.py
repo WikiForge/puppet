@@ -10,6 +10,9 @@ from iaupload import ArchiveUploader
 class TestArchiveUploader(unittest.TestCase):
     def setUp(self):
         self.uploader = ArchiveUploader()
+        self.uploader.parser = argparse.ArgumentParser()
+        self.uploader.parser.add_argument('--title', required=True)
+        self.uploader.parser.add_argument('--file', required=True)
 
     def test_args(self):
         args = self.uploader.parser.parse_args(['--title', 'test_title', '--file', '/path/to/test_file'])
