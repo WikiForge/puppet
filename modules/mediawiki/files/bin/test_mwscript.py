@@ -1,6 +1,6 @@
 import os
 import mwscript
-import pytest
+from unittest import mock
 
 
 def test_get_command_simple():
@@ -19,7 +19,8 @@ def test_get_command_extension():
     assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/1.39/extensions/CheckUser/maintenance/test.php --wiki=metawiki', 'generate': None, 'long': False, 'nolog': False}
 
 
-def test_get_command_extension_list():
+@mock.patch.dict(os.environ, {'LOGNAME': 'test'})
+def test_get_command_extension_list(mock_logname):  # noqa: U100
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
@@ -72,8 +73,8 @@ def test_get_command_extension_runner():
     args.version = '1.40'
     assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/extensions/CheckUser/maintenance/test.php --wiki=metawiki', 'generate': None, 'long': False, 'nolog': False}
 
-
-def test_get_command_extension_list_runner():
+@mock.patch.dict(os.environ, {'LOGNAME': 'test'})
+def test_get_command_extension_list_runner(mock_logname):  # noqa: U100
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
