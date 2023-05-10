@@ -221,7 +221,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
 
 
 def _get_staging_path(repo: str, version: str = '') -> str:
-    if version and ('extensions/' in repo or 'skins/' in repo):
+    if version and ('extensions/' in repo or 'skins/' in repo or repo == 'vendor'):
         return f'/srv/mediawiki-staging/{version}/{repo}'
 
     return f'/srv/mediawiki-staging/{repos[repo]}/'
@@ -270,6 +270,10 @@ def _construct_git_reset_revert(repo: str, version: str = '') -> str:
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard HEAD@{{1}}'
 
 
+def _construct_git_reset_hard(repo: str, version: str = '') -> str:
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} reset --hard'
+
+
 def _construct_reset_mediawiki_rm_staging(version: str) -> str:
     return f'sudo -u {DEPLOYUSER} rm -rf {_get_staging_path(version)}'
 
@@ -285,10 +289,11 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.l10n = True
         args.ignore_time = True
         args.extension_list = True
+        args.upgrade_vendor = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
     run_process(args=args, start=start)
-    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins:
+    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor:
         for version in args.versions:
             run_process(args=args, start=start, version=version)
 
@@ -347,6 +352,14 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     print(f'Failed to pull {repo} due to invalid name')
 
         if version:
+            if args.upgrade_vendor:
+                stage.append(_construct_git_reset_hard('vendor', version=version))
+                stage.append(_construct_git_pull('vendor', submodules=True, version=version))
+                if not args.world:
+                    stage.append(f'sudo -u {DEPLOYUSER} composer update --no-dev --quiet')
+                    rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
+                    rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
+
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
                     if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
@@ -446,6 +459,8 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                         print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
 
         for cmd in stage:  # setup env, git pull etc
+            if 'composer' in cmd:
+                os.chdir(_get_staging_path(version))
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
@@ -622,6 +637,7 @@ if __name__ == '__main__':
     parser.add_argument('--branch', dest='branch')
     parser.add_argument('--reset-world', dest='reset_world', action='store_true')
     parser.add_argument('--upgrade-world', dest='upgrade_world', action='store_true')
+    parser.add_argument('--upgrade-vendor', dest='upgrade_vendor', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
