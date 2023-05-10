@@ -274,6 +274,10 @@ def test_construct_git_reset_revert() -> None:
     assert mwdeploy._construct_git_reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
 
 
+def test_construct_git_reset_hard() -> None:
+    assert mwdeploy._construct_git_reset_hard('vendor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/vendor reset --hard'
+
+
 def test_construct_reset_mediawiki_rm_staging() -> None:
     assert mwdeploy._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
