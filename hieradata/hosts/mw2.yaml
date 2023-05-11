@@ -3,8 +3,6 @@ users::groups:
   - mediawiki-roots
 
 jobrunner: true
-jobrunner::intensive: true
-
 mediawiki::jobqueue::runner::redis_ip: '18.217.191.48:6379'
 
 role::mediawiki::use_strict_firewall: true
