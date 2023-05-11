@@ -31,15 +31,15 @@ class TestArchiveUploader(unittest.TestCase):
         now = datetime.now()
         mtime = now.timestamp()
         os.utime(f.name, (mtime, mtime))
-
-        mock_args = MagicMock()
-        mock_args.title = 'test_title'
-        mock_args.file = f.name
-        mock_args.collection = 'opensource'
-        mock_args.description = ''
-        mock_args.mediatype = 'web'
-        mock_args.subject = 'wikiforge;wikiteam'
-        mock_parse_args.return_value = mock_args
+        mock_args = {
+            'title': 'test_title',
+            'file': f.name,
+            'collection': 'opensource',
+            'description': '',
+            'mediatype': 'web',
+            'subject': 'wikiforge;wikiteam',
+        }
+        mock_parse_args.return_value = MagicMock(**mock_args)
 
         self.uploader.upload()
 
