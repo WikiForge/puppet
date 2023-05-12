@@ -1287,3 +1287,4 @@ OOJSPlus:
   branch: _branch_
   path: extensions/OOJSPlus
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OOJSPlus
+  versions: '1.41'
