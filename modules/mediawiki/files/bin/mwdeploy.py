@@ -493,7 +493,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
             if args.lang:
                 lang = f'--lang={args.lang}'
 
-            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles-{version}.php')
             rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
