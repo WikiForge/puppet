@@ -15,6 +15,14 @@ class mediawiki::multiversion (
         require => File['/srv/mediawiki/config'],
     }
 
+    file { '/srv/mediawiki/index.php':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/initialise/entrypoints/index.php',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/config'],
+    }
+
     if lookup(mediawiki::use_staging) {
         file { '/srv/mediawiki-staging/w':
             ensure  => 'link',
