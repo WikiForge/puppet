@@ -41,6 +41,8 @@ location ^~ /w/index.php {
 		# 302 (temporary redirect) for now, it will later be a 301 (permanent redirect)
 		return 302 /wiki/$arg_title?$new_args;
 	}
+
+	rewrite /w/index.php /wiki/ permanent;
 }
 
 location = /wiki {
