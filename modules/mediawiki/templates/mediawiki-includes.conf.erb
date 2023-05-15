@@ -35,7 +35,7 @@ location = /apple-touch-icon.png {
 	rewrite ^(.*)$ /touch.php;
 }
 
-location ^~ /wiki/w/(.*) {
+location ^~ /wiki/w/(.*)$ {
 	return 301 /wiki/$1;
 }
 
