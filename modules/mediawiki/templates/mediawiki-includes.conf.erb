@@ -72,7 +72,7 @@ location @wiki {
 }
 
 location ~ ^/m/(.*) {
-	return 301 /wiki/Special:UrlRedirector/$1;
+	return 301 /Special:UrlRedirector/$1;
 }
 	
 location /sitemaps/ {
@@ -85,5 +85,5 @@ location ~ ^/static/((?!(private))(.+))$ {
 
 # Redirect /entity/* to /wiki/Special:EntityData/*
 location ~ ^/entity/(.*) {
-	return 301 /wiki/Special:EntityData/$1;
+	return 301 /Special:EntityData/$1;
 }
