@@ -36,7 +36,13 @@ location = /apple-touch-icon.png {
 }
 
 location ^~ /w/index.php {
-	if ($args ~* "(?:^|&)action=submit(?:&|$)") {
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
+	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+
+	if ($arg_action = "submit") {
 		# Skip if action=submit
 		break;
 	}
