@@ -35,8 +35,12 @@ location = /apple-touch-icon.png {
 	rewrite ^(.*)$ /touch.php;
 }
 
-location ^~ /wiki/w/(.*)$ {
-	return 301 /wiki/$1;
+location ^~ /w/index.php {
+	if ($args ~* "(.*)(?:^|&)title=([^&]*)(?:&|$)(.*)") {
+		set $new_args $1$3;
+		# 302 (temporary redirect) for now, it will later be a 301 (permanent redirect)
+		return 302 /wiki/$arg_title?$new_args;
+	}
 }
 
 location = /wiki {
