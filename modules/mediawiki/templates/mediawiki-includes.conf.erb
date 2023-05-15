@@ -36,6 +36,11 @@ location = /apple-touch-icon.png {
 }
 
 location ^~ /w/index.php {
+	if ($args ~* "(?:^|&)action=submit(?:&|$)") {
+		# Skip if action=submit
+		break;
+	}
+
 	if ($args ~* "(.*)(?:^|&)title=([^&]*)(?:&|$)(.*)") {
 		set $new_args $1$3;
 		# 302 (temporary redirect) for now, it will later be a 301 (permanent redirect)
