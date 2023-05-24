@@ -114,7 +114,6 @@ sub rate_limit {
 		}
 	} else {
 		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
-		# T6283: remove rate limit for IABot (temporarily?)
 		if (
 			((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
@@ -126,8 +125,19 @@ sub rate_limit {
 				}
 			} else {
 				# Fallback
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
+				if (req.http.X-Wiki-RateLimit) {
+					set req.http.X-Wiki-RateLimit = regsub(req.http.X-Wiki-RateLimit, "[^0-9/]+", "");
+					set req.http.X-Wiki-RateLimit-Requests = regsub(req.http.X-Wiki-RateLimit, "/.*$", "");
+					set req.http.X-Wiki-RateLimit-Period = regsub(req.http.X-Wiki-RateLimit, "^[^/]+/", "");
+					if (std.integer(req.http.X-Wiki-RateLimit-Requests, 0) > 0 && std.duration(req.http.X-Wiki-RateLimit-Period, 0s) > 0s) {
+						if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, std.integer(req.http.X-Wiki-RateLimit-Requests), std.duration(req.http.X-Wiki-RateLimit-Period))) {
+							return (synth(429, "Varnish Rate Limit Exceeded"));
+						}
+					}
+				} else {
+					if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
+						return (synth(429, "Varnish Rate Limit Exceeded"));
+					}
 				}
 			}
 		}
