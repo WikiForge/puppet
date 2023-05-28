@@ -34,16 +34,19 @@ jobs:
           import yaml
 
           def check_alphabetical_order(data):
-              keys = sorted(data.keys())
-              return keys == list(data.keys())
+              keys = list(data.keys())
+              out_of_order_keys = [keys[i] for i in range(1, len(keys)) if keys[i] < keys[i-1]]
+              return out_of_order_keys
 
           with open("mediawiki-repos.yaml", "r") as file:
               data = yaml.safe_load(file)
 
-          if check_alphabetical_order(data):
+          out_of_order = check_alphabetical_order(data)
+          if len(out_of_order) == 0:
               print("Top-level keys in mediawiki-repos.yaml are sorted alphabetically.")
           else:
-              print("Top-level keys in mediawiki-repos.yaml are not sorted alphabetically.")
-              print("Please ensure the top-level keys in the mediawiki-repos.yaml file are sorted.")
+              print("Top-level keys in mediawiki-repos.yaml are not sorted alphabetically:")
+              for key in out_of_order:
+                  print(key)
               exit(1)
           '
