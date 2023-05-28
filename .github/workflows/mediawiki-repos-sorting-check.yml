@@ -30,10 +30,20 @@ jobs:
       - name: Run YAML Sorting Check
         run: |
           cd modules/mediawiki/data
-          if cmp -s <(python3 -c "import yaml; data = yaml.safe_load(open('mediawiki-repos.yaml')); sorted_keys = sorted(data.keys()); exit(1) if any(key != sorted_keys[i] for i, key in enumerate(data.keys())) else exit(0)") <(cat mediawiki-repos.yaml); then
-              echo "YAML data for mediawiki-repos.yaml is sorted alphabetically."
-          else
-              echo "YAML data for mediawiki-repos.yaml is not sorted alphabetically."
-              echo "Please ensure the mediawiki-repos.yaml file is sorted."
-              exit 1
-          fi
+          python3 -c '
+          import yaml
+
+          def check_alphabetical_order(data):
+              keys = sorted(data.keys())
+              return keys == list(data.keys())
+
+          with open("mediawiki-repos.yaml", "r") as file:
+              data = yaml.safe_load(file)
+
+          if check_alphabetical_order(data):
+              print("Top-level keys in mediawiki-repos.yaml are sorted alphabetically.")
+          else:
+              print("Top-level keys in mediawiki-repos.yaml are not sorted alphabetically.")
+              print("Please ensure the top-level keys in the mediawiki-repos.yaml file are sorted.")
+              exit(1)
+          '
