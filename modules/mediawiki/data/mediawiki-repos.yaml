@@ -1,11 +1,11 @@
-AJAXPoll:
-  branch: master
-  path: extensions/AJAXPoll
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-AJAXPoll
 3D:
   branch: _branch_
   path: extensions/3D
   repo_url: https://github.com/wikimedia/mediawiki-extensions-3D
+AJAXPoll:
+  branch: master
+  path: extensions/AJAXPoll
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-AJAXPoll
 AbuseFilter:
   branch: _branch_
   path: extensions/AbuseFilter
