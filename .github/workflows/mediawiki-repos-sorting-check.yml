@@ -1,0 +1,39 @@
+name: Check if mediawiki-repos.yaml is sorted alphabetically
+
+on:
+  push:
+    paths:
+      - .github/workflows/mediawiki-repos-sorting-check.yml
+      - modules/mediawiki/data/mediawiki-repos.yaml
+
+  pull_request:
+    paths:
+      - .github/workflows/mediawiki-repos-sorting-check.yml
+      - modules/mediawiki/data/mediawiki-repos.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install PyYAML
+        run: pip3 install pyyaml
+
+      - name: Run YAML Sorting Check
+        run: |
+          cd modules/mediawiki/data
+          if cmp -s <(python3 -c "import yaml; data = yaml.safe_load(open('mediawiki-repos.yaml')); sorted_keys = sorted(data.keys()); exit(1) if any(key != sorted_keys[i] for i, key in enumerate(data.keys())) else exit(0)") <(cat mediawiki-repos.yaml); then
+              echo "YAML data for mediawiki-repos.yaml is sorted alphabetically."
+          else
+              echo "YAML data for mediawiki-repos.yaml is not sorted alphabetically."
+              echo "Please ensure the mediawiki-repos.yaml file is sorted."
+              exit 1
+          fi
