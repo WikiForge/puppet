@@ -132,6 +132,8 @@ class mediawiki {
     $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
     $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
+    $aws_s3_access_key = lookup('mediawiki::aws_s3_access_key')
+    $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
