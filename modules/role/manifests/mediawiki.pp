@@ -44,56 +44,6 @@ class role::mediawiki (
         }
     }
 
-    file { '/opt/amazon-efs-utils-1.35.0-1_all.deb':
-        ensure => absent,
-        source => 'puppet:///modules/role/mediawiki/packages/amazon-efs-utils-1.35.0-1_all.deb',
-    }
-
-   ensure_packages(
-            [
-                'keyutils',
-                'libnfsidmap2',
-                'nfs-common',
-                'rpcbind',
-                'stunnel4',
-            ],
-            {
-                ensure => purged,
-            },
-        )
-
-   package { 'amazon-efs-utils':
-        ensure   => purged,
-        provider => dpkg,
-        source   => '/opt/amazon-efs-utils-1.35.0-1_all.deb',
-        require  => File['/opt/amazon-efs-utils-1.35.0-1_all.deb'],
-    }
-
-    if !defined(Mount['/mnt/mediawiki-static']) {
-        mount { '/mnt/mediawiki-static':
-            ensure   => absent,
-            fstype   => 'efs',
-            remounts => true,
-            device   => 'fs-0a9cb0b1a9bf84b4a:/',
-            options  => 'tls',
-            require  => Package['amazon-efs-utils'],
-        }
-    }
-
-    file { '/usr/local/bin/remountStatic.sh':
-        ensure => absent,
-        mode   => '0755',
-        source => 'puppet:///modules/role/mediawiki/bin/remountStatic.sh',
-    }
-
-    cron { 'check_mount':
-        ensure  => absent,
-        command => '/bin/bash /usr/local/bin/remountStatic.sh',
-        user    => 'root',
-        minute  => '*/1',
-        hour    => '*',
-    }
-
     # Using fastcgi we need more local ports
     sysctl::parameters { 'raise_port_range':
         values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },
