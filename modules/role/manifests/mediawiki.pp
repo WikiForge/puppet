@@ -45,7 +45,7 @@ class role::mediawiki (
     }
 
     file { '/opt/amazon-efs-utils-1.35.0-1_all.deb':
-        ensure => present,
+        ensure => absent,
         source => 'puppet:///modules/role/mediawiki/packages/amazon-efs-utils-1.35.0-1_all.deb',
     }
 
@@ -58,22 +58,15 @@ class role::mediawiki (
    ])
 
    package { 'amazon-efs-utils':
-        ensure   => installed,
+        ensure   => purged,
         provider => dpkg,
         source   => '/opt/amazon-efs-utils-1.35.0-1_all.deb',
         require  => File['/opt/amazon-efs-utils-1.35.0-1_all.deb'],
     }
 
-    file { '/mnt/mediawiki-static':
-        ensure => directory,
-        mode   => '0755',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
     if !defined(Mount['/mnt/mediawiki-static']) {
         mount { '/mnt/mediawiki-static':
-            ensure   => mounted,
+            ensure   => absent,
             fstype   => 'efs',
             remounts => true,
             device   => 'fs-0a9cb0b1a9bf84b4a:/',
@@ -83,13 +76,13 @@ class role::mediawiki (
     }
 
     file { '/usr/local/bin/remountStatic.sh':
-        ensure => present,
+        ensure => absent,
         mode   => '0755',
         source => 'puppet:///modules/role/mediawiki/bin/remountStatic.sh',
     }
 
     cron { 'check_mount':
-        ensure  => present,
+        ensure  => absent,
         command => '/bin/bash /usr/local/bin/remountStatic.sh',
         user    => 'root',
         minute  => '*/1',
