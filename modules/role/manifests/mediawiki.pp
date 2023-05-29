@@ -45,7 +45,7 @@ class role::mediawiki (
     }
 
     file { '/opt/amazon-efs-utils-1.35.0-1_all.deb':
-        ensure => absent,
+        ensure => present,
         source => 'puppet:///modules/role/mediawiki/packages/amazon-efs-utils-1.35.0-1_all.deb',
     }
 
