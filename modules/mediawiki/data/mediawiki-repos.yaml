@@ -6,6 +6,10 @@ AJAXPoll:
   branch: master
   path: extensions/AJAXPoll
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AJAXPoll
+AWS:
+  branch: master
+  path: extensions/AWS
+  repo_url: https://github.com/edwardspec/mediawiki-aws-s3
 AbuseFilter:
   branch: _branch_
   path: extensions/AbuseFilter
