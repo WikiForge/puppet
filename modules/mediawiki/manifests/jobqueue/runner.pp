@@ -46,6 +46,15 @@ class mediawiki::jobqueue::runner (
             monthday => [ '14', '28' ],
         }
 
+        ensure_packages(
+            'boto3',
+            {
+                ensure   => '1.26.144',
+                provider => 'pip3',
+                require  => Package['python3-pip'],
+            },
+        )
+
         cron { 'generate sitemaps for all wikis':
             ensure  => present,
             command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/${version}/extensions/WikiForgeMagic/maintenance/generateWikiForgeSitemap.php",
