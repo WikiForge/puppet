@@ -46,15 +46,6 @@ class mediawiki::jobqueue::runner (
             monthday => [ '14', '28' ],
         }
 
-        ensure_packages(
-            'boto3',
-            {
-                ensure   => '1.26.144',
-                provider => 'pip3',
-                require  => Package['python3-pip'],
-            },
-        )
-
         cron { 'generate sitemaps for all wikis':
             ensure  => present,
             command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/${version}/extensions/WikiForgeMagic/maintenance/generateWikiForgeSitemap.php",
@@ -66,9 +57,20 @@ class mediawiki::jobqueue::runner (
         }
 
         if $wiki == 'metawiki' {
+            $aws_s3_access_key = lookup('mediawiki::aws_s3_access_key')
+            $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
+            ensure_packages(
+                'boto3',
+                {
+                    ensure   => '1.26.144',
+                    provider => 'pip3',
+                    require  => Package['python3-pip'],
+                },
+            )
+
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py",
+                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py -B static.wikiforge.net -K ${aws_s3_access_key} -S ${aws_s3_access_secret_key}",
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
