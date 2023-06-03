@@ -1,7 +1,7 @@
 server {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
-        server_name restbase.wikiforge.net;
+        server_name restbase-lb.wikiforge.net;
 
 	ssl_certificate /etc/ssl/localcerts/wildcard.wikiforge.net.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.wikiforge.net.key;
