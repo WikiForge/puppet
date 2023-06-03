@@ -9,7 +9,7 @@ class mediawiki::deploy {
             owner   => 'www-data',
             group   => 'www-data',
             mode    => '0400',
-            before  => File['/usr/local/bin/deploy-mediawiki'],
+            before  => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/srv/mediawiki-staging/deploykey':
@@ -18,7 +18,7 @@ class mediawiki::deploy {
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
-            before => File['/usr/local/bin/deploy-mediawiki'],
+            before => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/var/www/.ssh':
@@ -26,7 +26,7 @@ class mediawiki::deploy {
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
-            before => File['/usr/local/bin/deploy-mediawiki'],
+            before => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/var/www/.ssh/known_hosts':
@@ -43,7 +43,7 @@ class mediawiki::deploy {
         {
             ensure   => '3.3.0',
             provider => 'pip3',
-            before   => File['/usr/local/bin/deploy-mediawiki'],
+            before   => File['/usr/local/bin/mwdeploy'],
             require  => Package['python3-pip'],
         },
     )
@@ -55,18 +55,18 @@ class mediawiki::deploy {
         mode   => '0755',
     }
 
-    file { '/usr/local/bin/deploy-mediawiki':
+    file { '/usr/local/bin/mwdeploy':
         ensure  => 'present',
         mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
+        source  => 'puppet:///modules/mediawiki/bin/mwdeploy.py',
         require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
     }
 
-    file { '/usr/local/bin/mwdeploy':
+    file { '/usr/local/bin/deploy-mediawiki':
         ensure  => 'link',
-        target  => '/usr/local/bin/deploy-mediawiki',
+        target  => '/usr/local/bin/mwdeploy',
         mode    => '0755',
-        require => File['/usr/local/bin/deploy-mediawiki'],
+        require => File['/usr/local/bin/mwdeploy'],
     }
 
     git::clone { 'MediaWiki config':
@@ -103,29 +103,29 @@ class mediawiki::deploy {
     }
 
     exec { 'MediaWiki Config Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
+        command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['MediaWiki config'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 
     exec { 'Landing Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
+        command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['landing'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 
     exec { 'ErrorPages Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
+        command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 }

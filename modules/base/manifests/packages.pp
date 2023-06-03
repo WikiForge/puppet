@@ -25,6 +25,7 @@ class base::packages {
         'pigz',
         'python-is-python3',
         'python3-distro',
+        'python3-pip',
         'ruby',
         'ruby-safe-yaml',
         'screen',

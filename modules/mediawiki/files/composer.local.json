@@ -1,7 +1,11 @@
 {
+	"require": {
+		"psy/psysh": "^0.11.1"
+	},
 	"extra": {
 		"merge-plugin": {
 			"include": [
+				"extensions/AWS/composer.json",
 				"extensions/Wikibase/composer.json",
 				"extensions/WikibaseEdtf/composer.json"
 			]

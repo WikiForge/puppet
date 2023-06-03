@@ -1,33 +1,22 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
-  - mediawiki-test-admins
 
 jobrunner: true
+jobrunner::intensive: true
+
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
-mediawiki::jobqueue::wiki: 'test1wiki'
+mediawiki::jobqueue::runner::cron: true
 
 role::mediawiki::use_strict_firewall: true
 
-mediawiki::php::fpm::fpm_min_child: 5
+mediawiki::php::fpm::fpm_min_child: 1
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
 
-mediawiki::php::memory_limit: '256M'
-mediawiki::php::enable_request_profiling: true
-
-mediawiki::use_staging: true
-
-mediawiki::multiversion::versions:
-  '1.39':
-    branch: 'REL1_39'
-  '1.40':
-    branch: 'REL1_40'
-    default: true
-  '1.41':
-    branch: 'master'
+mediawiki::php::memory_limit: '1G'
 
 php::php_version: '7.4'
 

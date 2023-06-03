@@ -26,15 +26,6 @@ class ssl {
         require => File['/var/www/.well-known/acme-challenge'],
     }
 
-    file { '/home/ssl-admins':
-        ensure    => directory,
-        owner     => 'puppet',
-        group     => 'ssl-admins',
-        mode      => '0660',
-        recurse   => true,
-        max_files => '7000',
-    }
-
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
@@ -69,15 +60,6 @@ class ssl {
         owner  => 'root',
         group  => 'root',
         mode   => '0770',
-    }
-
-    file { '/var/lib/nagios/ssl-acme':
-        ensure  => present,
-        source  => 'puppet:///modules/ssl/ssl-acme',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0775',
-        require => File['/var/lib/nagios'],
     }
 
     file { '/var/lib/nagios/id_ed25519':

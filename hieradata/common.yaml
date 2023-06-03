@@ -8,6 +8,8 @@ mediawiki::multiversion::versions:
   '1.39':
     branch: 'REL1_39'
     default: true
+  '1.40':
+    branch: 'REL1_40'
 
 puppetserver_hostname: puppet1.wikiforge.net
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
@@ -30,6 +32,10 @@ varnish::backends:
     port: 8101
     probe: mwhealth
     pool: true
+  mwtask1:
+    port: 8150
+    probe: false
+    pool: false
   test1:
     port: 8180
     probe: false

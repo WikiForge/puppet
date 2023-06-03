@@ -1,5 +1,3 @@
-users::groups:
-  - ssl-admins
 puppetserver: true
 puppetserver_java_opts: '-Xms2G -Xmx2G'
 puppetdb_enable: true

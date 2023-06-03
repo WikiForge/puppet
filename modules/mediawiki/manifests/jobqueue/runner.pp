@@ -57,9 +57,20 @@ class mediawiki::jobqueue::runner (
         }
 
         if $wiki == 'metawiki' {
+            $aws_s3_access_key = lookup('mediawiki::aws_s3_access_key')
+            $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
+            ensure_packages(
+                'boto3',
+                {
+                    ensure   => '1.26.144',
+                    provider => 'pip3',
+                    require  => Package['python3-pip'],
+                },
+            )
+
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py",
+                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py -B static.wikiforge.net -K ${aws_s3_access_key} -S ${aws_s3_access_secret_key}",
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
@@ -77,15 +88,6 @@ class mediawiki::jobqueue::runner (
             # Backups
             file { '/srv/backups':
                 ensure => directory,
-            }
-
-            cron { 'backups-mediawiki-static':
-                ensure   => present,
-                command  => '/usr/local/bin/wikiforge-backup backup mediawiki-static > /var/log/mediawiki-static-backup.log 2>&1',
-                user     => 'root',
-                minute   => '0',
-                hour     => '5',
-                monthday => ['22'],
             }
 
             cron { 'backups-mediawiki-xml':

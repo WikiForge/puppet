@@ -61,6 +61,9 @@ acl purge {
 	# mw2
 	"18.224.51.21";
 
+	# mwtask1
+	"23.142.24.76";
+
 	# test1
 	"52.14.195.40";
 
@@ -113,17 +116,17 @@ sub rate_limit {
 		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
 		# T6283: remove rate limit for IABot (temporarily?)
 		if (
-			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
+			((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
-			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
+			if (req.url ~ "^/(wiki/)?\S+\:MathShowImage?hash=[0-9a-z]+&mode=mathml" || req.url ~ "^/(w/)?index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
 				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
 			} else {
 				# Fallback
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 24, 2s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
 			}
@@ -303,7 +306,7 @@ sub vcl_recv {
 		return (pass);
 	}
 
- 	if (req.http.Host == "test1.wikiforge.net") {
+ 	if (req.http.Host ~ "^(alphatest|betatest|test1)\.wikiforge\.net") {
                 set req.backend_hint = test1;
                 return (pass);
         }
@@ -326,8 +329,8 @@ sub vcl_recv {
 
 # Defines the uniqueness of a request
 sub vcl_hash {
-	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+	# FIXME: try if we can make this ^/(wiki/)? only?
+	if ((req.http.Host != "wikiforge.net" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Device);
 	}
 }
@@ -343,7 +346,7 @@ sub vcl_pipe {
 # Initiate a backend fetch
 sub vcl_backend_fetch {
 	# Modify the end of the URL if mobile device
-	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
+	if ((bereq.url ~ "^/(wiki/)?[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1" && bereq.url !~ "(.*)(?:\?|&)useformat=mobile(?:&|$)" && bereq.http.Host != "wikiforge.net") {
 		if (bereq.url ~ "\?") {
 			set bereq.url = bereq.url + "&useformat=mobile";
 		} else {
@@ -499,9 +502,9 @@ sub vcl_deliver {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
+	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/(w/)?index\.php") {
 		// ...but exempt CentralNotice banner special pages
-		if (req.url !~ "^/(wiki/|w/index\.php\?title=)Special:Banner") {
+		if (req.url !~ "^/(wiki/|w/index\.php\?title=)?Special:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
 		}
 	}
@@ -512,7 +515,7 @@ sub vcl_deliver {
 	}
 
 	# Do not index certain URLs
-	if (req.url ~ "^(/w/(api|index|rest)\.php*|/wiki/Special(\:|%3A)(?!WikiForum)).+$") {
+	if (req.url ~ "^(/(w/)?(api|index|rest)\.php*|/(wiki/)?Special(\:|%3A)(?!WikiForum)).+$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 

@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -12,3 +12,19 @@ jobs:
         continue-on-error: true
         run: |
            ! grep -E -r --binary-files=without-match --color=always --file=typos --exclude=typos --exclude-dir=.git
+
+  notify-irc:
+    needs: check
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.repository_owner == 'WikiForge' && ( github.ref	== 'refs/heads/master' || github.event_name == 'pull_request' ) }}
+    steps:
+      - name: failed
+        uses: technote-space/workflow-conclusion-action@v3
+      - uses: rectalogic/notify-irc@v2
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        with:
+          channel: "#wikiforge-sre"
+          server: "irc.libera.chat"
+          nickname: wikiforge-github
+          message: ${{ github.repository }} - ${{ github.actor }} the build has errored.
+          sasl_password: ${{ secrets.IRC_WIKIFORGEBOTS }}

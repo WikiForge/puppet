@@ -24,6 +24,8 @@ script-src:
   - 'www.gstatic.com'
   - 'www.google.com'
   - 'platform.twitter.com'
+  - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 style-src:
   - "'self'"
@@ -48,6 +50,8 @@ style-src:
   - 'fastly.jsdelivr.net'
   - 'platform.twitter.com'
   - 'ton.twimg.com'
+  - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 img-src:
   - 'blob:'
@@ -109,6 +113,8 @@ frame-src:
   - 'archive.org'
   - 'query.wikidata.org'
   - 'www.bing.com'
+  - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 connect-src:
   - "'self'"
@@ -122,3 +128,5 @@ connect-src:
   - 'cdn.jsdelivr.net'
   - 'storage.googleapis.com'
   - '*.youtube-nocookie.com'
+  - 'hcaptcha.com'
+  - '*.hcaptcha.com'
