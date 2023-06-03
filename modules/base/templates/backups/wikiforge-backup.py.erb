@@ -13,11 +13,10 @@ import requests
 
 from fabric import Connection
 from datetime import datetime
-from py7zr import SevenZipFile
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiForge backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-static', 'mediawiki-xml'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
@@ -104,30 +103,6 @@ def backup_sql(dt: str, database: str):
         os.remove(f'{db}.tar.gz')
 
 
-def backup_mediawiki_static(dt: str, database: str):
-    if database is None:
-        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
-    else:
-        dbs = [database]
-
-    excluded_dirs = {'archive', 'deleted', 'dumps', 'lockdir', 'sitemaps', 'temp', 'thumb'}
-
-    for db in dbs:
-        with SevenZipFile(f'/mnt/mediawiki-static/{db}.7z', mode='w') as archive:
-            for root, dirs, files in os.walk(f'/mnt/mediawiki-static/{db}'):
-                dirs[:] = [d for d in dirs if d not in excluded_dirs]
-
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    archive_path = os.path.relpath(file_path, f'/mnt/mediawiki-static/{db}')
-                    archive.write(file_path, archive_path)
-
-        pca_connection().put(f'/mnt/mediawiki-static/{db}.7z', f'mediawiki-static/{db}/{dt}.7z', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-static/{db}/{dt}.7z', 4)
-
-        os.remove(f'/mnt/mediawiki-static/{db}.7z')
-
-
 def backup_mediawiki_xml(dt: str, database: str):
     if database is None:
         dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
@@ -157,8 +132,6 @@ def backup(source: str, database: str):
         backup_phorge(dt)
     elif source == 'sql':
         backup_sql(dt, database)
-    elif source == 'mediawiki-static':
-        backup_mediawiki_static(dt, database)
     elif source == 'mediawiki-xml':
         backup_mediawiki_xml(dt, database)
 
@@ -188,7 +161,7 @@ def download(source: str, dt: str, database: str):
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.7z')
-    elif source in ['sql', 'mediawiki-static']:
+    elif source in ['sql']:
         download_pca(f'{source}/{database}/{dt}.7z')
 
     print(f'Completed! This took {time.time() - ts}s')
@@ -198,7 +171,7 @@ def find_backups(source: str, database: str):
     all_backups = pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{source}', 0)
     backups_list = list(all_backups.text.split("\n"))
     
-    if source in ['database', 'mediawiki-static', 'mediawiki-xml']:
+    if source in ['database', 'mediawiki-xml']:
         for backup_item in backups_list:
             if backup_item.split('/')[0] == database:
                 print(backup_item.split('/')[1].split('.')[0])
@@ -212,7 +185,7 @@ def unfreeze_backup(source: str, dt: str, database: str):
         file = f'{source}/{dt}.tar.gz'
     elif source in ['sql']:
         file = f'{source}/{database}/{dt}.tar.gz'
-    elif source in ['mediawiki-static', 'mediawiki-xml']:
+    elif source in ['mediawiki-xml']:
         file = f'{source}/{database}/{dt}.7z'
 
     pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
