@@ -7,6 +7,10 @@ class mediawiki {
     include mediawiki::logging
     include mediawiki::php
 
+    if lookup('mwservices', {'default_value' => false}) {
+        include mediawiki::services_cron
+    }
+
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
     } else {
