@@ -256,7 +256,7 @@ def find_backups(source: str, database: str):
 def unfreeze_backup(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phorge']:
         file = f'{source}/{dt}.tar.gz'
-    elif source in ['mediawiki-static', 'sql']:
+    elif source in ['sql']:
         file = f'{source}/{database}/{dt}.tar.gz'
     elif source in ['mediawiki-xml']:
         file = f'{source}/{database}/{dt}.7z'
