@@ -83,7 +83,7 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'wikiforge': ['WikiForgeMagic'],
+        'wikiforge': ['FileStorageMonitor', 'SearchVue', 'WikiForgeMagic'],
     }
     return packs.get(pack_name, [])
 
