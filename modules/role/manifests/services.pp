@@ -1,6 +1,6 @@
 # === Class role::services
 #
-# Sets up Citeoid, Proton and Restbase.
+# Sets up Citoid, Proton and RESTBase.
 class role::services {
     include services::citoid
     include services::proton
