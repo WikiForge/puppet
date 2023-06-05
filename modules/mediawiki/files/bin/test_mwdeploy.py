@@ -293,7 +293,7 @@ def test_UpgradePackAction():
     parser.add_argument('--versions', action='store', default=None)
     parser.add_argument('--upgrade-pack', action=UpgradePackAction)
     namespace = parser.parse_args(['--upgrade-pack', 'wikiforge'])
-    assert namespace.upgrade_extensions == ['WikiForgeMagic']
+    assert namespace.upgrade_extensions == ['FileStorageMonitor', 'SearchVue', 'WikiForgeMagic']
 
 
 def test_LangAction():
