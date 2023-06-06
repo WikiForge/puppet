@@ -202,7 +202,7 @@ class mediawiki {
     }
 
     file { '/etc/s3-env.sh':
-        ensure  => 'present',
+        ensure  => present,
         content => template('mediawiki/s3-env.sh.erb'),
         mode    => '0755',
     }
