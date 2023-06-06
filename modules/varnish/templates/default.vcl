@@ -182,18 +182,6 @@ sub mw_request {
 		unset req.http.If-Modified-Since;
 	}
 
-	# Don't cache certain things on static
-	if (
-		req.http.Host == "static.wikiforge.net" &&
-		(
-			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
-			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
-			req.url ~ "^/.*wiki/dumps" # Do not cache wiki dumps
-		)
-	) {
-		return (pass);
-	}
-
 	# We can rewrite those to one domain name to increase cache hits
 	if (req.url ~ "^/(1\.\d{2,})/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.wikiforge.net";
