@@ -108,7 +108,7 @@ sub mobile_detection {
 # Rate limiting logic
 sub rate_limit {
 	# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
-	# T6283: remove rate limit for IABot (temporarily?)
+	# Exempts rate limit for IABot
 	if (
 		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
 		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
