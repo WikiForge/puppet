@@ -113,7 +113,7 @@ sub rate_limit {
 		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
 		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 	) {
-		if (req.url ~ "^/(wiki/)?\S+\:MathShowImage?hash=[0-9a-z]+&mode=mathml" || req.url ~ "^/(w/)?index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
+		if (req.url ~ "^/(wiki/)?\S+\:MathShowImage?hash=[0-9a-z]+&mode=mathml") {
 			# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 			if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
 				return (synth(429, "Varnish Rate Limit Exceeded"));
