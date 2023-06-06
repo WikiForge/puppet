@@ -201,6 +201,12 @@ class mediawiki {
         ],
     }
 
+    file { '/etc/s3-env.sh':
+        ensure  => 'present',
+        content => template('mediawiki/s3-env.sh.erb'),
+        mode    => '0755',
+    }
+
     file { '/tmp/magick-tmp':
         ensure => directory,
         owner  => 'www-data',
