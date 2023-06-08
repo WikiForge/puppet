@@ -69,7 +69,7 @@ class mediawiki::multiversion (
         git::clone { "femiwiki-deploy-${version}":
             ensure    => 'latest',
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
-            origin    => 'https://github.com/miraheze/femiwiki-deploy',
+            origin    => 'https://github.com/WikiForge/femiwiki-deploy',
             branch    => $params['branch'],
             owner     => 'www-data',
             group     => 'www-data',
