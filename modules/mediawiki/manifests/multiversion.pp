@@ -103,6 +103,10 @@ class mediawiki::multiversion (
             class { 'mediawiki::jobqueue::runner':
                 version => $version,
             }
+
+            class { 'mediawiki::services_cron':
+                version => $version,
+            }
         }
     }
 }
