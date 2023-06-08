@@ -228,7 +228,7 @@ CreateRedirect:
 CreateWiki:
   branch: master
   path: extensions/CreateWiki
-  repo_url: https://github.com/miraheze/CreateWiki
+  repo_url: https://github.com/WikiForge/CreateWiki
   composer: true
 CreatedPagesList:
   branch: _branch_
@@ -245,7 +245,7 @@ DarkMode:
 DataDump:
   branch: master
   path: extensions/DataDump
-  repo_url: https://github.com/miraheze/DataDump
+  repo_url: https://github.com/WikiForge/DataDump
 DataTransfer:
   branch: _branch_
   path: extensions/DataTransfer
@@ -415,7 +415,7 @@ GlobalCssJs:
 GlobalNewFiles:
   branch: master
   path: extensions/GlobalNewFiles
-  repo_url: https://github.com/miraheze/GlobalNewFiles
+  repo_url: https://github.com/WikiForge/GlobalNewFiles
 GlobalPreferences:
   branch: _branch_
   path: extensions/GlobalPreferences
@@ -496,11 +496,11 @@ ImageRating:
 ImportDump:
   branch: master
   path: extensions/ImportDump
-  repo_url: https://github.com/miraheze/ImportDump
+  repo_url: https://github.com/WikiForge/ImportDump
 IncidentReporting:
   branch: master
   path: extensions/IncidentReporting
-  repo_url: https://github.com/miraheze/IncidentReporting
+  repo_url: https://github.com/WikiForge/IncidentReporting
 InputBox:
   branch: _branch_
   path: extensions/InputBox
@@ -598,7 +598,7 @@ MagicNoCache:
 ManageWiki:
   branch: master
   path: extensions/ManageWiki
-  repo_url: https://github.com/miraheze/ManageWiki
+  repo_url: https://github.com/WikiForge/ManageWiki
 Maps:
   branch: master
   path: extensions/Maps
@@ -796,7 +796,7 @@ OrphanedTalkPages:
 PDFEmbed:
   branch: master
   path: extensions/PDFEmbed
-  repo_url: https://github.com/miraheze/PDFEmbed
+  repo_url: https://github.com/WikiForge/PDFEmbed
 PWA:
   branch: main
   path: extensions/PWA
@@ -945,7 +945,7 @@ RelatedArticles:
 RemovePII:
   branch: master
   path: extensions/RemovePII
-  repo_url: https://github.com/miraheze/RemovePII
+  repo_url: https://github.com/WikiForge/RemovePII
 RemoveRedlinks:
   branch: master
   path: extensions/RemoveRedlinks
@@ -973,7 +973,7 @@ RightFunctions:
 RottenLinks:
   branch: master
   path: extensions/RottenLinks
-  repo_url: https://github.com/miraheze/RottenLinks
+  repo_url: https://github.com/WikiForge/RottenLinks
 SandboxLink:
   branch: _branch_
   path: extensions/SandboxLink
@@ -1054,7 +1054,7 @@ Spoilers:
 SpriteSheet:
   branch: master
   path: extensions/SpriteSheet
-  repo_url: https://github.com/miraheze/SpriteSheet
+  repo_url: https://github.com/WikiForge/SpriteSheet
 StandardDialogs:
   branch: master
   path: extensions/StandardDialogs
@@ -1265,7 +1265,7 @@ WikiCategoryTagCloud:
 WikiDiscover:
   branch: master
   path: extensions/WikiDiscover
-  repo_url: https://github.com/miraheze/WikiDiscover
+  repo_url: https://github.com/WikiForge/WikiDiscover
 WikiEditor:
   branch: _branch_
   path: extensions/WikiEditor
@@ -1338,7 +1338,7 @@ WikimediaIncubator:
 YouTube:
   branch: master
   path: extensions/YouTube
-  repo_url: https://github.com/miraheze/YouTube
+  repo_url: https://github.com/WikiForge/YouTube
 apex:
   branch: _branch_
   path: skins/apex
