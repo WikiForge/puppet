@@ -82,7 +82,7 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'miraheze': ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'YouTube'],
+        'wikiforge': ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'YouTube'],
     }
     return packs.get(pack_name, [])
 
