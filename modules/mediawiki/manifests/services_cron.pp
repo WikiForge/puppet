@@ -1,5 +1,7 @@
 # === Class mediawiki::services_cron
-class mediawiki::services_cron {
+class mediawiki::services_cron (
+    String $version,
+) {
     file { '/srv/services':
         ensure => directory,
         owner  => 'www-data',
@@ -14,6 +16,12 @@ class mediawiki::services_cron {
         group   => 'www-data',
         mode    => '0400',
         require => File['/srv/services'],
+    }
+
+    file { '/usr/local/bin/pushServices.sh':
+        ensure => present,
+        content => template('mediawiki/pushServices.sh.erb'),
+        mode   => '0755',
     }
 
     cron { 'generate_services':
