@@ -104,8 +104,10 @@ class mediawiki::multiversion (
                 version => $version,
             }
 
-            class { 'mediawiki::services_cron':
-                version => $version,
+            if lookup('mwservices', {'default_value' => false}) {
+                class { 'mediawiki::services_cron':
+                    version => $version,
+                }
             }
         }
     }
