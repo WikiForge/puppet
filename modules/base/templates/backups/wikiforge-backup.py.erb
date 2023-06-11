@@ -105,7 +105,7 @@ def backup_sql(dt: str, database: str):
 
 def backup_mediawiki_xml(dt: str, database: str):
     if database is None:
-        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
+        dbs = json.load(open('/srv/mediawiki/cache/databases-all.json'))['combi'].keys()
     else:
         dbs = [database]
 
