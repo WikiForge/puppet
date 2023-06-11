@@ -24,7 +24,7 @@ def test_get_command_extension():
 @patch('builtins.input')
 def test_get_command_extension_list(mock_input, mock_getlogin):
     mock_getlogin.return_value = 'test'
-        mock_input.return_value = 'wikiforge'
+    mock_input.return_value = 'wikiforge'
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
