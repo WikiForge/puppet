@@ -85,7 +85,7 @@ class mediawiki::jobqueue::runner (
                 minute  => '0',
                 hour    => '0',
                 month   => '*',
-                weekday => [ '7' ],
+                weekday => [ '5' ],
             }
 
             cron { 'purge_parsercache':
