@@ -47,7 +47,19 @@ class services::proton {
         require     => [
             Git::Clone['proton'],
             Package['nodejs']
-        ]
+        ],
+    }
+ 
+    exec { 'proton_npm_merge':
+        command     => 'npm install merge --cache /tmp/npm_cache_proton --no-optional --only=production',
+        creates     => '/srv/proton/node_modules/merge',
+        cwd         => '/srv/proton',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/proton',
+        user        => 'proton',
+        before      => Service['proton'],
+        notify      => Service['proton'],
+        require     => Exec['proton_npm'],
     }
 
     file { '/etc/mediawiki/proton':
