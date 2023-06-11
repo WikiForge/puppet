@@ -33,7 +33,7 @@ class services::restbase {
     }
 
     exec { 'restbase_npm':
-        command     => 'npm install --cache /tmp/npm_cache_restbase',
+        command     => 'npm install --cache /tmp/npm_cache_restbase --no-optional --only=production',
         creates     => '/srv/restbase/node_modules',
         cwd         => '/srv/restbase',
         path        => '/usr/bin',
