@@ -49,7 +49,7 @@ class services::citoid {
     }
 
     exec { 'zotero_npm':
-        command     => 'npm install --cache /tmp/npm_cache_citoid',
+        command     => 'npm install --cache /tmp/npm_cache_citoid --no-optional --only=production',
         creates     => '/srv/zotero/node_modules',
         cwd         => '/srv/zotero',
         path        => '/usr/bin',
@@ -62,7 +62,7 @@ class services::citoid {
     }
 
     exec { 'citoid_npm':
-        command     => 'npm install --cache /tmp/npm_cache_citoid',
+        command     => 'npm install --cache /tmp/npm_cache_citoid --no-optional --only=production',
         creates     => '/srv/citoid/node_modules',
         cwd         => '/srv/citoid',
         path        => '/usr/bin',
