@@ -36,7 +36,7 @@ class services::proton {
     }
 
     exec { 'proton_npm':
-        command     => 'npm install --cache /tmp/npm_cache_proton',
+        command     => 'npm install --cache /tmp/npm_cache_proton --no-optional --only=production',
         creates     => '/srv/proton/node_modules',
         cwd         => '/srv/proton',
         path        => '/usr/bin',
