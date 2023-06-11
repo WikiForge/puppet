@@ -39,9 +39,9 @@ def test_get_command_extension_list(mock_getlogin):
 def test_get_command_all():
     args = mwscript.get_args()
     args.script = 'test.php'
-    args.arguments = ['all']
+    args.arguments = ['wikiforge']
     args.version = '1.39'
-    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
 def test_get_command_args():
@@ -96,9 +96,9 @@ def test_get_command_extension_list_runner(mock_getlogin):
 def test_get_command_all_runner():
     args = mwscript.get_args()
     args.script = 'test.php'
-    args.arguments = ['all']
+    args.arguments = ['wikiforge']
     args.version = '1.40'
-    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
 def test_get_command_args_runner():
