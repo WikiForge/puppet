@@ -104,8 +104,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if command:
                 command = command()
                 break
-            else:
-                print('Invalid choice.')
+            print('Invalid choice.')
     elif wiki and wiki in validDBLists:
         long = True
         while True:
@@ -116,8 +115,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if farm_choice in ('wikiforge', 'wikitide'):
                 command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}-{farm_choice}.json {script}'
                 break
-            else:
-                print('Invalid choice.')
+            print('Invalid choice.')
     elif args.extension:
         long = True
         while True:
@@ -133,8 +131,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if generate:
                 generate = generate()
                 break
-            else:
-                print('Invalid choice.')
+            print('Invalid choice.')
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
