@@ -100,9 +100,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 'wikitide': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikitide.json {script}',
                 'both': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-all.json {script}',
             }
-            command = list_script.get(list_choice)
-            if command:
-                command = command()
+            command_choice = list_script.get(list_choice)
+            if command_choice:
+                command = command_choice()
                 break
             print('Invalid choice.')
     elif wiki and wiki in validDBLists:
@@ -127,9 +127,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 'wikiforge': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}',
                 'wikitide': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiTideMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawikitide --extension={args.extension}',
             }
-            generate = generate_script.get(farm_choice)
-            if generate:
-                generate = generate()
+            generate_choice = generate_script.get(farm_choice)
+            if generate_choice:
+                generate = generate_choice()
                 break
             print('Invalid choice.')
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
