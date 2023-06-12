@@ -239,6 +239,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (
+		req.http.Host == "phorge.wikitide.com" ||
 		req.http.Host == "support.wikiforge.net" ||
 		req.http.Host == "phorge-storage.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
