@@ -79,11 +79,10 @@ def get_valid_skins(versions: list[str]) -> list[str]:
 def get_extensions_in_pack(pack_name: str) -> list[str]:
     packs = {
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
-        'miraheze': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'wikiforge': ['WikiForgeMagic'],
+        'wikiforge': ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'YouTube'],
     }
     return packs.get(pack_name, [])
 
@@ -654,7 +653,7 @@ if __name__ == '__main__':
     parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
     parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=UpgradeSkinsAction, help='skin(s) to upgrade')
-    parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'miraheze', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
+    parser.add_argument('--upgrade-pack', dest='upgrade_pack', action=UpgradePackAction, choices=['bundled', 'mleb', 'socialtools', 'universalomega', 'wikiforge'], help='pack of extensions/skins to upgrade')
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignore_time', action='store_true')
     parser.add_argument('--port', dest='port')

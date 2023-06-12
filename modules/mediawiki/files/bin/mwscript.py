@@ -28,7 +28,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     del mw_versions
 
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
-    validDBLists = versionLists
+    validDBLists = ('active',) + versionLists
 
     longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
@@ -37,7 +37,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     try:
         if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:
+        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikitide') or args.arguments[0] in [*['all', 'wikiforge', 'wikitide'], *validDBLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:
@@ -88,15 +88,50 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     else:
         script = f'{runner}{script}'
 
-    if wiki == 'all':
+    if wiki in ('all', 'wikiforge', 'wikitide'):
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
+        while True:
+            try:
+                list_choice = wiki if wiki != 'all' else input("Please type 'wikiforge', 'wikitide', or 'both' for what wikis you wish to run this script on: ")
+            except KeyboardInterrupt:
+                sys.exit()
+            list_script = {
+                'wikiforge': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json {script}',
+                'wikitide': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikitide.json {script}',
+                'both': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-all.json {script}',
+            }
+            command_choice = list_script.get(list_choice)
+            if command_choice:
+                command = command_choice()
+                break
+            print('Invalid choice.')
     elif wiki and wiki in validDBLists:
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
+        while True:
+            try:
+                farm_choice = 'wikitide' if wiki == 'active' else input("Please type 'wikiforge' or 'wikitide' for what wiki farm you wish to run this script on: ")
+            except KeyboardInterrupt:
+                sys.exit()
+            if farm_choice in ('wikiforge', 'wikitide'):
+                command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}-{farm_choice}.json {script}'
+                break
+            print('Invalid choice.')
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}'
+        while True:
+            try:
+                farm_choice = input("Please type 'wikiforge' or 'wikitide', for what wiki farm you wish to run this script on: ")
+            except KeyboardInterrupt:
+                sys.exit()
+            generate_script = {
+                'wikiforge': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}',
+                'wikitide': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiTideMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawikitide --extension={args.extension}',
+            }
+            generate_choice = generate_script.get(farm_choice)
+            if generate_choice:
+                generate = generate_choice()
+                break
+            print('Invalid choice.')
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'

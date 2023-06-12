@@ -69,7 +69,7 @@ class mediawiki::multiversion (
         git::clone { "femiwiki-deploy-${version}":
             ensure    => 'latest',
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
-            origin    => 'https://github.com/miraheze/femiwiki-deploy',
+            origin    => 'https://github.com/WikiForge/femiwiki-deploy',
             branch    => $params['branch'],
             owner     => 'www-data',
             group     => 'www-data',
@@ -102,6 +102,12 @@ class mediawiki::multiversion (
         if (lookup(jobrunner) and $params['default']) {
             class { 'mediawiki::jobqueue::runner':
                 version => $version,
+            }
+
+            if lookup('mwservices', {'default_value' => false}) {
+                class { 'mediawiki::services_cron':
+                    version => $version,
+                }
             }
         }
     }

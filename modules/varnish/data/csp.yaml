@@ -2,6 +2,7 @@
 default-src: 
   - "'self'"
   - '*.wikiforge.net'
+  - '*.wikitide.com'
 
 script-src:
   - 'blob:'
@@ -9,6 +10,7 @@ script-src:
   - "'unsafe-inline'"
   - "'unsafe-eval'"
   - '*.wikiforge.net'
+  - '*.wikitide.com'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -32,6 +34,7 @@ style-src:
   - 'data:'
   - "'unsafe-inline'"
   - '*.wikiforge.net'
+  - '*.wikitide.com'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -58,7 +61,7 @@ img-src:
   - "'self'"
   - 'data:'
   - '*.wikiforge.net'
-  - '*.miraheze.org'
+  - '*.wikitide.com'
   - 'upload.wikimedia.org'
   - 'wikimedia.org'
   - 'maps.google.com'
@@ -82,7 +85,7 @@ font-src:
   - "'self'"
   - 'data:'
   - '*.wikiforge.net'
-  - '*.miraheze.org'
+  - '*.wikitide.com'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
@@ -93,6 +96,7 @@ media-src:
   - "'self'"
   - 'blob:'
   - '*.wikiforge.net'
+  - '*.wikitide.com'
   - 'upload.wikimedia.org'
   - '*.youtube.com'
   - '*.youtube-nocookie.com'
@@ -100,6 +104,7 @@ media-src:
 frame-src:
   - "'self'"
   - '*.wikiforge.net'
+  - '*.wikitide.com'
   - 'www.google.com'
   - 'docs.google.com'
   - 'web.libera.chat'
@@ -119,6 +124,7 @@ frame-src:
 connect-src:
   - "'self'"
   - '*.wikiforge.net'
+  - '*.wikitide.com'
   - 'www.wikidata.org'
   - '*.wikipedia.org'
   - 'www.mediawiki.org'

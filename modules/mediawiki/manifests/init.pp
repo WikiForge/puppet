@@ -59,7 +59,7 @@ class mediawiki {
     git::clone { 'mathoid':
         ensure             => 'latest',
         directory          => '/srv/mathoid',
-        origin             => 'https://github.com/miraheze/mathoid-deploy',
+        origin             => 'https://github.com/WikiForge/mathoid-deploy',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
@@ -71,7 +71,7 @@ class mediawiki {
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
-        origin             => 'https://github.com/miraheze/3d2png-deploy',
+        origin             => 'https://github.com/WikiForge/3d2png-deploy',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
@@ -199,6 +199,12 @@ class mediawiki {
         privileges => [
             'ALL = (www-data) NOPASSWD: ALL',
         ],
+    }
+
+    file { '/etc/s3-env.sh':
+        ensure  => present,
+        content => template('mediawiki/s3-env.sh.erb'),
+        mode    => '0755',
     }
 
     file { '/tmp/magick-tmp':

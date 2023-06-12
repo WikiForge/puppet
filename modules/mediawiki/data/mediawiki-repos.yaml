@@ -153,6 +153,10 @@ Citizen:
   branch: main
   path: skins/Citizen
   repo_url: https://github.com/StarCitizenTools/mediawiki-skins-Citizen
+Citoid:
+  branch: _branch_
+  path: extensions/Citoid
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-Citoid
 CleanChanges:
   branch: _branch_
   path: extensions/CleanChanges
@@ -169,6 +173,10 @@ CollapsibleVector:
   branch: _branch_
   path: extensions/CollapsibleVector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CollapsibleVector
+Collection:
+  branch: _branch_
+  path: extensions/Collection
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-Collection
 CologneBlue:
   branch: _branch_
   path: skins/CologneBlue
@@ -228,7 +236,7 @@ CreateRedirect:
 CreateWiki:
   branch: master
   path: extensions/CreateWiki
-  repo_url: https://github.com/miraheze/CreateWiki
+  repo_url: https://github.com/WikiForge/CreateWiki
   composer: true
 CreatedPagesList:
   branch: _branch_
@@ -245,7 +253,7 @@ DarkMode:
 DataDump:
   branch: master
   path: extensions/DataDump
-  repo_url: https://github.com/miraheze/DataDump
+  repo_url: https://github.com/WikiForge/DataDump
 DataTransfer:
   branch: _branch_
   path: extensions/DataTransfer
@@ -325,6 +333,10 @@ Elastica:
   path: extensions/Elastica
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Elastica
   composer: true
+ElectronPdfService:
+  branch: _branch_
+  path: extensions/ElectronPdfService
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-ElectronPdfService
 EmailAuthorization:
   branch: _branch_
   path: extensions/EmailAuthorization
@@ -354,6 +366,11 @@ Femiwiki:
   path: skins/Femiwiki
   repo_url: https://github.com/femiwiki/FemiwikiSkin
   alpha_branch: main
+FileStorageMonitor:
+  branch: master
+  path: extensions/FileStorageMonitor
+  repo_url: https://github.com/WikiForge/FileStorageMonitor
+  composer: true
 FlaggedRevs:
   branch: _branch_
   path: extensions/FlaggedRevs
@@ -410,7 +427,7 @@ GlobalCssJs:
 GlobalNewFiles:
   branch: master
   path: extensions/GlobalNewFiles
-  repo_url: https://github.com/miraheze/GlobalNewFiles
+  repo_url: https://github.com/WikiForge/GlobalNewFiles
 GlobalPreferences:
   branch: _branch_
   path: extensions/GlobalPreferences
@@ -491,11 +508,11 @@ ImageRating:
 ImportDump:
   branch: master
   path: extensions/ImportDump
-  repo_url: https://github.com/miraheze/ImportDump
+  repo_url: https://github.com/WikiForge/ImportDump
 IncidentReporting:
   branch: master
   path: extensions/IncidentReporting
-  repo_url: https://github.com/miraheze/IncidentReporting
+  repo_url: https://github.com/WikiForge/IncidentReporting
 InputBox:
   branch: _branch_
   path: extensions/InputBox
@@ -593,7 +610,7 @@ MagicNoCache:
 ManageWiki:
   branch: master
   path: extensions/ManageWiki
-  repo_url: https://github.com/miraheze/ManageWiki
+  repo_url: https://github.com/WikiForge/ManageWiki
 Maps:
   branch: master
   path: extensions/Maps
@@ -774,6 +791,7 @@ OOJSPlus:
   branch: _branch_
   path: extensions/OOJSPlus
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OOJSPlus
+  composer: true
 OpenGraphMeta:
   branch: _branch_
   path: extensions/OpenGraphMeta
@@ -790,7 +808,7 @@ OrphanedTalkPages:
 PDFEmbed:
   branch: master
   path: extensions/PDFEmbed
-  repo_url: https://github.com/miraheze/PDFEmbed
+  repo_url: https://github.com/WikiForge/PDFEmbed
 PWA:
   branch: main
   path: extensions/PWA
@@ -939,7 +957,7 @@ RelatedArticles:
 RemovePII:
   branch: master
   path: extensions/RemovePII
-  repo_url: https://github.com/miraheze/RemovePII
+  repo_url: https://github.com/WikiForge/RemovePII
 RemoveRedlinks:
   branch: master
   path: extensions/RemoveRedlinks
@@ -967,7 +985,7 @@ RightFunctions:
 RottenLinks:
   branch: master
   path: extensions/RottenLinks
-  repo_url: https://github.com/miraheze/RottenLinks
+  repo_url: https://github.com/WikiForge/RottenLinks
 SandboxLink:
   branch: _branch_
   path: extensions/SandboxLink
@@ -1048,7 +1066,7 @@ Spoilers:
 SpriteSheet:
   branch: master
   path: extensions/SpriteSheet
-  repo_url: https://github.com/miraheze/SpriteSheet
+  repo_url: https://github.com/WikiForge/SpriteSheet
 StandardDialogs:
   branch: master
   path: extensions/StandardDialogs
@@ -1259,7 +1277,7 @@ WikiCategoryTagCloud:
 WikiDiscover:
   branch: master
   path: extensions/WikiDiscover
-  repo_url: https://github.com/miraheze/WikiDiscover
+  repo_url: https://github.com/WikiForge/WikiDiscover
 WikiEditor:
   branch: _branch_
   path: extensions/WikiEditor
@@ -1284,6 +1302,10 @@ WikiTextLoggedInOut:
   branch: _branch_
   path: extensions/WikiTextLoggedInOut
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiTextLoggedInOut
+WikiTideMagic:
+  branch: master
+  path: extensions/WikiTideMagic
+  repo_url: https://github.com/WikiForge/WikiTideMagic
 Wikibase:
   branch: _branch_
   path: extensions/Wikibase
@@ -1332,7 +1354,7 @@ WikimediaIncubator:
 YouTube:
   branch: master
   path: extensions/YouTube
-  repo_url: https://github.com/miraheze/YouTube
+  repo_url: https://github.com/WikiForge/YouTube
 apex:
   branch: _branch_
   path: skins/apex

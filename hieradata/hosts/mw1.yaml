@@ -2,8 +2,12 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 
+mwservices: true
+
 jobrunner: true
+
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
+mediawiki::jobqueue::runner::cron: true
 
 mediawiki::is_canary: true
 mediawiki::use_staging: true

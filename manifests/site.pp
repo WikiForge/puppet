@@ -55,6 +55,11 @@ node 'puppet1.wikiforge.net' {
     include role::ssl
 }
 
+node 'services1.wikiforge.net' {
+    include base
+    include role::services
+}
+
 node 'test1.wikiforge.net' {
     include base
     include role::mediawiki
