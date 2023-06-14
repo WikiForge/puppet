@@ -36,7 +36,7 @@ class EnvironmentList(TypedDict):
 prod: Environment = {
     'wikidbname': 'metawiki',
     'wikiurl': 'meta.wikiforge.net',
-    'servers': ['mw2', 'mw1'],
+    'servers': ['mw2', 'mw3', 'mw4', 'mw1'],
 }
 test: Environment = {
     'wikidbname': 'test1wiki',
