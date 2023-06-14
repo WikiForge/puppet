@@ -57,7 +57,7 @@ acl purge {
 
 <%- @backends.each_pair do | name, property | -%>
 	# <%= name %>
-	<%= ip_address %>;
+	"<%= ip_address %>";
 
 <%- end -%>
 }
