@@ -28,34 +28,42 @@ varnish::backends:
     port: 8100
     probe: mwhealth
     pool: true
+    ip_address: "3.145.73.77"
   mw2:
     port: 8101
     probe: mwhealth
     pool: true
+    ip_address: "18.224.51.21"
   mw3:
     port: 8102
     probe: mwhealth
     pool: true
+    ip_address: "3.145.164.236"
   mw4:
     port: 8103
     probe: mwhealth
     pool: true
+    ip_address: "3.139.80.48"
   mwtask1:
     port: 8150
     probe: false
     pool: false
+    ip_address: "23.142.24.76"
   test1:
     port: 8180
     probe: false
     pool: false
+    ip_address: "52.14.195.40"
   phorge1:
     port: 8200
     probe: false
     pool: false
+    ip_address: "3.135.195.194"
   puppet1:
     port: 8201
     probe: false
     pool: false
+    ip_address: "18.117.56.175"
 
 # Logging
 base::syslog::syslog_daemon: syslog
