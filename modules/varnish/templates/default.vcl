@@ -55,29 +55,11 @@ acl purge {
 	# localhost
 	"127.0.0.1";
 
-	# mw1
-	"3.145.73.77";
+<%- @backends.each_pair do | name, property | -%>
+	# <%= name %>
+	<%= ip_address %>;
 
-	# mw2
-	"18.224.51.21";
-
-	# mw3
-	"3.145.164.236";
-
-	# mw4
-	"3.139.80.48";
-
-	# mwtask1
-	"23.142.24.76";
-
-	# test1
-	"52.14.195.40";
-
-	# phorge1
-	"3.135.195.194";
-
-	# puppet1
-	"18.117.56.175";
+<%- end -%>
 }
 
 # Cookie handling logic
