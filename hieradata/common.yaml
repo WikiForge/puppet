@@ -40,8 +40,20 @@ varnish::backends:
     port: 8103
     probe: mwhealth
     pool: true
-  mwtask1:
+  mw5:
+    port: 8104
+    probe: mwhealth
+    pool: true
+  mw6:
+    port: 8105
+    probe: mwhealth
+    pool: true
+  jobrunner1:
     port: 8150
+    probe: false
+    pool: false
+  jobrunner2:
+    port: 8151
     probe: false
     pool: false
   test1:
