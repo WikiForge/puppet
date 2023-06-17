@@ -16,7 +16,6 @@ node 'jobchron1.wikiforge.net' {
     include mediawiki::jobqueue::chron
 }
 
-
 node /^jobrunner[12]\.wikiforge\.net$/ {
     include base
     include role::mediawiki
