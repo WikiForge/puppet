@@ -12,13 +12,17 @@
             // Job types to exempt (useful when combined with "*")
             "exclude": [
                 "DataDumpGenerateJob",
+                "RecordLintJob",
                 "RequestWikiAIJob",
+                "refreshLinks",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
             ]
         },
         "hi": {
+            // Number of runner processes in this group
             "runners": 1,
+            // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
                 "RequestWikiAIJob",
@@ -57,7 +61,7 @@
         // runJobs.php memory limits
         "memory": {
             "*": "300M",
-            "RequestWikiAIJob": "2000M",
+            "RequestWikiAIJob": "500M",
             "refreshLinks": "500M"
         }
     },
@@ -75,5 +79,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -15 ionice php /srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --maxjobs=1 --procs=1 --result=json"
+    "dispatcher": "nice -15 ionice php /srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --procs=1 --result=json"
 }

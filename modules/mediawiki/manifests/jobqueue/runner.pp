@@ -46,9 +46,20 @@ class mediawiki::jobqueue::runner (
             monthday => [ '14', '28' ],
         }
 
-        cron { 'generate sitemaps for all wikis':
+        cron { 'generate sitemaps for all WikiForge wikis':
             ensure  => present,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-all.json /srv/mediawiki/${version}/extensions/WikiForgeMagic/maintenance/generateWikiForgeSitemap.php",
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json /srv/mediawiki/${version}/extensions/WikiForgeMagic/maintenance/generateWikiForgeSitemap.php",
+            user    => 'www-data',
+            minute  => '0',
+            hour    => '0',
+            month   => '*',
+            weekday => [ '4' ],
+        }
+
+
+        cron { 'generate sitemaps for all WikiTide wikis':
+            ensure  => present,
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikitide.json /srv/mediawiki/${version}/extensions/WikiTideMagic/maintenance/generateWikiTideSitemap.php",
             user    => 'www-data',
             minute  => '0',
             hour    => '0',

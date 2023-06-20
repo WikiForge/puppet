@@ -126,6 +126,7 @@ class mediawiki {
     $mediawiki_password         = lookup('passwords::db::mediawiki')
     $redis_password             = lookup('passwords::redis::master')
     $noreply_password           = lookup('passwords::mail::noreply')
+    $noreply_username           = lookup('passwords::mail::noreply_username')
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
     $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')

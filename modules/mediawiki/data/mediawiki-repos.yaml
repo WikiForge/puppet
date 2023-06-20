@@ -1002,6 +1002,10 @@ SearchVue:
   branch: _branch_
   path: extensions/SearchVue
   repo_url: https://github.com/WikiForge/mediawiki-extensions-SearchVue
+SecurePoll:
+  branch: _branch_
+  path: extensions/SecurePoll
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-SecurePoll
 SemanticFormsSelect:
   branch: master
   path: extensions/SemanticFormsSelect
