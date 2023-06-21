@@ -58,8 +58,8 @@ acl purge {
 <%- @backends.each_pair.with_index do |(name, property), index| -%>
 	# <%= name %>
 	"<%= property['ip_address'] %>";
-<%- unless index == @backends.size - 1 -%>
-<%-="\n"%>
+<%- if index != @backends.size - 1 -%>
+
 <%- end -%>
 <%- end -%>
 }
