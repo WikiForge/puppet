@@ -12,7 +12,7 @@ groups:
   mediawiki-admins:
     gid: 2002
     description: sudo on MediaWiki servers
-    members: [agent]
+    members: [agent, rman41]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
@@ -51,3 +51,9 @@ users:
     name: agent
     realname: Agent
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2EL//7xW4oTJdwze3Mj//PE5N93Qogre1CJbB6ySga]
+  rman41:
+    ensure: present
+    uid: 1011
+    name: rman41
+    realname: Rman41
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyiMRpKS/pOT4VRdJ1aT9/YeO16FinmSqPjocT+B77f]
