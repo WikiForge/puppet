@@ -55,10 +55,10 @@ acl purge {
 	# localhost
 	"127.0.0.1";
 
-<%- @backends.each_pair do | name, property | -%>
+<%- @backends.each_pair.with_index do |(name, property), index| -%>
 	# <%= name %>
 	"<%= property['ip_address'] %>";
-
+<%= "\n" unless index == @backends.size - 1 %>
 <%- end -%>
 }
 
