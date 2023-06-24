@@ -19,7 +19,6 @@ class mediawiki {
         include mediawiki::shellbox
     }
 
-
     if !lookup('jobrunner::intensive', {'default_value' => false}) {
         cron { 'clean-tmp-files':
             ensure  => absent,
