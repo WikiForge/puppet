@@ -21,7 +21,7 @@ server {
 	}
 
 	location ~ \.php$ {
-		fastcgi_pass unix:/run/php/shellbox.sock;
+		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	}
