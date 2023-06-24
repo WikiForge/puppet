@@ -16,7 +16,7 @@ role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
-mediawiki::use_shellbox: false
+mediawiki::use_shellbox: true
 mediawiki::jobqueue::wiki: 'metawiki'
 memcached_servers:
   - 172.31.28.186:11211:1
