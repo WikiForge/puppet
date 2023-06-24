@@ -78,7 +78,7 @@ server {
 	listen 80;
 	listen [::]:80;
 
-	server_name ^(?!shellbox\.internal$).*$;
+	server_name _;
 
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
