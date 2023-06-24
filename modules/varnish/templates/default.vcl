@@ -201,6 +201,10 @@ sub vcl_recv {
 		return (synth(200));
 	}
 
+	if (req.http.Host == "shellbox.internal") {
+		return (pass);
+	}
+
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (req.http.Accept-Encoding ~ "gzip") {
