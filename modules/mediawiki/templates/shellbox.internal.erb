@@ -6,10 +6,10 @@ server {
 	root /srv/shellbox/public_html;
 
 	location /shellbox {
-		alias /srv/shellbox/public_html/shellbox.php;
+		alias $document_root/shellbox.php;
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 		include fastcgi_params;
-		fastcgi_param SCRIPT_FILENAME /srv/shellbox/public_html/shellbox.php;
+		fastcgi_param SCRIPT_FILENAME $document_root/shellbox.php;
 		fastcgi_param HTTP_AUTHORIZATION $http_authorization;
 		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
 	}
