@@ -7,6 +7,8 @@ jobrunner: true
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
 mediawiki::jobqueue::wiki: 'test1wiki'
 
+mediawiki::use_shellbox: true
+
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 5
