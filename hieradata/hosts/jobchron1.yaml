@@ -2,6 +2,7 @@ redis::heap: '1GB'
 
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
 mediawiki::php::enable_fpm: false
+mediawiki::use_shellbox: false
 
 php::php_version: '7.4'
 
