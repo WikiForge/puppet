@@ -1,9 +1,5 @@
 # === Class mediawiki
 class mediawiki {
-    if lookup(mediawiki::use_shellbox) {
-        include mediawiki::shellbox
-    }
-
     include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::nginx
@@ -18,6 +14,11 @@ class mediawiki {
     }
 
     include mediawiki::multiversion
+
+    if lookup(mediawiki::use_shellbox) {
+        include mediawiki::shellbox
+    }
+
 
     if !lookup('jobrunner::intensive', {'default_value' => false}) {
         cron { 'clean-tmp-files':
