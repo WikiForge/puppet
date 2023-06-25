@@ -122,6 +122,12 @@ class mediawiki {
         require => File['/srv/mediawiki'],
     }
 
+    file { '/srv/mediawiki/wikitide-sitemap-index.php':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/wikitide-sitemap-index.php',
+        require => File['/srv/mediawiki'],
+    }
+
     $wikiadmin_password         = lookup('passwords::db::wikiadmin')
     $mediawiki_password         = lookup('passwords::db::mediawiki')
     $redis_password             = lookup('passwords::redis::master')
