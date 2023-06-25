@@ -137,6 +137,10 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
+
+	location = /sitemap-index.xml {
+		rewrite ^(.*)$ /wikitide-sitemap-index.php;
+	}
 }
 
 <%- @sslcerts.each_pair do | name, property | -%>
