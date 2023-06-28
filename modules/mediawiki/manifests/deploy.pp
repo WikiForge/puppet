@@ -123,7 +123,7 @@ class mediawiki::deploy {
     }
 
     exec { 'Landing Sync':
-        command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
+        command     => "/usr/local/bin/mwdeploy --landing --wikitide-landing --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
