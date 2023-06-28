@@ -308,7 +308,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'wikitide-landing': args.wikitide-landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'wikitide-landing': args.wikitide_landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     loginfo = {}
     rsyncpaths = []
