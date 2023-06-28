@@ -81,9 +81,9 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name www.wikitide.com;
+	server_name wikitide.com;
 	root /srv/mediawiki/wikitide-landing;
-	index index.html;
+	index index.php index.html;
 
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
