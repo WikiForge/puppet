@@ -1,7 +1,18 @@
 #!/usr/bin/python3
-# Backup script for WikiForge
-# Created by John Lewis for Miraheze 2022
-# Adapted for WikiForge by Universal Omega 2023
+
+"""
+Backup script for WikiForge
+- Originally created by John Lewis in 2022
+- Modified for WikiForge by Universal Omega in 2023
+
+Changes by Universal Omega for WikiForge:
+  - Fix unfreeze_backup
+  - Suport Phorge backups
+  - Support multiversion in mediawiki-xml
+  - Use 7zip for mediawiki-xml
+  - Support file chunking
+  - Support databases ending in wikitide for sql backups
+"""
 
 import argparse
 import time
@@ -10,6 +21,9 @@ import os
 import json
 import glob
 import requests
+import subprocess
+import math
+import hashlib
 
 from fabric import Connection
 from datetime import datetime
@@ -20,6 +34,12 @@ parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'med
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
+
+# 5GB is the max upload size for Swift
+MAX_SIZE = int(5 * 1024 * 1024 * 1024) # 5GB
+
+# Larger files seem to get killed or OOM
+MAX_CHUNK_SIZE = int(0.2 * 1024 * 1024 * 1024) # 0.2GB
 
 
 def pca_connection():
@@ -44,6 +64,33 @@ def pca_web(method: str, url: str, expiry: int):
         return requests.head(url, headers=headers)
     else:
         raise Exception('Method is not currently implemented in WikiForge-Backup')
+
+
+# expiry is in weeks
+def upload_in_chunks(file_path: str, upload_path: str, expiry: int):
+    file_size = os.path.getsize(file_path)
+    max_retries = 3
+
+    with open(file_path, 'rb') as f:
+        chunk_num = int(math.ceil(file_size / MAX_CHUNK_SIZE))
+        for i in range(chunk_num):
+            chunk_data = f.read(MAX_CHUNK_SIZE)
+            chunk_hash = hashlib.md5(chunk_data).hexdigest()
+            chunk_path = f'{file_path}.part{i}'
+            with open(chunk_path, 'wb') as chunk_file:
+                chunk_file.write(chunk_data)
+            retry_count = 0
+            while retry_count < max_retries:
+                try:
+                    pca_connection().put(chunk_path, f'{upload_path}.part{i}', False)
+                    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{upload_path}.part{i}', expiry)
+                    os.remove(chunk_path)
+                    break
+                except Exception as e:
+                    print(f"Error uploading chunk {i}: {e}")
+                    retry_count += 1
+            else:
+                print(f"Max retries reached for chunk {i}")
 
 
 def backup_private(dt: str):
@@ -76,8 +123,12 @@ def backup_phorge(dt: str):
     tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
-    pca_connection().put('phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/phorge/{dt}.tar.gz', 4)
+    file_size = os.path.getsize('phorge.tar.gz')
+    if file_size <= MAX_SIZE:
+        pca_connection().put('phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/phorge/{dt}.tar.gz', 4)
+    else:
+        upload_in_chunks('phorge.tar.gz', f'phorge/{dt}.tar.gz', 4)
 
     os.remove('phorge.tar.gz')
 
@@ -97,8 +148,12 @@ def backup_sql(dt: str, database: str):
             os.remove(dbfile)
         tar.close()
 
-        pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/{db}/{dt}.tar.gz', 5)
+        file_size = os.path.getsize(f'{db}.tar.gz')
+        if file_size <= MAX_SIZE:
+            pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
+            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/{db}/{dt}.tar.gz', 5)
+        else:
+            upload_in_chunks(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', 5)
 
         os.remove(f'{db}.tar.gz')
 
@@ -113,8 +168,12 @@ def backup_mediawiki_xml(dt: str, database: str):
         version = os.popen(f'getMWVersion {db}').read().strip()
         os.system(f'/usr/bin/php /srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=7 --wiki={db}')
 
-        pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
-        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
+        file_size = os.path.getsize(f'/srv/backups/{db}.xml.7z')
+        if file_size <= MAX_SIZE:
+            pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
+            pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
+        else:
+            upload_in_chunks(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', 13)
 
         os.remove(f'/srv/backups/{db}.xml.7z')
 
@@ -157,12 +216,27 @@ def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    if source in ['private', 'sslkeys', 'phorge']:
-        download_pca(f'{source}/{dt}.tar.gz')
-    elif source in ['mediawiki-xml']:
-        download_pca(f'{source}/{database}/{dt}.xml.7z')
-    elif source in ['sql']:
-        download_pca(f'{source}/{database}/{dt}.7z')
+    file_ext = 'tar.gz' if source in ['phorge', 'private', 'sql', 'sslkeys'] else '7z'
+    file_prefix = f'{source}/{database}/{dt}.{file_ext}' if source in ['mediawiki-xml', 'sql'] else f'{source}/{dt}.{file_ext}'
+    file_name = f'{source}-{database}-{dt}.{file_ext}' if source in ['mediawiki-xml'] else f'{source}-{dt}.{file_ext}'
+
+    if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part0', 0).status_code == 404:
+        download_pca(f'{file_prefix}')
+    else:
+        # Download and combine parts
+        chunk_num = 0
+        with open(f'{file_name}', 'wb') as outfile:
+            while True:
+                try:
+                    download_pca(f'{file_prefix}.part{chunk_num}')
+                    with open(f'{dt}.{file_ext}.part{chunk_num}', 'rb') as infile:
+                        outfile.write(infile.read())
+                    os.remove(f'{dt}.{file_ext}.part{chunk_num}')
+                    chunk_num += 1
+                except:
+                    print(f'Error downloading chunk {chunk_num}. Retrying...')
+                if pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file_prefix}.part{chunk_num}', 0).status_code == 404:
+                    break
 
     print(f'Completed! This took {time.time() - ts}s')
 
