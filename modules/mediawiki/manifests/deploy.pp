@@ -91,6 +91,17 @@ class mediawiki::deploy {
         require   => File['/srv/mediawiki-staging'],
     }
 
+    git::clone { 'wikitide-landing':
+        ensure    => 'latest',
+        directory => '/srv/mediawiki-staging/wikitide-landing',
+        origin    => 'https://github.com/WikiForge/wikitide-landing',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+        require   => File['/srv/mediawiki-staging'],
+    }
+
     git::clone { 'ErrorPages':
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/ErrorPages',
