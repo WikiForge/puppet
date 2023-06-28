@@ -15,7 +15,7 @@ mw_versions = os.popen('getMWVersions').read().strip()
 versions = {'version': 'version'}
 if mw_versions:
     versions = json.loads(mw_versions)
-repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'wikitide-landing': 'wikitde-landing'}
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing', 'wikitide-landing': 'wikitide-landing'}
 
 del mw_versions
 
