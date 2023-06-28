@@ -75,11 +75,10 @@ server {
 }
 
 server {
-	# We can only set backlog once per port (so this will be applied to the others below)
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+	listen 80 deferred;
+	listen [::]:80 deferred;
+	listen 443 ssl deferred http2;
+	listen [::]:443 deferred ssl http2;
 
 	server_name wikitide.com;
 	root /srv/mediawiki/wikitide-landing;
@@ -103,6 +102,17 @@ server {
 
 	location ~ ^/(\.git|config) {
 		deny all;
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
 	}
 
 	location /discord {
