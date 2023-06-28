@@ -75,10 +75,10 @@ server {
 }
 
 server {
-	listen 80 deferred;
-	listen [::]:80 deferred;
-	listen 443 ssl deferred http2;
-	listen [::]:443 deferred ssl http2;
+	listen 80 deferred backlog=4096;
+	listen [::]:80 deferred backlog=4096;
+	listen 443 ssl deferred http2 backlog=4096;
+	listen [::]:443 deferred ssl http2 backlog=4096;
 
 	server_name wikitide.com;
 	root /srv/mediawiki/wikitide-landing;
