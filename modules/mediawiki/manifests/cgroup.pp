@@ -13,6 +13,8 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
+    $php_version = lookup('php::php_version')
+
     systemd::service { 'cgroup':
         ensure  => present,
         content => systemd_template('cgroup'),
