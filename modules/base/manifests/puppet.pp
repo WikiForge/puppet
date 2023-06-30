@@ -24,9 +24,24 @@ class base::puppet (
         logoutput   => true,
     }
 
-    package { 'puppet-agent':
-        ensure  => present,
-        require => Apt::Source['puppetlabs'],
+    $architecture = $facts['os']['architecture']
+
+    if $architecture == 'aarch64' {
+        # ARM64 architecture, use Puppet
+        package { 'puppet':
+            ensure  => present,
+            require => Apt::Source['puppetlabs'],
+        }
+
+        $puppet_package = 'puppet'
+    } else {
+        # Other architecture, use Puppet agent
+        package { 'puppet-agent':
+            ensure  => present,
+            require => Apt::Source['puppetlabs'],
+        }
+
+        $puppet_package = 'puppet-agent'
     }
 
     # facter needs this for proper "virtual"/"is_virtual" resolution
@@ -35,19 +50,19 @@ class base::puppet (
     file { '/usr/bin/facter':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/facter',
-        require => Package['puppet-agent'],
+        require => Package[$puppet_package],
     }
 
     file { '/usr/bin/hiera':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/hiera',
-        require => Package['puppet-agent'],
+        require => Package[$puppet_package],
     }
 
     file { '/usr/bin/puppet':
         ensure  => 'link',
         target  => '/opt/puppetlabs/bin/puppet',
-        require => Package['puppet-agent'],
+        require => Package[$puppet_package],
     }
 
     file { '/var/log/puppet':
@@ -83,7 +98,7 @@ class base::puppet (
             ensure  => present,
             content => template('base/puppet/puppet.conf.erb'),
             mode    => '0444',
-            require => Package['puppet-agent'],
+            require => Package[$puppet_package],
         }
     }
 

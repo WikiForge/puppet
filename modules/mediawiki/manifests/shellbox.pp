@@ -8,7 +8,7 @@ class mediawiki::shellbox {
     git::clone { 'shellbox':
         ensure    => present,
         directory => '/srv/shellbox',
-        origin    => 'https://gerrit.wikimedia.org/r/mediawiki/libs/Shellbox',
+        origin    => 'https://github.com/wikimedia/mediawiki-libs-Shellbox',
         branch    => 'master',
         owner     => 'www-data',
         group     => 'www-data',

@@ -1,4 +1,4 @@
 {
-	"url": "http://shellbox.internal:8080/shellbox",
+	"url": "http://shellbox.internal:6024/shellbox",
 	"tempDir": "/var/tmp/shellbox"
 }

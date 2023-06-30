@@ -1,0 +1,68 @@
+name: Check if mediawiki-repos.yaml is sorted alphabetically
+
+on:
+  push:
+    paths:
+      - .github/workflows/mediawiki-repos-sorting-check.yml
+      - modules/mediawiki/data/mediawiki-repos.yaml
+
+  pull_request:
+    paths:
+      - .github/workflows/mediawiki-repos-sorting-check.yml
+      - modules/mediawiki/data/mediawiki-repos.yaml
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install PyYAML
+        run: pip3 install pyyaml
+
+      - name: Run YAML Sorting Check
+        run: |
+          cd modules/mediawiki/data
+          python3 -c '
+          import yaml
+
+          def check_alphabetical_order(data):
+              keys = list(data.keys())
+              out_of_order_keys = [keys[i] for i in range(1, len(keys)) if keys[i] < keys[i-1]]
+              return out_of_order_keys
+
+          with open("mediawiki-repos.yaml", "r") as file:
+              data = yaml.safe_load(file)
+
+          out_of_order = check_alphabetical_order(data)
+          if len(out_of_order) == 0:
+              print("Top-level keys in mediawiki-repos.yaml are sorted alphabetically.")
+          else:
+              print("Top-level keys in mediawiki-repos.yaml are not sorted alphabetically:")
+              for key in out_of_order:
+                  print(key)
+              exit(1)
+          '
+
+  notify-irc:
+    needs: check
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.repository_owner == 'WikiForge' && ( github.ref	== 'refs/heads/master' || github.event_name == 'pull_request' ) }}
+    steps:
+      - name: failed
+        uses: technote-space/workflow-conclusion-action@v3
+      - uses: rectalogic/notify-irc@v2
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        with:
+          channel: "#wikiforge-sre"
+          server: "irc.libera.chat"
+          nickname: wikiforge-github
+          message: ${{ github.repository }} - ${{ github.actor }} the build has errored.
+          sasl_password: ${{ secrets.IRC_WIKIFORGEBOTS }}

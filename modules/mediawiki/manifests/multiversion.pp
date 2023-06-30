@@ -9,7 +9,15 @@ class mediawiki::multiversion (
 
     file { '/srv/mediawiki/w':
         ensure  => 'link',
-        target  => "/srv/mediawiki/config/initialise/entrypoints",
+        target  => '/srv/mediawiki/config/initialise/entrypoints',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/config'],
+    }
+
+    file { '/srv/mediawiki/index.php':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/initialise/entrypoints/index.php',
         owner   => 'www-data',
         group   => 'www-data',
         require => File['/srv/mediawiki/config'],
@@ -18,7 +26,7 @@ class mediawiki::multiversion (
     if lookup(mediawiki::use_staging) {
         file { '/srv/mediawiki-staging/w':
             ensure  => 'link',
-            target  => "/srv/mediawiki-staging/config/initialise/entrypoints",
+            target  => '/srv/mediawiki-staging/config/initialise/entrypoints',
             owner   => 'www-data',
             group   => 'www-data',
             require => File['/srv/mediawiki-staging/config'],
@@ -52,10 +60,16 @@ class mediawiki::multiversion (
             group  => 'www-data',
         }
 
+        file { "/srv/mediawiki/cache/${version}":
+            ensure => 'directory',
+            owner  => 'www-data',
+            group  => 'www-data',
+        }
+
         git::clone { "femiwiki-deploy-${version}":
             ensure    => 'latest',
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
-            origin    => 'https://github.com/miraheze/femiwiki-deploy',
+            origin    => 'https://github.com/WikiForge/femiwiki-deploy',
             branch    => $params['branch'],
             owner     => 'www-data',
             group     => 'www-data',
@@ -76,7 +90,7 @@ class mediawiki::multiversion (
 
         file { "/srv/mediawiki/${version}/LocalSettings.php":
             ensure  => 'link',
-            target  => "/srv/mediawiki/config/LocalSettings.php",
+            target  => '/srv/mediawiki/config/LocalSettings.php',
             owner   => 'www-data',
             group   => 'www-data',
             require => [
@@ -88,6 +102,12 @@ class mediawiki::multiversion (
         if (lookup(jobrunner) and $params['default']) {
             class { 'mediawiki::jobqueue::runner':
                 version => $version,
+            }
+
+            if lookup('mwservices', {'default_value' => false}) {
+                class { 'mediawiki::services_cron':
+                    version => $version,
+                }
             }
         }
     }

@@ -55,20 +55,13 @@ acl purge {
 	# localhost
 	"127.0.0.1";
 
-	# mw1
-	"3.145.73.77";
+<%- @backends.each_pair.with_index do |(name, property), index| -%>
+	# <%= name %>
+	"<%= property['ip_address'] %>";
+<%- if index != @backends.size - 1 -%>
 
-	# mw2
-	"18.224.51.21";
-
-	# test1
-	"52.14.195.40";
-
-	# phorge1
-	"3.135.195.194";
-
-	# puppet1
-	"18.117.56.175";
+<%- end -%>
+<%- end -%>
 }
 
 # Cookie handling logic
@@ -104,28 +97,21 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.wikiforge.net, we can handle more of those requests
-	if (req.http.Host == "static.wikiforge.net") {
-		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
-			return (synth(429, "Varnish Rate Limit Exceeded"));
-		}
-	} else {
-		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
-		# T6283: remove rate limit for IABot (temporarily?)
-		if (
-			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
-			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-		) {
-			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
-				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
-				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
-				}
-			} else {
-				# Fallback
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
-				}
+	# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
+	# Exempts rate limit for IABot
+	if (
+		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
+		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+	) {
+		if (req.url ~ "^/(wiki/)?\S+\:MathShowImage?hash=[0-9a-z]+&mode=mathml") {
+			# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
+			if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
+				return (synth(429, "Varnish Rate Limit Exceeded"));
+			}
+		} else {
+			# Fallback
+			if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 24, 2s)) {
+				return (synth(429, "Varnish Rate Limit Exceeded"));
 			}
 		}
 	}
@@ -145,22 +131,6 @@ sub vcl_synth {
 		set resp.http.Location = "https://commons.wikiforge.net/";
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
-	}
-
-	// Handle CORS preflight requests
-	if (
-		req.http.Host == "static.wikiforge.net" &&
-		resp.reason == "CORS Preflight"
-	) {
-		set resp.reason = "OK";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-
-		// allow Range requests, and avoid other CORS errors when debugging with X-WikiForge-Debug
-		set resp.http.Access-Control-Allow-Origin = "*";
-		set resp.http.Access-Control-Allow-Headers = "Range,X-WikiForge-Debug";
-		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
-		set resp.http.Access-Control-Max-Age = "86400";
 	}
 }
 
@@ -190,35 +160,6 @@ sub mw_request {
 
 	set req.backend_hint = mediawiki.backend();
 
-	# Rewrite hostname to static.wikiforge.net for caching
-	if (req.url ~ "^/static/") {
-		set req.http.Host = "static.wikiforge.net";
-	}
-
-	# Numerous static.wikiforge.net specific code
-	if (req.http.Host == "static.wikiforge.net") {
-		# We can do this because static.wikiforge.net should not be capable of serving such requests anyway
-		# This could also increase cache hit rates as Cookies will be stripped entirely
-		unset req.http.Cookie;
-		unset req.http.Authorization;
-
-		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
-		# set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
-
-		# CORS Prelight
-		if (req.method == "OPTIONS" && req.http.Origin) {
-			return (synth(200, "CORS Preflight"));
-		}
-		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
-		# required for Extension:MultiMediaViewer
-		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
-			/* Pretend that the parameter wasn't there for caching purposes */
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
-			set req.http.X-Content-Disposition = "attachment";
-		}
-	}
-
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
 		# Zero reason to append ?useformat=true here
@@ -229,18 +170,6 @@ sub mw_request {
 	# If a user is logged out, do not give them a cached page of them logged in
 	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
 		unset req.http.If-Modified-Since;
-	}
-
-	# Don't cache certain things on static
-	if (
-		req.http.Host == "static.wikiforge.net" &&
-		(
-			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
-			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
-			req.url ~ "^/.*wiki/dumps" # Do not cache wiki dumps
-		)
-	) {
-		return (pass);
 	}
 
 	# We can rewrite those to one domain name to increase cache hits
@@ -271,20 +200,10 @@ sub vcl_recv {
 	if (req.http.Host == "health.wikiforge.net" && req.url == "/check") {
 		return (synth(200));
 	}
-	
-	if (req.http.host == "static.wikiforge.net" && req.url == "/") {
-		return (synth(301, "Commons Redirect"));
-	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
-		if (
-			req.http.Host == "static.wikiforge.net" &&
-			req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
-		) {
-			# No point in compressing these
-			unset req.http.Accept-Encoding;
-		} elseif (req.http.Accept-Encoding ~ "gzip") {
+		if (req.http.Accept-Encoding ~ "gzip") {
 			set req.http.Accept-Encoding = "gzip";
 		} elseif (req.http.Accept-Encoding ~ "deflate") {
 			set req.http.Accept-Encoding = "deflate";
@@ -303,13 +222,14 @@ sub vcl_recv {
 		return (pass);
 	}
 
- 	if (req.http.Host == "test1.wikiforge.net") {
+ 	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1)\.(wikiforge\.net|wikitide\.com)") {
                 set req.backend_hint = test1;
                 return (pass);
         }
 
 	# Do not cache requests from this domain
 	if (
+		req.http.Host == "phorge.wikitide.com" ||
 		req.http.Host == "support.wikiforge.net" ||
 		req.http.Host == "phorge-storage.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
@@ -326,8 +246,8 @@ sub vcl_recv {
 
 # Defines the uniqueness of a request
 sub vcl_hash {
-	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+	# FIXME: try if we can make this ^/(wiki/)? only?
+	if ((req.http.Host != "wikiforge.net" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Device);
 	}
 }
@@ -343,7 +263,7 @@ sub vcl_pipe {
 # Initiate a backend fetch
 sub vcl_backend_fetch {
 	# Modify the end of the URL if mobile device
-	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
+	if ((bereq.url ~ "^/(wiki/)?[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1" && bereq.url !~ "(.*)(?:\?|&)useformat=mobile(?:&|$)" && bereq.http.Host != "wikiforge.net") {
 		if (bereq.url ~ "\?") {
 			set bereq.url = bereq.url + "&useformat=mobile";
 		} else {
@@ -471,12 +391,9 @@ sub vcl_backend_response {
 		return(pass(601s));
 	}
 
-	// hit-for-pass objects >= 8388608 size and if domain == static.wikiforge.net or
-	// hit-for-pass objects >= 67108864 size and if domain != static.wikiforge.net.
+	// hit-for-pass objects >= 67108864 size.
 	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.wikiforge.net" ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.wikiforge.net"
-	) {
+	if (std.integer(beresp.http.Content-Length, 0) >= 67108864) {
 		// HFP
 		return(pass(beresp.ttl));
 	}
@@ -486,24 +403,10 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.wikiforge.net. We also set this header for some images hosted
+	# We set Access-Control-Allow-Origin to * for some images hosted
 	# on the same site as the wiki (private).
-	if (
-		(
-	 	 	 req.http.Host == "static.wikiforge.net" &&
-			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-		) ||
-	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-	) {
+	if (req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$") {
 		set resp.http.Access-Control-Allow-Origin = "*";
-	}
-
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
-		// ...but exempt CentralNotice banner special pages
-		if (req.url !~ "^/(wiki/|w/index\.php\?title=)Special:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
-		}
 	}
 
 	# Client side caching for load.php
@@ -512,7 +415,7 @@ sub vcl_deliver {
 	}
 
 	# Do not index certain URLs
-	if (req.url ~ "^(/w/(api|index|rest)\.php*|/wiki/Special(\:|%3A)(?!WikiForum)).+$") {
+	if (req.url ~ "^(/(w/)?(api|index|rest)\.php*|/(wiki/)?Special(\:|%3A)(?!WikiForum)).+$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 

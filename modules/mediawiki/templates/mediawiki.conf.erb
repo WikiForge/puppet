@@ -1,9 +1,9 @@
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
 	listen 80 deferred backlog=4096;
-	listen [::]:80 deferred ipv6only=on backlog=4096;
+	listen [::]:80 deferred backlog=4096;
 	listen 443 ssl deferred http2 backlog=4096;
-	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
+	listen [::]:443 deferred ssl http2 backlog=4096;
 
 	server_name wikiforge.net;
 	root /srv/mediawiki/landing;
@@ -44,7 +44,7 @@ server {
 		return 301 https://discord.gg/ND5Arhght2;
 	}
 
-	location ~ ^/((?!(css|discord|images)).)*$ {
+	location ~ ^/((?!(css|discord|js|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -136,61 +136,6 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
-	}
-}
-
-server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name static.wikiforge.net;
-	root /mnt/mediawiki-static;
-
-	send_timeout 120;
-
-	ssl_certificate /etc/ssl/localcerts/wildcard.wikiforge.net.crt;
-	ssl_certificate_key /etc/ssl/private/wildcard.wikiforge.net.key;
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
-
-	# Increase cache hits on varnish
-	location ~ ^/(?!(private\/))(.+)wiki/(?!(dumps|thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$)) {
-		expires 1w;
-	}
-
-	location ~ ^/(.+)wiki/thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$ {
-		expires 1w;
-
-		# Thumbnail handler for MediaWiki
-		# This location only matches on a thumbnail's url
-		# If the file does not exist we use @thumb_handler to run the thumb_handler.php script
-		try_files $uri $uri/ @thumb_handler;
-	}
-
-	# Thumbnail 404 handler, only called by try_files when a thumbnail does not exist
-	location @thumb_handler {
-		# Do a rewrite here so that thumb.php gets the correct arguments
-		rewrite ^/(.+)wiki/thumb/(.+)$ https://$1.wikiforge.net/w/thumb_handler.php/$2;
- 	}
-
-	location = /favicon.ico {
-		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
-	}
-
-	location = /apple-touch-icon.png {
-		try_files /../../srv/mediawiki/favicons/apple-touch-icon-$host.png /../../srv/mediawiki/favicons/apple-touch-icon-default.png;
-	}
-
-	location /private/ {
-		deny all;
-	}
-
-	location /dumps/ {
-		autoindex on;
 	}
 }
 

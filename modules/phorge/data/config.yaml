@@ -25,7 +25,10 @@ auth.require-email-verification: true
 # Phabricator
 phabricator.show-prototypes: true
 phabricator.base-uri: "https://support.wikiforge.net/"
-phabricator.allowed-uris: ["https://phorge1.wikiforge.net/"]
+phabricator.allowed-uris: [
+  "https://phorge.wikitide.com/",
+  "https://phorge1.wikiforge.net/"
+]
 phabricator.timezone: 'UTC'
 security.alternate-file-domain: "https://phorge-storage.wikiforge.net/"
 security.require-https: true

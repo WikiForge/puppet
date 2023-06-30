@@ -72,6 +72,13 @@ class puppetserver(
         require   => Package['puppet-agent'],
     }
 
+    git::clone { 'services':
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/services',
+        origin    => 'https://github.com/WikiForge/services',
+        require   => Package['puppet-agent'],
+    }
+
     git::clone { 'ssl':
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
@@ -177,6 +184,13 @@ class puppetserver(
 
     cron { 'puppet-git':
         command => '/usr/bin/git -C /etc/puppetlabs/puppet/git pull > /dev/null 2>&1',
+        user    => 'root',
+        hour    => '*',
+        minute  => [ '9', '19', '29', '39', '49', '59' ],
+    }
+
+    cron { 'services-git':
+        command => '/usr/bin/git -C /etc/puppetlabs/puppet/services pull > /dev/null 2>&1',
         user    => 'root',
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],

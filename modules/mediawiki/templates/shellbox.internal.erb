@@ -1,20 +1,34 @@
 server {
-	listen *:8080;
-	listen [::]:8080 ipv6only=on;
+	listen 6024;
+	listen [::]:6024;
 
 	server_name shellbox.internal;
 	root /srv/shellbox/public_html;
 
 	location /shellbox {
+		alias /srv/shellbox/public_html/shellbox.php;
+		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root/shellbox.php;
+		fastcgi_param HTTP_AUTHORIZATION $http_authorization;
 		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
-		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 	}
 
-	location /srv/shellbox/public_html {
+	location / {
 		satisfy any;
-		allow 127.0.0.1;
 		deny all;
+		allow 127.0.0.1;
+	}
+
+	location ~ \.php$ {
+		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+
+	location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|mp4|ogg|ogv|webm|htc|woff|woff2|ttf)$ {
+		expires 1M;
+		access_log off;
+		add_header Cache-Control "public";
 	}
 }

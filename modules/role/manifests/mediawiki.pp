@@ -7,7 +7,7 @@ class role::mediawiki (
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish]', ['ipaddress', 'ipaddress6'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services]', ['ipaddress', 'ipaddress6'])
             .map |$key, $value| {
                 "${value['ipaddress']} ${value['ipaddress6']}"
             }
@@ -42,58 +42,6 @@ class role::mediawiki (
             port    => '443',
             notrack => true,
         }
-    }
-
-    file { '/opt/amazon-efs-utils-1.35.0-1_all.deb':
-        ensure => present,
-        source => 'puppet:///modules/role/mediawiki/packages/amazon-efs-utils-1.35.0-1_all.deb',
-    }
-
-   ensure_packages([
-       'keyutils',
-       'libnfsidmap2',
-       'nfs-common',
-       'rpcbind',
-       'stunnel4',
-   ])
-
-   package { 'amazon-efs-utils':
-        ensure   => installed,
-        provider => dpkg,
-        source   => '/opt/amazon-efs-utils-1.35.0-1_all.deb',
-        require  => File['/opt/amazon-efs-utils-1.35.0-1_all.deb'],
-    }
-
-    file { '/mnt/mediawiki-static':
-        ensure => directory,
-        mode   => '0755',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    if !defined(Mount['/mnt/mediawiki-static']) {
-        mount { '/mnt/mediawiki-static':
-            ensure   => mounted,
-            fstype   => 'efs',
-            remounts => true,
-            device   => 'fs-0a9cb0b1a9bf84b4a:/',
-            options  => 'tls',
-            require  => Package['amazon-efs-utils'],
-        }
-    }
-
-    file { '/usr/local/bin/remountStatic.sh':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/role/mediawiki/bin/remountStatic.sh',
-    }
-
-    cron { 'check_mount':
-        ensure  => present,
-        command => '/bin/bash /usr/local/bin/remountStatic.sh',
-        user    => 'root',
-        minute  => '*/1',
-        hour    => '*',
     }
 
     # Using fastcgi we need more local ports

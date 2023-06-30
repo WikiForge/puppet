@@ -2,23 +2,31 @@ groups:
   sre:
     gid: 2000
     description: roots, sudo everywhere
-    members: [universalomega]
+    members: [reception, universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
-  ssl-admins:
+  mediawiki-roots:
     gid: 2001
-    description: limited sudo access to manage SSL certificates
+    description: full root access on MediaWiki servers
     members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
-                 'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
+    privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2002
     description: sudo on MediaWiki servers
-    members: [rman41]
+    members: [agent, rman41]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  mediawiki-test-admins:
+    gid: 2010
+    description: sudo on the MediaWiki test server
+    members: []
+    privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
@@ -31,9 +39,21 @@ users:
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ
-  rman41:
+  reception:
     ensure: present
     uid: 1002
+    name: reception
+    realname: Reception
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN50cum9FqBozQgyHuw6zh5kGvbyiKgZg3x+g/+wCnM9]
+  agent:
+    ensure: present
+    uid: 1010
+    name: agent
+    realname: Agent
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2EL//7xW4oTJdwze3Mj//PE5N93Qogre1CJbB6ySga]
+  rman41:
+    ensure: present
+    uid: 1011
     name: rman41
     realname: Rman41
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyiMRpKS/pOT4VRdJ1aT9/YeO16FinmSqPjocT+B77f]

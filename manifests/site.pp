@@ -1,11 +1,6 @@
 # servers
 
-node 'bots1.wikiforge.net' {
-    include base
-    include role::irc
-}
-
-node /^cp[12]\.wikiforge\.net$/ {
+node /^cp[123456]\.wikiforge\.net$/ {
     include base
     include role::varnish
 }
@@ -21,12 +16,17 @@ node 'jobchron1.wikiforge.net' {
     include mediawiki::jobqueue::chron
 }
 
+node /^jobrunner[12]\.wikiforge\.net$/ {
+    include base
+    include role::mediawiki
+}
+
 node 'mem1.wikiforge.net' {
     include base
     include role::memcached
 }
 
-node /^mw[12]\.wikiforge\.net$/ {
+node /^mw[123456]\.wikiforge\.net$/ {
     include base
     include role::mediawiki
 }
@@ -48,6 +48,11 @@ node 'puppet1.wikiforge.net' {
     include role::puppetserver
     include role::salt
     include role::ssl
+}
+
+node 'services1.wikiforge.net' {
+    include base
+    include role::services
 }
 
 node 'test1.wikiforge.net' {

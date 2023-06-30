@@ -59,7 +59,7 @@ class mediawiki {
     git::clone { 'mathoid':
         ensure             => 'latest',
         directory          => '/srv/mathoid',
-        origin             => 'https://github.com/miraheze/mathoid-deploy',
+        origin             => 'https://github.com/WikiForge/mathoid-deploy',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
@@ -71,7 +71,7 @@ class mediawiki {
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
-        origin             => 'https://github.com/miraheze/3d2png-deploy',
+        origin             => 'https://github.com/WikiForge/3d2png-deploy',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
@@ -126,12 +126,15 @@ class mediawiki {
     $mediawiki_password         = lookup('passwords::db::mediawiki')
     $redis_password             = lookup('passwords::redis::master')
     $noreply_password           = lookup('passwords::mail::noreply')
+    $noreply_username           = lookup('passwords::mail::noreply_username')
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
     $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')
     $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
     $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
+    $aws_s3_access_key = lookup('mediawiki::aws_s3_access_key')
+    $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -155,6 +158,12 @@ class mediawiki {
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/getMWVersion.php',
+    }
+
+    file { '/usr/local/bin/getMWVersions':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/getMWVersions.php',
     }
 
     file { '/usr/local/bin/mwscript':
@@ -191,6 +200,12 @@ class mediawiki {
         privileges => [
             'ALL = (www-data) NOPASSWD: ALL',
         ],
+    }
+
+    file { '/etc/s3-env.sh':
+        ensure  => present,
+        content => template('mediawiki/s3-env.sh.erb'),
+        mode    => '0755',
     }
 
     file { '/tmp/magick-tmp':

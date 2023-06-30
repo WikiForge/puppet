@@ -8,13 +8,15 @@ mediawiki::multiversion::versions:
   '1.39':
     branch: 'REL1_39'
     default: true
+  '1.40':
+    branch: 'REL1_40'
 
 puppetserver_hostname: puppet1.wikiforge.net
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
-mediawiki::use_shellbox: false
+mediawiki::use_shellbox: true
 mediawiki::jobqueue::wiki: 'metawiki'
 memcached_servers:
   - 172.31.28.186:11211:1
@@ -26,22 +28,57 @@ varnish::backends:
     port: 8100
     probe: mwhealth
     pool: true
+    ip_address: 18.221.121.203
   mw2:
     port: 8101
     probe: mwhealth
     pool: true
+    ip_address: 3.137.156.210
+  mw3:
+    port: 8102
+    probe: mwhealth
+    pool: true
+    ip_address: 3.145.164.236
+  mw4:
+    port: 8103
+    probe: mwhealth
+    pool: true
+    ip_address: 3.139.80.48
+  mw5:
+    port: 8104
+    probe: mwhealth
+    pool: true
+    ip_address: 3.145.18.108
+  mw6:
+    port: 8105
+    probe: mwhealth
+    pool: true
+    ip_address: 18.118.93.80
+  jobrunner1:
+    port: 8150
+    probe: false
+    pool: false
+    ip_address: 13.58.205.57
+  jobrunner2:
+    port: 8151
+    probe: false
+    pool: false
+    ip_address: 3.128.255.135
   test1:
     port: 8180
     probe: false
     pool: false
+    ip_address: 52.14.195.40
   phorge1:
     port: 8200
     probe: false
     pool: false
+    ip_address: 3.135.195.194
   puppet1:
     port: 8201
     probe: false
     pool: false
+    ip_address: 18.117.56.175
 
 # Logging
 base::syslog::syslog_daemon: syslog
