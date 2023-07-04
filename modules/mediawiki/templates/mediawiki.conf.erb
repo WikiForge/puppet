@@ -6,7 +6,7 @@ server {
 	listen [::]:443 deferred ssl http2 backlog=4096;
 
 	server_name wikiforge.net;
-	root /srv/mediawiki/landing;
+	root /srv/mediawiki/wikiforge-landing;
 	index index.php index.html;
 
 	if ($http_user_agent ~* "WordPress") {
