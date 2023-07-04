@@ -521,6 +521,10 @@ Interwiki:
   branch: _branch_
   path: extensions/Interwiki
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Interwiki
+InterwikiDispatcher:
+  branch: master
+  path: extensions/InterwikiDispatcher
+  repo_url: https://github.com/Markus-Rost/InterwikiDispatcher
 InterwikiSorting:
   branch: _branch_
   path: extensions/InterwikiSorting

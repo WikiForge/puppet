@@ -1,3 +1,7 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
 redis::heap: '1GB'
 
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'

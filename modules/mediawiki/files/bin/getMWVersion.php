@@ -10,4 +10,6 @@ if ( count( $argv ) < 2 ) {
 	exit( 1 );
 }
 
+define( 'MW_DB', $argv[1] );
+
 echo WikiForgeFunctions::getMediaWikiVersion( $argv[1] ) . "\n";

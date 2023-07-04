@@ -15,7 +15,7 @@ mw_versions = os.popen('getMWVersions').read().strip()
 versions = {'version': 'version'}
 if mw_versions:
     versions = json.loads(mw_versions)
-repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing'}
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'wikiforge-landing': 'wikiforge-landing', 'wikitide-landing': 'wikitide-landing'}
 
 del mw_versions
 
@@ -308,7 +308,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': args.world and version, 'wikiforge-landing': args.wikiforge_landing and not version, 'wikitide-landing': args.wikitide_landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     loginfo = {}
     rsyncpaths = []
@@ -380,7 +380,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if status:
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
-                    if exitcode == 0 and output != 'Already up to date.':
+                    if exitcode == 0 and (args.force or output != 'Already up to date.'):
                         print(f'Upgrading {extension}')
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
                             if not args.skip_schema_confirm and extension not in warnings:
@@ -429,7 +429,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                     if status:
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
-                    if exitcode == 0 and output != 'Already up to date.':
+                    if exitcode == 0 and (args.force or output != 'Already up to date.'):
                         print(f'Upgrading {skin}')
                         for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
                             if not args.skip_schema_confirm and skin not in warnings:
@@ -648,7 +648,8 @@ if __name__ == '__main__':
     parser.add_argument('--upgrade-vendor', dest='upgrade_vendor', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
-    parser.add_argument('--landing', dest='landing', action='store_true')
+    parser.add_argument('--wikiforge-landing', dest='wikiforge_landing', action='store_true')
+    parser.add_argument('--wikitide-landing', dest='wikitide_landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', '--i18n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extension_list', action='store_true')
