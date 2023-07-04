@@ -212,10 +212,6 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
-
-	location = /sitemap-index.xml {
-		rewrite ^(.*)$ /wikitide-sitemap-index.php;
-	}
 }
 
 <%- @sslcerts.each_pair do | name, property | -%>
@@ -262,6 +258,12 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
+
+<%- if name == "wikitide" -%> 
+	location = /sitemap-index.xml {
+		rewrite ^(.*)$ /wikitide-sitemap-index.php;
+	}
+<%- end -%>
 }
 
 <%- end -%>
