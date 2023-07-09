@@ -1,6 +1,6 @@
 # class: mariadb::packages
 class mariadb::packages(
-    VMlib::Mariadb_version $version = lookup('mariadb::version', {'default_value' => '10.5'}),
+    VMlib::Mariadb_version $version = lookup('mariadb::version', {'default_value' => '10.11'}),
 ) {
 
     package { [
@@ -36,7 +36,7 @@ class mariadb::packages(
     }
 
     package { [
-        "mariadb-server-${version}",
+        'mariadb-server',
         'mariadb-backup',
         'libjemalloc2',
     ]:
