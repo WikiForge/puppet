@@ -22,11 +22,11 @@ probe mwhealth {
 	.interval = <%= @interval_check %>;
 	# <%= @interval_timeout %> should be our upper limit for responding to a fair light web request
 	.timeout = <%= @interval_timeout %>;
-	# At least 4 out of 5 checks must be successful
+	# At least 2 out of 3 checks must be successful
 	# to mark the backend as healthy
-	.window = 5;
-	.threshold = 4;
-        .initial = 4;
+	.window = 3;
+	.threshold = 2;
+        .initial = 2;
 	.expected_response = 204;
 }
 
