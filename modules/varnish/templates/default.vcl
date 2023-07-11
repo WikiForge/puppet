@@ -165,9 +165,10 @@ sub mw_request {
 	# Handling thumb_handler.php requests
 	if (req.url ~ "^/((1\.\d{2,})|w)/thumb_handler.php") {
 		set req.backend_hint = thumb.backend();
-	} else {
-		set req.backend_hint = mediawiki.backend();
+		return (pass);
 	}
+
+	set req.backend_hint = mediawiki.backend();
 
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
