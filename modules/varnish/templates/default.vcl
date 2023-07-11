@@ -43,9 +43,13 @@ backend <%= name %> {
 # Initialise vcl
 sub vcl_init {
 	new mediawiki = directors.random();
+	new thumb = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['pool'] -%>
 	mediawiki.add_backend(<%= name %>, 1);
+<%- end -%>
+<%- if property['thumb'] -%>
+	thumb.add_backend(<%= name %>, 1);
 <%- end -%>
 <%- end -%>
 }
@@ -158,7 +162,12 @@ sub mw_request {
 	}
 <%- end -%>
 
-	set req.backend_hint = mediawiki.backend();
+	# Handling thumb_handler.php requests
+	if (req.url ~ "^/w/thumb_handler.php") {
+		set req.backend_hint = thumb.backend();
+	} else {
+		set req.backend_hint = mediawiki.backend();
+	}
 
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
