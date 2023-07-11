@@ -21,8 +21,8 @@ mediawiki::jobqueue::wiki: 'metawiki'
 memcached_servers:
   - 172.31.28.186:11211:1
 
-varnish::interval-check: '60s'
-varnish::interval-timeout: '60s'
+varnish::interval-check: '5s'
+varnish::interval-timeout: '5s'
 varnish::backends:
   mw1:
     port: 8100
