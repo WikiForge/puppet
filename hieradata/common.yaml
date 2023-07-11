@@ -64,7 +64,7 @@ varnish::backends:
     port: 8151
     probe: false
     pool: false
-    thumb: true
+    thumb: false
     ip_address: 3.128.255.135
   test1:
     port: 8180
