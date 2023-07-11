@@ -163,7 +163,7 @@ sub mw_request {
 <%- end -%>
 
 	# Handling thumb_handler.php requests
-	if (req.url ~ "^/w/thumb_handler.php") {
+	if (req.url ~ "^/((1\.\d{2,})|w)/thumb_handler.php") {
 		set req.backend_hint = thumb.backend();
 	} else {
 		set req.backend_hint = mediawiki.backend();
