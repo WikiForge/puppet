@@ -28,6 +28,7 @@ varnish::backends:
     port: 8100
     probe: mwhealth
     pool: true
+    thumb: true
     ip_address: 18.221.121.203
   mw2:
     port: 8101
@@ -38,6 +39,7 @@ varnish::backends:
     port: 8102
     probe: mwhealth
     pool: true
+    thumb: true
     ip_address: 3.145.164.236
   mw4:
     port: 8103
@@ -48,6 +50,7 @@ varnish::backends:
     port: 8104
     probe: mwhealth
     pool: true
+    thumb: true
     ip_address: 3.145.18.108
   mw6:
     port: 8105
