@@ -58,16 +58,19 @@ varnish::backends:
     port: 8150
     probe: false
     pool: false
+    thumb: true
     ip_address: 13.58.205.57
   jobrunner2:
     port: 8151
     probe: false
     pool: false
+    thumb: true
     ip_address: 3.128.255.135
   test1:
     port: 8180
     probe: false
     pool: false
+    thumb: true
     ip_address: 52.14.195.40
   phorge1:
     port: 8200
