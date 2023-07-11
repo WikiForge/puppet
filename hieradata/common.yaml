@@ -74,7 +74,7 @@ varnish::backends:
     ip_address: 3.128.255.135
   test1:
     port: 8180
-    probe: false
+    probe: mwhealth
     pool: false
     thumb: true
     ip_address: 52.14.195.40
