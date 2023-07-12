@@ -13,6 +13,11 @@ location ~ ^/1\.\d\d/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?
 	expires 1d;
 }
 
+location /thumb_proxy/ {
+	proxy_pass http://thumb-lb.wikiforge.net;
+        proxy_set_header Host $host;
+}
+
 location /w/rest.php/ {
 	try_files $uri $uri/ /w/rest.php?$args;
 }
