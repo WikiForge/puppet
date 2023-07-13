@@ -2,7 +2,10 @@
 #
 # Packages needed for mediawiki
 class mediawiki::packages {
-    include imagemagick::install
+    if lookup(mediawiki::use_imagemagick) {
+        include imagemagick::install
+    }
+
     include mediawiki::firejail
 
     ensure_packages([
