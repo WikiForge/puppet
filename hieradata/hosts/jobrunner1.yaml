@@ -8,6 +8,8 @@ jobrunner::intensive: true
 mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
 mediawiki::jobqueue::runner::cron: true
 
+mediawiki::use_imagemagick: true
+
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 4
