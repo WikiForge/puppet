@@ -2,13 +2,14 @@
 #
 # Packages needed for mediawiki
 class mediawiki::packages {
-    include imagemagick::install
+#    include imagemagick::install
     include mediawiki::firejail
 
     ensure_packages([
         'djvulibre-bin',
         'dvipng',
         'ghostscript',
+        'graphicsmagick',
         'htmldoc',
         'inkscape',
         'fonts-freefont-ttf',
@@ -33,6 +34,7 @@ class mediawiki::packages {
         'python3-minimal',
         'python3-requests',
         'rsync',
+        'webp',
     ])
 
     if !lookup(mediawiki::use_shellbox) {
