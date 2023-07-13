@@ -172,7 +172,9 @@ server {
 	}
 
 	location / {
-		return 301 https://$host$request_uri;
+		if ($request_uri ~ "^/(?!thumb_proxy/)") {
+			return 301 https://$host$request_uri;
+		}
 	}
 }
 
