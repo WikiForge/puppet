@@ -5,7 +5,7 @@ users::groups:
 jobrunner: true
 jobrunner::intensive: true
 
-mediawiki::jobqueue::runner::redis_ip: '18.221.91.74:6379'
+mediawiki::jobqueue::runner::redis_ip: '172.31.5.111:6379'
 mediawiki::jobqueue::runner::cron: true
 
 role::mediawiki::use_strict_firewall: true
