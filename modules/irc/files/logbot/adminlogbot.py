@@ -346,6 +346,6 @@ for bot in bots:
 while True:
     for bot in bots:
         try:
-            bot.ircobj.process_once(timeout=0.1)
+            bot.reactor.process_once(timeout=0.1)
         except Exception:
             logging.exception('Died in main event loop')
