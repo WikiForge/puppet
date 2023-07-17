@@ -37,39 +37,39 @@ class SASLRCBot(RCBot):
         self.sasl_password = "<%= @sasl_password %>"
 
     def signedOn(self):
-        self.sendLine("CAP REQ :sasl")
+        self.sendLine(b"CAP REQ :sasl")
 
     def irc_CAP(self, prefix, params):
-        if params[1] == "ACK" and "sasl" in params[2]:
+        if params[1] == "ACK" and b"sasl" in params[2]:
             self.initiate_sasl()
 
     def initiate_sasl(self):
-        self.sendLine("AUTHENTICATE %s" % self.sasl_mechanism)
+        self.sendLine(b"AUTHENTICATE " + self.sasl_mechanism.encode("utf-8"))
 
     def irc_900(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication successful":
+        if params[1] == self.nickname and params[2] == b"SASL authentication successful":
             self.join(self.channel)
 
     def irc_904(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication failed":
+        if params[1] == self.nickname and params[2] == b"SASL authentication failed":
             print("SASL authentication failed.")
             self.transport.loseConnection()
 
     def irc_906(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication aborted":
+        if params[1] == self.nickname and params[2] == b"SASL authentication aborted":
             print("SASL authentication aborted.")
             self.transport.loseConnection()
 
     def irc_903(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication successful":
+        if params[1] == self.nickname and params[2] == b"SASL authentication successful":
             self.join(self.channel)
 
     def sendLine(self, line):
-        super().sendLine(line.encode("utf-8"))
+        super().sendLine(line)
 
     def lineReceived(self, line):
-        if line == "AUTHENTICATE +":
-            response = "AUTHENTICATE " + self.sasl_mechanism + " " + self.encode_base64(self.sasl_username + "\x00" + self.sasl_username + "\x00" + self.sasl_password)
+        if line == b"AUTHENTICATE +":
+            response = b"AUTHENTICATE " + self.sasl_mechanism.encode("utf-8") + b" " + self.encode_base64(self.sasl_username + "\x00" + self.sasl_username + "\x00" + self.sasl_password)
             self.sendLine(response)
         else:
             super().lineReceived(line)
