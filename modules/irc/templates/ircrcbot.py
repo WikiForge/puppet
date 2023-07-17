@@ -13,14 +13,12 @@ class RCBot(irc.IRCClient):
     password = "wikiforgebots:<%= @wikiforgebots_password %>"
     channel = "<%= @channel %>"
     lineRate = 1
-    sasl_in_progress = False
 
     def signedOn(self):
         global recver
         self.join(self.channel)
         print("Signed on as %s." % (self.nickname,))
         recver = self
-        self.sasl_start()
 
     def joined(self, channel):
         print("Joined %s." % (channel,))
@@ -30,34 +28,59 @@ class RCBot(irc.IRCClient):
         # with 'unexpected end of data'.
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
 
-    def sasl_start(self):
+
+class SASLRCBot(RCBot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sasl_mechanism = None
+        self.sasl_username = "<%= @sasl_username %>"
+        self.sasl_password = "<%= @sasl_password %>"
+
+    def signedOn(self):
         self.sendLine("CAP REQ :sasl")
 
-    def sasl_response(self, response):
-        if response == "+":
-            username = "wikiforgebots"
-            password = "<%= @wikiforgebots_password %>"
-            auth_string = f"{username}\0{password}"
-            self.sendLine(f"AUTHENTICATE PLAIN {auth_string}")
-            self.sasl_in_progress = True
+    def irc_CAP(self, prefix, params):
+        if params[1] == "ACK" and "sasl" in params[2]:
+            self.initiate_sasl()
+
+    def initiate_sasl(self):
+        self.sendLine("AUTHENTICATE %s" % self.sasl_mechanism)
+
+    def irc_900(self, prefix, params):
+        if params[1] == self.nickname and params[2] == "SASL authentication successful":
+            self.join(self.channel)
+
+    def irc_904(self, prefix, params):
+        if params[1] == self.nickname and params[2] == "SASL authentication failed":
+            print("SASL authentication failed.")
+            self.transport.loseConnection()
+
+    def irc_906(self, prefix, params):
+        if params[1] == self.nickname and params[2] == "SASL authentication aborted":
+            print("SASL authentication aborted.")
+            self.transport.loseConnection()
+
+    def irc_903(self, prefix, params):
+        if params[1] == self.nickname and params[2] == "SASL authentication successful":
+            self.join(self.channel)
+
+    def sendLine(self, line):
+        super().sendLine(line.encode("utf-8"))
 
     def lineReceived(self, line):
-        if self.sasl_in_progress:
-            if line.startswith("+"):
-                self.sasl_in_progress = False
-                self.sasl_response(line)
-                return
-            elif line.startswith("-"):
-                self.sasl_in_progress = False
-                print("SASL authentication failed.")
-                self.transport.loseConnection()
-                return
+        if line == "AUTHENTICATE +":
+            response = "AUTHENTICATE " + self.sasl_mechanism + " " + self.encode_base64(self.sasl_username + "\x00" + self.sasl_username + "\x00" + self.sasl_password)
+            self.sendLine(response)
+        else:
+            super().lineReceived(line)
 
-        super().lineReceived(line)
+    @staticmethod
+    def encode_base64(s):
+        return s.encode("utf-8").decode("base64")
 
 
 class RCFactory(protocol.ClientFactory):
-    protocol = RCBot
+    protocol = SASLRCBot
 
     def clientConnectionLost(self, connector, reason):
         print("Lost connection (%s), reconnecting." % (reason,))
@@ -68,7 +91,6 @@ class RCFactory(protocol.ClientFactory):
 
 
 class Echo(DatagramProtocol):
-
     def datagramReceived(self, data, host_port):
         global recver
         (host, port) = host_port
