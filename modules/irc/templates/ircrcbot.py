@@ -87,9 +87,8 @@ class SASLRCBot(RCBot):
         self.sendLine(response)
 
     def encode_plain(self):
-        return base64.b64encode(
-                self.encode("\x00%s\x00%s" % (self.sasl_username, self.sasl_password))
-            ).decode()
+        auth_string = "\x00".join((self.sasl_username, self.sasl_password))
+        return base64.b64encode(auth_string.encode("utf-8")).decode("utf-8")
 
     def encode_base64(self, s):
         return s.encode("base64").strip()
