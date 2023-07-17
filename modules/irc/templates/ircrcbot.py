@@ -13,12 +13,14 @@ class RCBot(irc.IRCClient):
     password = "wikiforgebots:<%= @wikiforgebots_password %>"
     channel = "<%= @channel %>"
     lineRate = 1
+    sasl_in_progress = False
 
     def signedOn(self):
         global recver
         self.join(self.channel)
         print("Signed on as %s." % (self.nickname,))
         recver = self
+        self.sasl_start()
 
     def joined(self, channel):
         print("Joined %s." % (channel,))
@@ -27,6 +29,31 @@ class RCBot(irc.IRCClient):
         # We ignore any errors, otherwise it will possibly fail
         # with 'unexpected end of data'.
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
+
+    def sasl_start(self):
+        self.sendLine("CAP REQ :sasl")
+
+    def sasl_response(self, response):
+        if response == "+":
+            username = "wikiforgebots"
+            password = "<%= @wikiforgebots_password %>"
+            auth_string = f"{username}\0{username}\0{password}"
+            self.sendLine(f"AUTHENTICATE PLAIN {auth_string}")
+            self.sasl_in_progress = True
+
+    def lineReceived(self, line):
+        if self.sasl_in_progress:
+            if line.startswith("+"):
+                self.sasl_in_progress = False
+                self.sasl_response(line)
+                return
+            elif line.startswith("-"):
+                self.sasl_in_progress = False
+                print("SASL authentication failed.")
+                self.transport.loseConnection()
+                return
+
+        super().lineReceived(line)
 
 
 class RCFactory(protocol.ClientFactory):
