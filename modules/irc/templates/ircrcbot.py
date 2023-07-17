@@ -1,19 +1,42 @@
 #!/usr/bin/python3
 
-import base64
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor, ssl
 from twisted.words.protocols import irc
 from twisted.internet import protocol
+import base64
 
 recver = None
 
 
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
-    password = "wikiforgebots:<%= @wikiforgebots_password %>"
+    password = "<%= @wikiforgebots_password %>"
     channel = "<%= @channel %>"
     lineRate = 1
+
+    def connectionMade(self):
+        self.lineRate = None
+        self.sendLine('CAP REQ :sasl')
+        self.lineRate = 1
+        irc.IRCClient.connectionMade(self)
+
+    def irc_CAP(self, prefix, params):
+        if params[1] != 'ACK' or params[2].split() != ['sasl']:
+            print('sasl not available')
+            self.quit('')
+        sasl_string = '{0}\0{0}\0{1}'.format(self.nickname, self.password)
+        sasl_b64_bytes = base64.b64encode(sasl_string.encode(encoding='UTF-8',errors='strict'))
+        self.sendLine('AUTHENTICATE PLAIN')
+        self.sendLine('AUTHENTICATE ' + sasl_b64_bytes.decode('UTF-8'))
+
+    def irc_903(self, prefix, params):
+        self.sendLine('CAP END')
+
+    def irc_904(self, prefix, params):
+        print('sasl auth failed', params)
+        self.quit('')
+    irc_905 = irc_904
 
     def signedOn(self):
         global recver
@@ -30,72 +53,8 @@ class RCBot(irc.IRCClient):
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
 
 
-class SASLRCBot(RCBot):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.sasl_mechanism = "PLAIN"
-        self.sasl_username = "wikiforgebots"
-        self.sasl_password = "<%= @wikiforgebots_password %>"
-        self._sasl_in_progress = False
-
-    def signedOn(self):
-        self.sendLine("CAP REQ :sasl")
-
-    def irc_CAP(self, prefix, params):
-        if params[1] == "ACK" and "sasl" in params[2]:
-            self.initiate_sasl()
-
-    def initiate_sasl(self):
-        self._sasl_in_progress = True
-        self.sendLine("AUTHENTICATE " + self.sasl_mechanism)
-
-    def irc_900(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication successful":
-            self.join(self.channel)
-
-    def irc_904(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication failed":
-            print("SASL authentication failed.")
-            self.transport.loseConnection()
-
-    def irc_906(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication aborted":
-            print("SASL authentication aborted.")
-            self.transport.loseConnection()
-
-    def irc_903(self, prefix, params):
-        if params[1] == self.nickname and params[2] == "SASL authentication successful":
-            self.join(self.channel)
-
-    def sendLine(self, line):
-        if not self._sasl_in_progress:
-            super().sendLine(line.encode("utf-8"))
-
-    def lineReceived(self, line):
-        if line == "AUTHENTICATE +":
-            self.handle_sasl_challenge()
-        else:
-            super().lineReceived(line)
-
-    def handle_sasl_challenge(self):
-        if self.sasl_mechanism == "PLAIN":
-            response = self.sasl_mechanism + " " + self.encode_plain()
-        else:
-            print("Unsupported SASL mechanism: %s" % self.sasl_mechanism)
-            self.transport.loseConnection()
-            return
-        self.sendLine(response)
-
-    def encode_plain(self):
-        auth_string = "\x00".join((self.sasl_username, self.sasl_password))
-        return base64.b64encode(auth_string.encode("utf-8")).decode("utf-8")
-
-    def encode_base64(self, s):
-        return s.encode("base64").strip()
-
-
 class RCFactory(protocol.ClientFactory):
-    protocol = SASLRCBot
+    protocol = RCBot
 
     def clientConnectionLost(self, connector, reason):
         print("Lost connection (%s), reconnecting." % (reason,))
@@ -106,6 +65,7 @@ class RCFactory(protocol.ClientFactory):
 
 
 class Echo(DatagramProtocol):
+
     def datagramReceived(self, data, host_port):
         global recver
         (host, port) = host_port
