@@ -64,6 +64,40 @@ default_project: &default_project
                               retry_limit: 10
                               show_sql: false
 
+wikiforge_project: &wikiforge_project
+  x-modules:
+    - spec:
+        paths:
+          /{api:v1}:
+            x-modules:
+              - path: projects/v1/wikimedia.wmf.yaml
+                options:
+                  <<: *default_options
+                  pageviews:
+                    host: https://restbase.wikiforge.net/{domain}/v1/metrics
+          /{api:sys}:
+            x-modules:
+              - path: projects/proxy.yaml
+                options:
+                  <<: *proxy_options
+                  block_external_reqs: false
+              - spec:
+                  paths:
+                    /legacy/key_value:
+                      x-modules:
+                        - path: sys/key_value.js
+                    /table: *table_spec
+#                    /mathoid:
+#                      x-modules:
+#                        - path: sys/mathoid.js
+#                          options: *mathoid_options
+                    /post_data:
+                      x-modules:
+                        - path: sys/post_data.js
+                    /events:
+                      x-modules:
+                        - path: sys/events.js
+
 
 # The root of the spec tree. Domains tend to share specs by referencing them
 # using YAML references.
@@ -91,6 +125,7 @@ spec_root: &spec_root
     /{domain:<%= value %>}: *default_project
 <%- end -%>
 <%- end -%>
+    /{domain:meta.wikiforge.net}: *wikiforge_project
 
     /robots.txt:
       get:
