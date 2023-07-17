@@ -37,7 +37,7 @@ class RCBot(irc.IRCClient):
         if response == "+":
             username = "wikiforgebots"
             password = "<%= @wikiforgebots_password %>"
-            auth_string = f"{username}\0{username}\0{password}"
+            auth_string = f"{username}\0{password}"
             self.sendLine(f"AUTHENTICATE PLAIN {auth_string}")
             self.sasl_in_progress = True
 
