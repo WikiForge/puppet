@@ -1,5 +1,10 @@
 # servers
 
+node 'bots1.wikiforge.net' {
+    include base
+    include role::irc
+}
+
 node /^cp[1234]\.wikiforge\.net$/ {
     include base
     include role::varnish
@@ -16,13 +21,8 @@ node 'jobchron1.wikiforge.net' {
     include mediawiki::jobqueue::chron
 }
 
-node 'jobrunner1.wikiforge.net' {
-    include base
-    include role::mediawiki
-    include role::irc
-}
 
-node 'jobrunner2.wikiforge.net' {
+node /^jobrunner[12]\.wikiforge\.net$/ {
     include base
     include role::mediawiki
 }
