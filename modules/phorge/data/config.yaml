@@ -38,6 +38,11 @@ policy.allow-public: true
 user.require-real-name: false
 storage.local-disk.path: "/srv/phorge/images/"
 
+amazon-s3.endpoint: ''
+amazon-s3.region: 'us-east-2'
+
+storage.s3.bucket: 'phorge-storage.wikiforge.net'
+
 # Maniphest priorities
 maniphest.priorities:
   '100':
