@@ -4,3 +4,5 @@ puppetserver_hostname: 'puppet1.wikiforge.net'
 
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
+
+bots_hostname: 'jobrunner1.wikiforge.net'
