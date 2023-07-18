@@ -16,7 +16,7 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
 
 mediawiki::php::memory_limit: '256M'
-mediawiki::php::enable_request_profiling: false
+mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
 
