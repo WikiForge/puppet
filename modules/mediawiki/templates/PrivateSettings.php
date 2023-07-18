@@ -13,7 +13,9 @@ $wmgSMTPUsername = '<%= @noreply_username %>';
 
 // MediaWiki secret keys
 $wgUpgradeKey = '<%= @mediawiki_upgradekey %>';
-$wgSecretKey = '<%= @mediawiki_secretkey %>';
+$wgSecretKey = $wi->wikifarm === 'wikitide' ?
+	'<%= @mediawiki_wikitide_secretkey %>' :
+	'<%= @mediawiki_wikiforge_secretkey %>';
 
 // hCaptcha secret key
 $wgHCaptchaSecretKey = '<%= @hcaptcha_secretkey %>';
