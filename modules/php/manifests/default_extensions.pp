@@ -19,7 +19,6 @@ class php::default_extensions {
         'ftp',
         'gettext',
         'iconv',
-        'json',
         'phar',
         'posix',
         'readline',
