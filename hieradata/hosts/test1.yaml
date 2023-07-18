@@ -29,7 +29,7 @@ mediawiki::multiversion::versions:
   '1.41':
     branch: 'master'
 
-php::php_version: '7.4'
+php::php_version: '8.2'
 
 base::syslog::rsyslog_udp_localhost: true
 
