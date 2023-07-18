@@ -200,10 +200,10 @@ class mediawiki::php (
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
     if $php_version == '7.4' {
-        file { '/usr/lib/php/20190902/tideways_xhprof-php7.4.so':
+        file { '/usr/lib/php/20190902/tideways_xhprof.so':
             ensure => $profiling_ensure,
             mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof-php7.4.so',
             before => Php::Extension['tideways-xhprof'],
         }
     } else {
