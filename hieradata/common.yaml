@@ -11,7 +11,7 @@ mediawiki::multiversion::versions:
     branch: 'REL1_40'
     default: true
 
-puppetserver_hostname: puppet1-private.wikiforge.net
+puppetserver_hostname: 'puppet1-private.wikiforge.net'
 role::salt::minions::salt_master: 'puppet1-private.wikiforge.net'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
