@@ -13,6 +13,9 @@ mediawiki::multiversion::versions:
 
 puppetserver_hostname: puppet1.wikiforge.net
 role::salt::minions::salt_master: 'puppet1.wikiforge.net'
+
+bots_hostname: 'jobrunner1-private.wikiforge.net'
+
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
