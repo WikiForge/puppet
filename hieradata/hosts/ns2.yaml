@@ -1,2 +1,3 @@
+bots_hostname: 'jobrunner1.wikiforge.net'
 puppetserver_hostname: 'puppet1.wikiforge.net'
 dns: true
