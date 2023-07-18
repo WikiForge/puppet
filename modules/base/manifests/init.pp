@@ -1,5 +1,7 @@
 # class: base
-class base {
+class base (
+    String $bots_hostname = lookup('bots_hostname')
+) {
     include apt
     include base::packages
     include base::puppet
@@ -24,9 +26,9 @@ class base {
     }
 
     file { '/usr/local/bin/logsalmsg':
-        ensure => present,
-        source => 'puppet:///modules/base/logsalmsg',
-        mode   => '0555',
+        ensure  => present,
+        content => template('base/logsalmsg.erb'),
+        mode    => '0555',
     }
 
     class { 'apt::backports':
