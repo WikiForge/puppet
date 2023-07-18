@@ -37,6 +37,13 @@ class php::default_extensions {
         priority     => 20,
     }
 
+    if lookup('php::php_version') == '7.4' {
+        php::extension { 'json':
+            package_name => '',
+            priority     => 20,
+        }
+    }
+
     # Hi-priority extensions
     php::extension{
         default:
