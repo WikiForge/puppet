@@ -6,4 +6,4 @@ role::memcached::max_seq_reqs: 200
 role::memcached::size: 5120
 role::memcached::extended_options: []
 role::memcached::port: 11211
-puppetserver_hostname: 'puppet1-private.wikiforge.net'
+puppetserver_hostname: 'puppet1.wikiforge.net'
