@@ -38,15 +38,7 @@ class nginx (
     }
 
     $module_path = get_module_path('varnish')
-
     $cache_proxies = query_nodes("domain='${domain}' and Class['Role::Varnish']")
-        .map |$node, $node_facts| {
-            {
-                'networking.ip'  => $node_facts['networking']['ip'],
-                'networking.ip6' => $node_facts['networking']['ip6'],
-            }
-        }
-
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
