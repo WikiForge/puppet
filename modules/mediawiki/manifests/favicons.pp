@@ -25,7 +25,8 @@ class mediawiki::favicons {
         source  => 'puppet:///modules/mediawiki/favicons/apple-touch-icon-default-wikiforge.png',
         require => File['/srv/mediawiki/favicons'],
     }
-   file { '/srv/mediawiki/favicons/apple-touch-icon-default-wikitide.png':
+
+    file { '/srv/mediawiki/favicons/apple-touch-icon-default-wikitide.png':
         ensure  => present,
         source  => 'puppet:///modules/mediawiki/favicons/apple-touch-icon-default-wikitide.png',
         require => File['/srv/mediawiki/favicons'],
