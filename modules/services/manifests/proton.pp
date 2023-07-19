@@ -49,7 +49,7 @@ class services::proton {
             Package['nodejs']
         ],
     }
- 
+
     exec { 'proton_npm_merge':
         command     => 'npm install merge --cache /tmp/npm_cache_proton --no-optional --only=production',
         creates     => '/srv/proton/node_modules/merge',
