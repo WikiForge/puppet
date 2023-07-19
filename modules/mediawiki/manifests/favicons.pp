@@ -8,15 +8,26 @@ class mediawiki::favicons {
         require => File['/srv/mediawiki'],
     }
 
-    file { '/srv/mediawiki/favicons/default.ico':
+    file { '/srv/mediawiki/favicons/default-wikiforge.ico':
         ensure  => present,
-        source  => 'puppet:///modules/mediawiki/favicons/default.ico',
+        source  => 'puppet:///modules/mediawiki/favicons/default-wikiforge.ico',
         require => File['/srv/mediawiki/favicons'],
     }
 
-    file { '/srv/mediawiki/favicons/apple-touch-icon-default.png':
+    file { '/srv/mediawiki/favicons/default-wikitide.ico':
         ensure  => present,
-        source  => 'puppet:///modules/mediawiki/favicons/apple-touch-icon-default.png',
+        source  => 'puppet:///modules/mediawiki/favicons/default-wikitide.ico',
+        require => File['/srv/mediawiki/favicons'],
+    }
+    
+    file { '/srv/mediawiki/favicons/apple-touch-icon-default-wikiforge.png':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/favicons/apple-touch-icon-default-wikiforge.png',
+        require => File['/srv/mediawiki/favicons'],
+    }
+   file { '/srv/mediawiki/favicons/apple-touch-icon-default-wikitide.png':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/favicons/apple-touch-icon-default-wikitide.png',
         require => File['/srv/mediawiki/favicons'],
     }
 }
