@@ -27,4 +27,4 @@ nginx::keepalive_timeout: 2
 nginx::keepalive_requests: 150
 nginx::logrotate_number: 2
 
-puppetserver_hostname: 'puppet1.wikiforge.net'
+puppetserver_hostname: 'puppet1-private.wikiforge.net'

@@ -10,4 +10,4 @@ mediawiki::use_shellbox: false
 
 php::php_version: '7.4'
 
-puppetserver_hostname: 'puppet1.wikiforge.net'
+puppetserver_hostname: 'puppet1-private.wikiforge.net'
