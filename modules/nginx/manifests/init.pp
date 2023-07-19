@@ -40,10 +40,10 @@ class nginx (
     $module_path = get_module_path('varnish')
 
     $cache_proxies = query_nodes("domain='${domain}' and Class['Role::Varnish']")
-        .map |$node, $facts| {
+        .map |$node, $node_facts| {
             {
-                'networking.ip'  => $facts['networking']['ip'],
-                'networking.ip6' => $facts['networking']['ip6'],
+                'networking.ip'  => $node_facts['networking']['ip'],
+                'networking.ip6' => $node_facts['networking']['ip6'],
             }
         }
 
