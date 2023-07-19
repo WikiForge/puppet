@@ -15,7 +15,11 @@ function streamAppleTouch() {
 
 	$touch = $wgAppleTouchIcon;
 	if ( $touch === '/apple-touch-icon.png' || $touch === false ) {
-		$touch = '/favicons/apple-touch-icon-default.png';
+		if ( $wi->wikifarm == 'wikitide' ) {
+			$touch = '/favicons/apple-touch-icon-default-wikitide.png';
+		} else {
+			$touch = '/favicons/apple-touch-icon-default-wikiforge.png';
+		}
 	}
 
 	$req = RequestContext::getMain()->getRequest();
