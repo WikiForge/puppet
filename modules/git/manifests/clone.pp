@@ -42,7 +42,7 @@ define git::clone(
                 true    => '--recurse-submodules ',
                 default => '',
             }
-            
+
             $shallow_submodules_arg = $shallow_submodules ? {
                 true    => '--shallow-submodules ',
                 default => '',
@@ -139,19 +139,19 @@ define git::clone(
                     default => "remotes/origin/${branch}",
                 }
                 exec { "git_pull_${title}":
-                    cwd       => $directory,
-                    command   => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${allow_unrelated_histories_arg}",
-                    provider  => shell,
-                    logoutput => on_failure,
+                    cwd         => $directory,
+                    command     => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${allow_unrelated_histories_arg}",
+                    provider    => shell,
+                    logoutput   => on_failure,
                     environment => $env,
                     # git diff --quiet will exit 1 (return false)
                     #  if there are differences
-                    unless    => "${git} fetch && /usr/bin/git diff --quiet ${remote_to_check}",
-                    user      => $owner,
-                    group     => $group,
-                    umask     => $umask,
-                    path      => '/usr/bin:/bin',
-                    require   => Exec["git_clone_${title}"],
+                    unless      => "${git} fetch && /usr/bin/git diff --quiet ${remote_to_check}",
+                    user        => $owner,
+                    group       => $group,
+                    umask       => $umask,
+                    path        => '/usr/bin:/bin',
+                    require     => Exec["git_clone_${title}"],
                 }
                 # If we want submodules up to date, then we need
                 # to run git submodule update --init after

@@ -239,11 +239,11 @@ class puppetserver(
     }
 
     cron { 'updatesfs':
-        ensure   => present,
-        command  => '/root/updatesfs',
-        user     => 'root',
-        hour     => 23,
-        minute   => 0,
+        ensure  => present,
+        command => '/root/updatesfs',
+        user    => 'root',
+        hour    => 23,
+        minute  => 0,
     }
 
     # Backups

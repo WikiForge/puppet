@@ -25,7 +25,7 @@ class irc::relaybot {
     }
 
     package { 'dotnet-sdk-6.0':
-        ensure => installed,
+        ensure  => installed,
         require => Exec['apt_update_relaybot'],
     }
 

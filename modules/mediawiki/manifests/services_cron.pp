@@ -19,9 +19,9 @@ class mediawiki::services_cron (
     }
 
     file { '/usr/local/bin/pushServices.sh':
-        ensure => present,
+        ensure  => present,
         content => template('mediawiki/pushServices.sh.erb'),
-        mode   => '0755',
+        mode    => '0755',
     }
 
     cron { 'generate_services':

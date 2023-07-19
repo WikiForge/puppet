@@ -48,8 +48,8 @@ class services::restbase {
     ssl::wildcard { 'services wildcard': }
 
     nginx::site { 'restbase':
-        ensure  => present,
-        source  => 'puppet:///modules/services/nginx/restbase',
+        ensure => present,
+        source => 'puppet:///modules/services/nginx/restbase',
     }
 
     file { '/etc/mediawiki/restbase':

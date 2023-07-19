@@ -29,7 +29,7 @@ class services::proton {
         mode      => '0755',
         timeout   => '550',
         before    => Service['proton'],
-        require => [
+        require   => [
             User['proton'],
             Group['proton']
         ]
