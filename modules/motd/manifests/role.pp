@@ -4,8 +4,8 @@ define motd::role(
     Optional[String] $description = undef,
 ) {
     $message = $description ? {
-        undef   => "${facts['facts['networking']['hostname']']} is ${title}",
-        default => "${facts['facts['networking']['hostname']']} is a ${description} (${title})",
+        undef   => "${facts['networking']['hostname']} is ${title}",
+        default => "${facts['networking']['hostname']} is a ${description} (${title})",
     }
 
     motd::script { "role-${title}":

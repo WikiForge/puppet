@@ -36,19 +36,19 @@ class ssh::server (
         content => template('ssh/sshd_config.erb'),
     }
 
-    if $facts['facts['networking']['ip6']'] == undef {
-        $aliases = [ $facts['facts['networking']['hostname']'], $facts['facts['networking']['ip']'] ]
-    } elsif $facts['facts['networking']['ip6']'] != undef and $facts['facts['networking']['ip']'] == undef {
-        $aliases = [ $facts['facts['networking']['hostname']'], $facts['facts['networking']['ip6']'] ]
+    if $facts['networking']['ip6'] == undef {
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip'] ]
+    } elsif $facts['networking']['ip6'] != undef and $facts['networking']['ip'] == undef {
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip6'] ]
     } else {
-        $aliases = [ $facts['facts['networking']['hostname']'], $facts['facts['networking']['ip']'], $facts['facts['networking']['ip6']'] ]
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip'], $facts['networking']['ip6'] ]
     }
 
-    debug("Storing ecdsa-sha2-nistp256 SSH hostkey for ${facts['facts['networking']['fqdn']']}")
-    @@sshkey { $facts['facts['networking']['fqdn']']:
+    debug("Storing ecdsa-sha2-nistp256 SSH hostkey for ${facts['networking']['fqdn']}")
+    @@sshkey { $facts['networking']['fqdn']:
         ensure       => present,
         type         => 'ecdsa-sha2-nistp256',
-        key          => $facts['facts['ssh']['ecdsa']['key']'],
+        key          => $facts['ssh']['ecdsa']['key'],
         host_aliases => $aliases,
     }
 }
