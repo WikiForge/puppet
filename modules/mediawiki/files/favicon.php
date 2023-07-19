@@ -15,7 +15,11 @@ function streamFavicon() {
 
 	$favicon = $wgFavicon;
 	if ( $favicon === '/favicon.ico' ) {
-		$favicon = '/favicons/default.ico';
+		if ( $wi->wikifarm == 'wikitide' ) {
+			$favicon = '/favicons/default-wikitide.ico';
+		} else {
+			$favicon = '/favicons/default-wikiforge.ico';
+		}
 	}
 
 	$req = RequestContext::getMain()->getRequest();
