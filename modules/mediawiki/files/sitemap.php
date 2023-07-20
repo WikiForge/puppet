@@ -45,6 +45,12 @@ function streamSitemapFile() {
 
 	$url = "https://{$wmgUploadHostname}/{$wgDBname}/sitemaps/{$filename}";
 
+	$req = RequestContext::getMain()->getRequest();
+	if ( $req->getHeader( 'X-Sitemap-Loop' ) !== false ) {
+		header( 'HTTP/1.1 500 Internal Server Error' );
+		return;
+	}
+
 	$client = MediaWikiServices::getInstance()
 		->getHttpRequestFactory()
 		->create( $url );
