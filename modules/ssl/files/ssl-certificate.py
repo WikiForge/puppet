@@ -210,7 +210,7 @@ class SslCertificate:
 
         domain = self.domain
         if domain == 'wikiforge.net':
-            domain = 'Wildcard.wikiforge.net'
+            domain = 'wildcard.wikiforge.net'
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
