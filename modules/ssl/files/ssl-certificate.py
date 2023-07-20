@@ -208,19 +208,23 @@ class SslCertificate:
         if not self.quiet:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
+        domain = self.domain
+        if domain == 'wikiforge.net':
+            domain = 'Wildcard.wikiforge.net'
+
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system('git -C /srv/ssl/ssl/ pull')
-        os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
-        os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
+        os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{domain}.crt')
+        os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}"')
         os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private and self.newprivate is True:
             print('New private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
-            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
+            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{domain}.key')
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
