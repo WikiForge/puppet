@@ -4,6 +4,8 @@ jobrunner::intensive: false
 puppetserver: false
 dns: false
 
+puppet_major_version: 8
+
 mediawiki::multiversion::versions:
   '1.39':
     branch: 'REL1_39'
