@@ -6,19 +6,26 @@ class role::postgresql {
         use_ssl  => lookup('postgresql::ssl', {'default_value' => false}),
     }
 
-    $firewall_rules = query_facts('Class[Role::Puppetserver]', ['networking'])
-        .map |$key, $value| {
-            { "postgresql_${key}":
-                proto   => 'tcp',
-                port    => '5432',
-                srange  => "(${value['networking']['ip']} ${value['networking']['ip6']})",
-                notrack => true,
-             }
-      }
-      .flatten()
-      .unique()
+$firewall_rules = []
 
-    create_resources('ferm::service', $firewall_rules)
+$query_results = query_facts('Class[Role::Puppetserver]', ['networking'])
+if $query_results {
+  $query_results.each |$key, $value| {
+    $ip = $value['networking']['ip']
+    $ip6 = $value['networking']['ip6']
+    if $ip and $ip6 {
+      $firewall_rules << {
+        "postgresql_${key}":
+          proto   => 'tcp',
+          port    => '5432',
+          srange  => "(${ip} ${ip6})",
+          notrack => true,
+      }
+    }
+  }
+}
+
+create_resources('ferm::service', $firewall_rules)
 
     motd::role { 'role::postgresql':
         description => 'hosting postgresql server',
