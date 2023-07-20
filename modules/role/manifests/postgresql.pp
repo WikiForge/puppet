@@ -9,7 +9,7 @@ class role::postgresql {
     $firewall_rules_str = join(
         query_facts('Class[Role::Puppetserver]', ['networking'])
         .map |$key, $value| {
-            "(${value['networking']['ip']} ${value['networking']['ip6']})"
+            "{$value['networking']['ip']} {$value['networking']['ip6']}"
         }
         .flatten()
         .unique()
@@ -19,7 +19,7 @@ class role::postgresql {
     ferm::service { 'postgresql':
         proto   => 'tcp',
         port    => '5432',
-        srange  => $firewall_rules_str,
+        srange  => "(${$firewall_rules_str})",
         notrack => true,
     }
 
