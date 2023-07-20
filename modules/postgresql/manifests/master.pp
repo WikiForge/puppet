@@ -39,9 +39,7 @@ class postgresql::master(
     Optional[Array] $includes = [],
     String $pgversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => '13',
-        'buster'  => '11',
-        'stretch' => '9.6',
-        'jessie'  => '9.4',
+        'bookworm' => '15',
     },
     VMlib::Ensure $ensure = 'present',
     Integer $max_wal_senders = 5,
