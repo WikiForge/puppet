@@ -17,6 +17,4 @@ class varnish::nginx {
     ssl::wildcard { 'varnish nginx wildcard': }
 
     include ssl::hiera
-
-    ssl::cert { 'm.wikiforge.net': }
 }
