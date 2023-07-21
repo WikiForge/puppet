@@ -110,6 +110,28 @@ class mediawiki::php (
         ]:
             ensure => present
         }
+    } else {
+        file { '/usr/lib/php/20220829/luasandbox.so':
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/luasandbox.so',
+            before => Php::Extension['luasandbox'],
+        }
+
+        file { '/usr/lib/php/20220829/wikidiff2.so':
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/wikidiff2.so',
+            before => Php::Extension['wikidiff2'],
+        }
+
+        php::extension{ [
+            'luasandbox',
+            'wikidiff2',
+        ]:
+            ensure => present,
+            package_name => '',
+        }
     }
 
     # Extensions that require configuration.
