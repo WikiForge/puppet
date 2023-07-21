@@ -34,8 +34,9 @@ class mediawiki::php (
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '256M',
         'rlimit_core'                     => 0,
+        'apc.shm_size'                    => '256M',
+        'opcache.jit_buffer_size'         => '256M',
     }
     if $enable_fpm {
         $_sapis = ['cli', 'fpm']
