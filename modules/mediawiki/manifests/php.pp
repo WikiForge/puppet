@@ -129,7 +129,7 @@ class mediawiki::php (
             'luasandbox',
             'wikidiff2',
         ]:
-            ensure => present,
+            ensure       => present,
             package_name => '',
         }
     }
