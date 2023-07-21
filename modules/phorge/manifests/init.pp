@@ -177,7 +177,7 @@ class phorge (
 
     file { '/srv/phorge/phorge/conf/local/local.json':
         ensure  => present,
-        content => template('phorge/local.json.erb'),
+        content => to_json_pretty($phorge_settings),
         notify  => Service['phd'],
         require => Git::Clone['phorge'],
     }
