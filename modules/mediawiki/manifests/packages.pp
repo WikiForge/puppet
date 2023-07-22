@@ -2,7 +2,6 @@
 #
 # Packages needed for mediawiki
 class mediawiki::packages {
-#    include imagemagick::install
     include mediawiki::firejail
 
     ensure_packages([
