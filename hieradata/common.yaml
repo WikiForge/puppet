@@ -38,30 +38,6 @@ varnish::backends:
     pool: true
     thumb: true
     ip_address: 18.191.144.8
-  mw3:
-    port: 8102
-    probe: mwhealth
-    pool: true
-    thumb: true
-    ip_address: 3.145.164.236
-  mw4:
-    port: 8103
-    probe: mwhealth
-    pool: true
-    thumb: true
-    ip_address: 3.139.80.48
-  mw5:
-    port: 8104
-    probe: mwhealth
-    pool: true
-    thumb: true
-    ip_address: 3.141.42.10
-  mw6:
-    port: 8105
-    probe: mwhealth
-    pool: true
-    thumb: true
-    ip_address: 18.217.178.166
   jobrunner1:
     port: 8150
     probe: mwhealth
