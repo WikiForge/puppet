@@ -1,69 +1,53 @@
 # servers
 
 node /^cp[1234]\.wikiforge\.net$/ {
-    include base
-    include role::varnish
+    role(varnish)
 }
 
 node 'db1.wikiforge.net' {
-    include base
-    include role::db
+    role(db)
 }
 
 node 'jobchron1.wikiforge.net' {
-    include base
-    include role::redis
+    role(redis)
     include mediawiki::jobqueue::chron
 }
 
 node 'jobrunner1.wikiforge.net' {
-    include base
-    include role::mediawiki
-    include role::irc
+    role mediawiki, irc
 }
 
 node 'jobrunner2.wikiforge.net' {
-    include base
-    include role::mediawiki
+    role(mediawiki)
 }
 
 node 'mem1.wikiforge.net' {
-    include base
-    include role::memcached
+    role(memcached)
 }
 
 node /^mw[12]\.wikiforge\.net$/ {
-    include base
-    include role::mediawiki
+    role(mediawiki)
 }
 
 node /^ns[12]\.wikiforge\.net$/ {
-    include base
-    include role::dns
+    role(dns)
 }
 
 node 'phorge1.wikiforge.net' {
-    include base
-    include role::phorge
+    role(phorge)
 }
 
 node 'puppet1.wikiforge.net' {
-    include base
-    include role::postgresql
+    role postgresql, puppetserver, salt, ssl
     include puppetdb::database
-    include role::puppetserver
-    include role::salt
-    include role::ssl
 }
 
 node 'services1.wikiforge.net' {
-    include base
-    include role::services
+    role(services)
 }
 
 node 'test1.wikiforge.net' {
-    include base
-    include role::mediawiki
+    role(mediawiki)
 }
 
 # ensures all servers have basic class if puppet runs
