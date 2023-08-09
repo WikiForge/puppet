@@ -5,6 +5,16 @@ define ssl::wildcard (
     $ssl_cert_key_private_group = 'ssl-cert',
 ) {
 
+    if !defined(File[$ssl_cert_path]) {
+        file { $ssl_cert_path:
+            ensure  => directory,
+            owner   => 'root',
+            group   => $ssl_cert_key_private_group,
+            mode    => '0775',
+            require => Package['ssl-cert'],
+        }
+    }
+
     if defined(Service['nginx']) {
         $restart_nginx = Service['nginx']
     } else {
