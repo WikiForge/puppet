@@ -16,7 +16,6 @@ class mediawiki::jobqueue::runner (
     $wiki = lookup('mediawiki::jobqueue::wiki')
     ensure_packages('python3-xmltodict')
 
-
     systemd::service { 'jobrunner':
         ensure    => present,
         content   => systemd_template('jobrunner'),
