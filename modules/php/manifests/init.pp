@@ -17,7 +17,7 @@ class php(
 
         apt::source { 'php_apt':
             location => 'https://packages.sury.org/php/',
-            release  => "${::lsbdistcodename}",
+            release  => $facts['os']['distro']['codename'],
             repos    => 'main',
             require  => File['/etc/apt/trusted.gpg.d/php.gpg'],
             notify   => Exec['apt_update_php'],
