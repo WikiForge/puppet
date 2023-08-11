@@ -12,7 +12,7 @@ git -C /srv/services/services/ config user.email "universalomega@wikiforge.net"
 
 git -C /srv/services/services/ config user.name "WikiForgeSSLBot"
 
-/usr/bin/php /srv/mediawiki/<%= @version %>/extensions/WikiForgeMagic/maintenance/addWikiToServices.php --wiki=metawiki
+/usr/bin/php <%= @runner %>/srv/mediawiki/<%= @version %>/extensions/WikiForgeMagic/maintenance/addWikiToServices.php --wiki=metawiki
 
 git -C /srv/services/services/ add -A --all
 
