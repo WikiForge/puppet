@@ -4,9 +4,9 @@
 class mediawiki::jobqueue::shared (
     String $version,
 ) {
-    $run = ''
+    $runner = ''
     if versioncmp($version, '1.40') >= 0 {
-        $run = "/srv/mediawiki/${version}/maintenance/run.php "
+        $runner = "/srv/mediawiki/${version}/maintenance/run.php "
     }
 
     git::clone { 'JobRunner':
