@@ -9,6 +9,34 @@ class php(
     Hash $config_by_sapi                      = {},
     Hash $extensions                          = {}
 ) {
+    if $version != '7.4' and !defined(Apt::Source['php_apt']) {
+        file { '/etc/apt/trusted.gpg.d/php.gpg':
+            ensure => present,
+            source => 'puppet:///modules/php/key/php.gpg',
+        }
+
+        apt::source { 'php_apt':
+            location => 'https://packages.sury.org/php/',
+            release  => "${::lsbdistcodename}",
+            repos    => 'main',
+            require  => File['/etc/apt/trusted.gpg.d/php.gpg'],
+            notify   => Exec['apt_update_php'],
+        }
+
+        apt::pin { 'php_pin':
+            priority => 600,
+            origin   => 'packages.sury.org'
+        }
+
+        # First installs can trip without this
+        exec {'apt_update_php':
+            command     => '/usr/bin/apt-get update',
+            refreshonly => true,
+            logoutput   => true,
+            require     => Apt::Pin['php_pin'],
+        }
+    }
+
     # We need php-common everywhere
     ensure_packages(["php${version}-common", "php${version}-opcache"])
 
