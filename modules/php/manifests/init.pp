@@ -11,11 +11,11 @@ class php(
 ) {
     if $version != '7.4' and !defined(Apt::Source['php_apt']) {
         ensure_packages(
-             'php7.4-common',
-             {
-                 ensure => purged,
-             },
-         )
+            'php7.4-common',
+            {
+                ensure => purged,
+            },
+        )
 
         file { '/etc/apt/trusted.gpg.d/php.gpg':
             ensure => present,
