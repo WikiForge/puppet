@@ -156,7 +156,9 @@ sub mw_request {
 	
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
-	if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
+	if ( req.http.X-WikiForge-Debug-Access-Key == "<%= debug_access_key %>" &&
+		req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net"
+	) {
 		set req.backend_hint = <%= name %>;
 		return (pass);
 	}
