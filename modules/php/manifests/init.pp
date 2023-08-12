@@ -9,14 +9,7 @@ class php(
     Hash $config_by_sapi                      = {},
     Hash $extensions                          = {}
 ) {
-    if $version != '7.4' and !defined(Apt::Source['php_apt']) {
-        ensure_packages(
-            'php7.4-common',
-            {
-                ensure => purged,
-            },
-        )
-
+    if !defined(Apt::Source['php_apt']) {
         file { '/etc/apt/trusted.gpg.d/php.gpg':
             ensure => present,
             source => 'puppet:///modules/php/key/php.gpg',
