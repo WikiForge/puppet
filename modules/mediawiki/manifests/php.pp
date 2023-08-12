@@ -110,9 +110,9 @@ class mediawiki::php (
 
     file { '/usr/lib/php/20220829/luasandbox.so':
         ensure => present,
-         mode   => '0755',
+        mode   => '0755',
         source => 'puppet:///modules/mediawiki/php/luasandbox.so',
-         before => Php::Extension['luasandbox'],
+        before => Php::Extension['luasandbox'],
     }
 
     file { '/usr/lib/php/20220829/wikidiff2.so':
