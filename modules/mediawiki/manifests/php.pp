@@ -108,35 +108,26 @@ class mediawiki::php (
         ensure => present
     }
 
-    if $php_version == '7.4' {
-        php::extension { [
-            'luasandbox',
-            'wikidiff2',
-        ]:
-            ensure => present
-        }
-    } else {
-        file { '/usr/lib/php/20220829/luasandbox.so':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/luasandbox.so',
-            before => Php::Extension['luasandbox'],
-        }
+    file { '/usr/lib/php/20220829/luasandbox.so':
+        ensure => present,
+         mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/luasandbox.so',
+         before => Php::Extension['luasandbox'],
+    }
 
-        file { '/usr/lib/php/20220829/wikidiff2.so':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/wikidiff2.so',
-            before => Php::Extension['wikidiff2'],
-        }
+    file { '/usr/lib/php/20220829/wikidiff2.so':
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/wikidiff2.so',
+        before => Php::Extension['wikidiff2'],
+    }
 
-        php::extension{ [
-            'luasandbox',
-            'wikidiff2',
-        ]:
-            ensure       => present,
-            package_name => '',
-        }
+    php::extension{ [
+        'luasandbox',
+        'wikidiff2',
+    ]:
+        ensure       => present,
+        package_name => '',
     }
 
     # Extensions that require configuration.
@@ -214,7 +205,7 @@ class mediawiki::php (
             }
         }
 
-        # Send logs locally to /var/log/php7.x-fpm/error.log
+        # Send logs locally to /var/log/php8.x-fpm/error.log
         # Please note: this replaces the logrotate rule coming from the package,
         # because we use syslog-based logging. This will also prevent an fpm reload
         # for every logrotate run.
@@ -234,20 +225,11 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    if $php_version == '7.4' {
-        file { '/usr/lib/php/20190902/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof-php7.4.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
-    } else {
-        file { '/usr/lib/php/20220829/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
+    file { '/usr/lib/php/20220829/tideways_xhprof.so':
+        ensure => $profiling_ensure,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
+        before => Php::Extension['tideways-xhprof'],
     }
 
     php::extension { 'tideways-xhprof':
@@ -260,7 +242,7 @@ class mediawiki::php (
         }
     }
 
-    # Set the default interpreter to php7
+    # Set the default interpreter to php8
     $cli_path = "/usr/bin/php${php_version}"
     $pkg = "php${php_version}-cli"
     alternatives::select { 'php':
