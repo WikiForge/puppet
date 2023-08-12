@@ -15,7 +15,6 @@ groups:
     members: [rman41]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service redis *',
@@ -27,7 +26,6 @@ groups:
     members: []
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
