@@ -155,14 +155,15 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
+
+	if (req.http.X-WikiForge-Debug-Access-Key == "<%= debug_access_key %>") {
 <%- @backends.each_pair do | name, property | -%>
-	if ( req.http.X-WikiForge-Debug-Access-Key == "<%= debug_access_key %>" &&
-		req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net"
-	) {
-		set req.backend_hint = <%= name %>;
-		return (pass);
-	}
+		if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
+			set req.backend_hint = <%= name %>;
+			return (pass);
+		}
 <%- end -%>
+	}
 
 	# Handling thumb_handler.php requests
 	if (req.url ~ "^/((1\.\d{2,})|w)/thumb_handler.php") {
