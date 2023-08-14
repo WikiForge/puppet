@@ -9,5 +9,7 @@ mediawiki::php::enable_fpm: false
 mediawiki::use_shellbox: false
 
 php::php_version: '8.2'
+php::absented_php_versions:
+  - '7.4'
 
 puppetserver_hostname: 'puppet1.wikiforge.net'
