@@ -19,6 +19,8 @@ mediawiki::php::fpm_config:
 mediawiki::php::memory_limit: '500M'
 
 php::php_version: '8.2'
+php::absented_php_versions:
+  - '7.4'
 
 base::syslog::rsyslog_udp_localhost: true
 
