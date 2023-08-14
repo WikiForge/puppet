@@ -3,36 +3,14 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    VMlib::Php_version $version               = lookup('php::php_version'),
-    VMlib::Ensure $ensure                     = present,
-    Array[Php::Sapi] $sapis                   = ['cli'],
-    Hash $config_by_sapi                      = {},
-    Hash $extensions                          = {}
+    VMlib::Php_version $version                      = lookup('php::php_version'),
+    Array[VMlib::Php_version] $absented_php_versions = lookup('php::absented_php_versions', {'default_value' => []}),
+    VMlib::Ensure $ensure                            = present,
+    Array[Php::Sapi] $sapis                          = ['cli'],
+    Hash $config_by_sapi                             = {},
+    Hash $extensions                                 = {}
 ) {
     if $version != '7.4' and !defined(Apt::Source['php_apt']) {
-        ensure_packages(
-            'php7.4-common',
-            {
-                ensure => purged,
-            },
-        )
-
-        file { 'cleanup_php7.4_files':
-            ensure  => absent,
-            recurse => true,
-            force   => true,
-            path    => [
-                '/etc/php/7.4',
-                '/usr/lib/20190902',
-                '/usr/lib/7.4',
-                '/usr/share/php/7.4',
-                '/var/log/php7.4-fpm',
-                '/var/log/php7.4-fpm-shellbox-slowlog.log',
-                '/var/log/php7.4-fpm-www-slowlog.log',
-                '/var/log/php7.4-fpm.log',
-            ],
-        }
-
         file { '/etc/apt/trusted.gpg.d/php.gpg':
             ensure => present,
             source => 'puppet:///modules/php/key/php.gpg',
@@ -59,6 +37,9 @@ class php(
             require     => Apt::Pin['php_pin'],
         }
     }
+
+    # remove all php versions we want to absent, completely.
+    php::absented_version{ $absented_php_versions: }
 
     # We need php-common everywhere
     ensure_packages(["php${version}-common", "php${version}-opcache"])
