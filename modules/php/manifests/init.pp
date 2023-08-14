@@ -17,6 +17,22 @@ class php(
             },
         )
 
+        file { 'cleanup_php7.4_files':
+            ensure  => absent,
+            recurse => true,
+            force   => true,
+            path    => [
+                '/etc/php/7.4',
+                '/usr/lib/20190902',
+                '/usr/lib/7.4',
+                '/usr/share/php/7.4',
+                '/var/log/php7.4-fpm',
+                '/var/log/php7.4-fpm-shellbox-slowlog.log',
+                '/var/log/php7.4-fpm-www-slowlog.log',
+                '/var/log/php7.4-fpm.log',
+            ],
+        }
+
         file { '/etc/apt/trusted.gpg.d/php.gpg':
             ensure => present,
             source => 'puppet:///modules/php/key/php.gpg',
