@@ -54,6 +54,20 @@ sub vcl_init {
 <%- end -%>
 }
 
+# Debug ACL: those exempt from requiring an access key
+acl debug {
+	# localhost
+	"127.0.0.1";
+
+<%- @backends.each_pair.with_index do |(name, property), index| -%>
+	# <%= name %>
+	"<%= property['ip_address'] %>";
+<%- if index != @backends.size - 1 -%>
+
+<%- end -%>
+<%- end -%>
+}
+
 # Purge ACL
 acl purge {
 	# localhost
@@ -156,7 +170,7 @@ sub mw_request {
 	
 	# Assigning a backend
 
-	if (req.http.X-WikiForge-Debug-Access-Key == "<%= @debug_access_key %>") {
+	if (req.http.X-WikiForge-Debug-Access-Key == "<%= @debug_access_key %>" || client.ip ~ debug) {
 <%- @backends.each_pair do | name, property | -%>
 		if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
 			set req.backend_hint = <%= name %>;
