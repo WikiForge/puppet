@@ -1,0 +1,41 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+  - mediawiki-test-admins
+
+jobrunner: true
+mediawiki::jobqueue::runner::redis_ip: '172.31.5.111:6379'
+mediawiki::jobqueue::wiki: 'test1wiki'
+
+role::mediawiki::use_strict_firewall: true
+
+mediawiki::php::fpm::fpm_min_child: 6
+mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+mediawiki::php::fpm_config:
+  post_max_size: '250M'
+  upload_max_filesize: '250M'
+
+mediawiki::php::memory_limit: '256M'
+mediawiki::php::enable_request_profiling: true
+
+mediawiki::use_staging: true
+
+mediawiki::multiversion::versions:
+  '1.39':
+    branch: 'REL1_39'
+  '1.40':
+    branch: 'REL1_40'
+    default: true
+  '1.41':
+    branch: 'master'
+
+php::php_version: '8.2'
+
+base::syslog::rsyslog_udp_localhost: true
+
+# NGINX
+nginx::keepalive_timeout: 2
+nginx::keepalive_requests: 150
+nginx::logrotate_number: 2
+
+puppetserver_hostname: 'puppet1.wikiforge.net'
