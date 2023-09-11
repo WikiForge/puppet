@@ -1,5 +1,10 @@
 # servers
 
+node 'cloud1.wikiforge.net' {
+    include base
+    include role::cloud
+}
+
 node /^cp[123]\.wikiforge\.net$/ {
     include base
     include role::varnish
