@@ -49,6 +49,11 @@ node /^mw[12345]\.wikiforge\.net$/ {
     include role::mediawiki
 }
 
+node /^mw([12345]|11)\.wikiforge\.net$/ {
+    include base
+    include role::mediawiki
+}
+
 node /^ns[12]\.wikiforge\.net$/ {
     include base
     include role::dns
