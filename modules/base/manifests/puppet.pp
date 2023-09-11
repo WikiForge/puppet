@@ -15,7 +15,7 @@ class base::puppet (
         location => 'http://apt.puppetlabs.com',
         # Once Puppet is out for bullseye,
         # remove this!
-        release => 'bullseye',
+        release  => 'bullseye',
         repos    => "puppet${puppet_major_version}",
         require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
         notify   => Exec['apt_update_puppetlabs'],
