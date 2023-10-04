@@ -87,7 +87,7 @@ class icinga(
 
   # switch logging between mainlog and syslog
   # logging on windows only file is supported, warning output see below
-  if $logging_type == 'file' or $::kernel == 'windows' {
+  if $logging_type == 'file' or $facts['kernel'] == 'windows' {
     $_mainlog = 'present'
     $_syslog  = 'absent'
   } else {
@@ -105,7 +105,7 @@ class icinga(
     severity => $logging_level,
   }
 
-  case $::kernel {
+  case $facts['kernel'] {
     'linux': {
       $icinga_user    = $::icinga2::globals::user
       $icinga_group   = $::icinga2::globals::group
@@ -119,7 +119,7 @@ class icinga(
         $icinga_shell = '/bin/false'
       }
 
-      case $::osfamily {
+      case $facts['os']['family'] {
         'redhat': {
           package { [ 'nagios-common', $icinga_package ]+$extra_packages:
             ensure => installed,
@@ -176,7 +176,7 @@ class icinga(
       }
 
       if $ssh_public_key {
-        ssh_authorized_key { "${icinga_user}@${::fqdn}":
+        ssh_authorized_key { "${icinga_user}@${facts['networking']['fqdn']}":
           ensure => present,
           user   => $icinga_user,
           key    => $ssh_public_key,

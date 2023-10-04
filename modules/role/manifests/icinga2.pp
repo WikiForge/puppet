@@ -64,13 +64,13 @@ class role::icinga2 (
     Optional[String] $icinga2_api_bind_host = lookup('icinga2_api_bind_host', {'default_value' => undef}),
 ) {
     class { '::monitoring':
-        db_host               => $icinga2_db_host,
-        db_name               => $icinga2_db_name,
-        db_user               => $icinga2_db_user,
-        db_password           => $ido_db_user_password ,
-        icinga2_api_bind_host => $icinga2_api_bind_host,
+        db_host                => $icinga2_db_host,
+        db_name                => $icinga2_db_name,
+        db_user                => $icinga2_db_user,
+        db_password            => $ido_db_user_password ,
+        icinga2_api_bind_host  => $icinga2_api_bind_host,
         wikiforgebots_password => $wikiforgebots_password,
-        ticket_salt           => $ticket_salt,
+        ticket_salt            => $ticket_salt,
     }
 
     class { '::icingaweb2':

@@ -43,7 +43,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0755',
-        require => Package["mariadb-server"],
+        require => Package['mariadb-server'],
     }
 
     if $tmpdir != '/tmp' {
@@ -52,7 +52,7 @@ class mariadb::config(
             owner   => 'mysql',
             group   => 'mysql',
             mode    => '0775',
-            require => Package["mariadb-server"],
+            require => Package['mariadb-server'],
         }
     }
 
@@ -61,7 +61,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0750',
-        require => Package["mariadb-server"],
+        require => Package['mariadb-server'],
     }
 
     file { '/etc/mysql/wikiforge/default-grants.sql':
@@ -82,13 +82,13 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0644',
-        require => Package["mariadb-server"],
+        require => Package['mariadb-server'],
     }
 
     logrotate::conf { 'mysql-server':
         ensure  => present,
         source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
-        require => Package["mariadb-server"],
+        require => Package['mariadb-server'],
     }
 
     systemd::unit { 'mariadb.service':

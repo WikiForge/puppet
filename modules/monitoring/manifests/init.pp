@@ -30,7 +30,7 @@ class monitoring (
     }
 
     ensure_packages(
-        "mariadb-client",
+        'mariadb-client',
         {
             ensure  => present,
         },

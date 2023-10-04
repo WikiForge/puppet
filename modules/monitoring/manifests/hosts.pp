@@ -3,19 +3,19 @@ define monitoring::hosts (
     $contacts    = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
 ) {
     @@icinga2::object::host { $title:
-        ensure   => $ensure,
-        import   => ['generic-host'],
+        ensure  => $ensure,
+        import  => ['generic-host'],
         address => $facts['networking']['hostname'] ? {
-            'cloud1' => $facts['networking']['interfaces']['vmbr1']['ip'],
-            'mail11' => $facts['networking']['interfaces']['ens19']['ip'],
-            'mw11' => $facts['networking']['interfaces']['ens19']['ip'],
-            'mw12' => $facts['networking']['interfaces']['ens19']['ip'],
+            'cloud1'   => $facts['networking']['interfaces']['vmbr1']['ip'],
+            'mail11'   => $facts['networking']['interfaces']['ens19']['ip'],
+            'mw11'     => $facts['networking']['interfaces']['ens19']['ip'],
+            'mw12'     => $facts['networking']['interfaces']['ens19']['ip'],
             'phorge11' => $facts['networking']['interfaces']['ens19']['ip'],
-            default => $facts['networking']['ip'],
+            default    => $facts['networking']['ip'],
         },
 #        address6 => $facts['networking']['ip6'],
-        target   => '/etc/icinga2/conf.d/puppet_hosts.conf',
-        vars     => {
+        target  => '/etc/icinga2/conf.d/puppet_hosts.conf',
+        vars    => {
             notification => {
                 mail => {
                     groups => $contacts,
