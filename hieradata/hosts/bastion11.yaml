@@ -1,0 +1,3 @@
+users::groups:
+  - bastion
+puppetserver_hostname: 'puppet1.wikiforge.net'
