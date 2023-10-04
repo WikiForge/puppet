@@ -5,6 +5,10 @@ node 'cloud1.wikiforge.net' {
     include role::cloud
 }
 
+node 'bastion11.wikiforge.net' {
+    include base
+    include role::bastion
+}
 node 'bots1.wikiforge.net' {
     include base
 }
