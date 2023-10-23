@@ -22,9 +22,9 @@ class role::db (
     }
 
     class { 'mariadb::config':
-        config   => 'mariadb/config/mw.cnf.erb',
+        config          => 'mariadb/config/mw.cnf.erb',
         icinga_password => lookup('passwords::db::icinga'),
-        password => lookup('passwords::db::root'),
+        password        => lookup('passwords::db::root'),
     }
 
     file { '/etc/mysql/wikiforge/mediawiki-grants.sql':

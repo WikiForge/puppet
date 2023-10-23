@@ -145,7 +145,7 @@ class mediawiki {
     $aws_s3_access_key             = lookup('mediawiki::aws_s3_access_key')
     $aws_s3_access_secret_key      = lookup('mediawiki::aws_s3_access_secret_key')
     $mediawiki_externaldata_cslmodswikitide             = lookup('mediawiki::externaldata_cslmodswikitide')
-    
+
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),

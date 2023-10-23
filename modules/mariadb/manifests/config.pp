@@ -114,7 +114,7 @@ class mariadb::config(
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://tech.wikiforge.net/wiki/MariaDB',
-        vars => {
+        vars          => {
             mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
