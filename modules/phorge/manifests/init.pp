@@ -6,8 +6,6 @@ class phorge (
 
 $wikiforge_s3_access                = lookup('mediawiki::aws_s3_access_key')
 $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_key')
-$wikitide_s3_access                = lookup('phorge::aws_s3_access_key_wikitide')
-$wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wikitide')
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
@@ -115,11 +113,6 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
         }
     }
 
-    nginx::site { 'issue-tracker.wikitide.org':
-        ensure => present,
-        source => 'puppet:///modules/phorge/issue-tracker.wikitide.org.conf',
-    }
-
     nginx::site { 'support-archive.wikiforge.net':
         ensure => present,
         source => 'puppet:///modules/phorge/support-archive.wikiforge.net.conf',
@@ -136,13 +129,6 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
         ensure => directory,
         owner  => 'www-data',
         group  => 'www-data',
-    }
-
-    file { '/srv/phorge/phorge/conf/custom':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => File['/srv/phorge'],
     }
 
     git::clone { 'arcanist':
@@ -173,18 +159,18 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
         require   => File['/srv/phorge'],
     }
 
+    file { '/srv/phorge/phorge/conf/custom':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/phorge'],
+    }
+
     file { '/srv/phorge/repos':
         ensure => directory,
         mode   => '0755',
         owner  => 'www-data',
         group  => 'www-data',
-    }
-
-    file { '/srv/phorge/repos/wikiforge':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => File['/srv/phorge/repos'],
     }
 
     file { '/srv/phorge/repos/wikitide':
@@ -204,6 +190,8 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
+        'amazon-s3.access-key' => lookup('mediawiki::aws_s3_access_key'),
+        'amazon-s3.secret-key' => lookup('mediawiki::aws_s3_access_secret_key'),
         'mysql.pass' => lookup('passwords::db::phorge'),
     }
 
@@ -219,6 +207,7 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
                     'user'     => lookup('passwords::mail::noreply_username'),
                     'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'tls',
+                    'message-id' => true,
                 },
             },
         ],
@@ -229,10 +218,7 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
     file { '/srv/phorge/phorge/conf/local/local.json':
         ensure  => present,
         content => to_json_pretty($phorge_settings),
-        notify  => [
-            Service['phd-wikiforge'],
-            Service['phd-wikitide'],
-        ],
+        notify  => Service['phd-wikiforge'],
         require => Git::Clone['phorge'],
     }
 
@@ -252,26 +238,9 @@ $wikitide_s3_secret                = lookup('phorge::aws_s3_access_secret_key_wi
         require => Git::Clone['phorge'],
     }
 
-    file { '/srv/phorge/phorge/conf/custom/wikitide.conf.php':
-        ensure  => present,
-        source  => 'puppet:///modules/phorge/wikitide.conf.php',
-        notify  => [
-            Service['phd-wikiforge'],
-            Service['phd-wikitide'],
-        ],
-        require => Git::Clone['phorge'],
-    }
-
     systemd::service { 'phd-wikiforge':
         ensure  => present,
         content => systemd_template('phd-wikiforge'),
-        restart => true,
-        require => File['/srv/phorge/phorge/conf/local/local.json'],
-    }
-
-    systemd::service { 'phd-wikitide':
-        ensure  => present,
-        content => systemd_template('phd-wikitide'),
         restart => true,
         require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
