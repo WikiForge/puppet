@@ -231,10 +231,7 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
     file { '/srv/phorge/phorge/conf/custom/wikiforge.conf.php':
         ensure  => present,
         source  => 'puppet:///modules/phorge/wikiforge.conf.php',
-        notify  => [
-            Service['phd-wikiforge'],
-            Service['phd-wikitide'],
-        ],
+        notify  => Service['phd-wikiforge'],
         require => Git::Clone['phorge'],
     }
 
