@@ -66,4 +66,4 @@ varnish::backends:
 
 # Logging
 base::syslog::syslog_daemon: syslog
-base::syslog::syslog_host: []
+base::syslog::syslog_host: [ 'graylog11.int.wikiforge.work:12210' ]
