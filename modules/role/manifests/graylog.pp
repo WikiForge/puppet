@@ -27,11 +27,11 @@ class role::graylog {
     -> class { 'graylog::server':
         package_version => '5.2.0-7',
         config          => {
-            'password_secret'     => lookup('passwords::graylog::password_secret'),
-            'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
-            'elasticsearch_hosts' => $elasticsearch_host,
+            'password_secret'           => lookup('passwords::graylog::password_secret'),
+            'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
+            'elasticsearch_hosts'       => $elasticsearch_host,
             'ignore_migration_failures' => true,
-            'message_journal_max_size' => '2gb',
+            'message_journal_max_size'  => '2gb',
         }
     }
 
