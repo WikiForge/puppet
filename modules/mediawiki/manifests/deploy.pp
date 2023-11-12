@@ -91,7 +91,7 @@ class mediawiki::deploy {
             mode      => '0755',
             require   => File['/srv/mediawiki-staging'],
         }
-    }  
+    }
 
     git::clone { 'wikiforge-landing':
         ensure    => 'latest',
