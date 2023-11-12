@@ -99,6 +99,12 @@ class mariadb::config(
         restart  => false,
     }
 
+     rsyslog::input::file { 'mysql':
+        path              => '/var/log/mysql/mysql-error.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
+
     monitoring::services { 'MariaDB':
         check_command => 'mysql',
         docs          => 'https://tech.wikiforge.net/wiki/MariaDB',
