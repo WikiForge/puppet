@@ -1,9 +1,9 @@
 class icingaweb2 (
-    String $db_host              = 'db11.wikiforge.net',
+    String $db_host              = 'db11.int.wikiforge.work',
     String $db_name              = 'icingaweb2',
     String $db_user_name         = 'icingaweb2',
     String $db_user_password     = undef,
-    String $ido_db_host          = 'db11.wikiforge.net',
+    String $ido_db_host          = 'db11.int.wikiforge.work',
     String $ido_db_name          = 'icinga',
     String $ido_db_user_name     = 'icinga2',
     String $ido_db_user_password = undef,

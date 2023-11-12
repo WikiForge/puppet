@@ -20,7 +20,7 @@
 #   A key used for encryption purposes
 #
 class role::roundcubemail (
-    String $db_host               = 'db11.wikiforge.net',
+    String $db_host               = 'db11.int.wikiforge.work',
     String $db_name               = 'roundcubemail',
     String $db_user_name          = 'roundcubemail',
     String $db_user_password      = lookup('passwords::roundcubemail'),

@@ -1,6 +1,6 @@
-icinga_ido_db_host: 'db11.wikiforge.net'
-icingaweb_db_host: 'db11.wikiforge.net'
-grafana_db_host: 'db11.wikiforge.net'
+icinga_ido_db_host: 'db11.int.wikiforge.work'
+icingaweb_db_host: 'db11.int.wikiforge.work'
+grafana_db_host: 'db11.int.wikiforge.work'
 
 
 icinga2_api_bind_host: '::'

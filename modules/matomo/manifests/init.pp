@@ -1,7 +1,7 @@
 # class: matomo
 class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = 'db11.wikiforge.net',
+    String $matomo_db_host = 'db11.int.wikiforge.work',
 ) {
     ensure_packages('composer')
 
