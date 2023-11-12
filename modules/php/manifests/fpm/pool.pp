@@ -75,10 +75,12 @@ define php::fpm::pool(
         notify  => Service["php${php::version}-fpm"]
     }
 
-    # Configure rsyslog to monitor the php slowlog file and send the log messages to Graylog
-    rsyslog::input::file { 'php-slowlog':
-        path              => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
-        syslog_tag_prefix => '',
-        use_udp           => lookup('base::syslog::rsyslog_udp_localhost', {'default_value' => false}),
+    unless defined(Rsyslog::Input::File['php-slowlog']) {
+        # Configure rsyslog to monitor the php slowlog file and send the log messages to Graylog
+        rsyslog::input::file { 'php-slowlog':
+            path              => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
+            syslog_tag_prefix => '',
+            use_udp           => lookup('base::syslog::rsyslog_udp_localhost', {'default_value' => false}),
+        }
     }
 }
