@@ -41,18 +41,18 @@ define ssl::wildcard (
         }
     }
 
-    if !defined(File["${ssl_cert_path}/internal.wikiforge.net.crt"]) {
-        file { "${ssl_cert_path}/internal.wikiforge.net.crt":
+    if !defined(File["${ssl_cert_path}/wikiforge.work.crt"]) {
+        file { "${ssl_cert_path}/wikiforge.work.crt":
             ensure => 'present',
-            source => 'puppet:///ssl/certificates/internal.wikiforge.net.crt',
+            source => 'puppet:///ssl/certificates/wikiforge.work.crt',
             notify => $restart_nginx,
         }
     }
 
-    if !defined(File["${ssl_cert_key_private_path}/internal.wikiforge.net.key"]) {
-        file { "${ssl_cert_key_private_path}/internal.wikiforge.net.key":
+    if !defined(File["${ssl_cert_key_private_path}/wikiforge.work.key"]) {
+        file { "${ssl_cert_key_private_path}/wikiforge.work.key":
             ensure    => 'present',
-            source    => 'puppet:///ssl-keys/internal.wikiforge.net.key',
+            source    => 'puppet:///ssl-keys/wikiforge.work.key',
             owner     => 'root',
             group     => $ssl_cert_key_private_group,
             mode      => '0660',
