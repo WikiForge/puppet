@@ -149,6 +149,13 @@ class puppetserver(
         ],
     }
 
+    file { '/etc/puppetlabs/puppet/ssl-keys':
+        ensure  => directory,
+        owner   => 'puppet',
+        group   => 'puppet',
+        require => File['/etc/puppetlabs/puppet/ssl-cert'],
+    }
+
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,
