@@ -147,7 +147,7 @@ class matomo (
 
     ssl::wildcard { 'matomo wildcard': }
 
-    nginx::site { 'matomo.wikiforge.net':
+    nginx::site { 'matomo.inside.wf':
         ensure  => present,
         source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,

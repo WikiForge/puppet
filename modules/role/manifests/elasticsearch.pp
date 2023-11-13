@@ -25,11 +25,11 @@ class role::elasticsearch {
             'network.host'                                   => $facts['networking']['fqdn'],
             'xpack.security.enabled'                         => true,
             'xpack.security.http.ssl.enabled'                => true,
-            'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/wildcard.wikiforge.net.key',
-            'xpack.security.http.ssl.certificate'            => '/etc/elasticsearch/ssl/wildcard.wikiforge.net.crt',
+            'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/inside.wf.key',
+            'xpack.security.http.ssl.certificate'            => '/etc/elasticsearch/ssl/inside.wf.crt',
             'xpack.security.transport.ssl.enabled'           => true,
-            'xpack.security.transport.ssl.key'               => '/etc/elasticsearch/ssl/wildcard.wikiforge.net.key',
-            'xpack.security.transport.ssl.certificate'       => '/etc/elasticsearch/ssl/wildcard.wikiforge.net.crt',
+            'xpack.security.transport.ssl.key'               => '/etc/elasticsearch/ssl/inside.wf.key',
+            'xpack.security.transport.ssl.certificate'       => '/etc/elasticsearch/ssl/inside.wf.crt',
             'xpack.security.transport.ssl.verification_mode' => 'certificate',
             # We use a firewall so this is safe
             'xpack.security.authc.anonymous.username'        => 'elastic',
@@ -56,7 +56,7 @@ class role::elasticsearch {
     }
 
     if $es_master {
-        nginx::site { 'elasticsearch.wikiforge.net':
+        nginx::site { 'elasticsearch.inside.wf':
             ensure  => present,
             source  => 'puppet:///modules/role/elasticsearch/nginx.conf',
             monitor => false,

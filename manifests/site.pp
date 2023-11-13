@@ -21,7 +21,7 @@ node 'jobchron1.inside.wf' {
     include mediawiki::jobqueue::chron
 }
 
-node 'graylog11.inside.wf' {
+node 'graylog1.inside.wf' {
     include base
     include role::graylog
 }
@@ -63,7 +63,7 @@ node 'ns1.inside.wf' {
     include role::dns
 }
 
-node 'os11.inside.wf' {
+node 'os1.inside.wf' {
     include base
     include role::opensearch
 }

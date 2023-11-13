@@ -175,7 +175,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
-        server = f'{Debug}.wikiforge.net'
+        server = f'{Debug}.inside.wf'
         headers = {'X-WikiForge-Debug': server}
         location = f'{domain}@{server}'
     else:

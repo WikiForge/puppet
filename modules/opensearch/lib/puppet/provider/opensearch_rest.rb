@@ -85,7 +85,7 @@ class Puppet::Provider::OpensearchREST < Puppet::Provider
   #   an array of Hashes representing the found API objects, whether they be
   #   templates, pipelines, et cetera.
   def self.api_objects(protocol = 'https',
-                       host = 'os11.wikiforge.net',
+                       host = 'os1.inside.wf',
                        port = 9200,
                        timeout = 10,
                        username = nil,
