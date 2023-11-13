@@ -3,7 +3,7 @@ class grafana (
     String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
-    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db11.int.wikiforge.work'}),
+    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db1.inside.wf'}),
 ) {
 
     include ::apt

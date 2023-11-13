@@ -1,6 +1,6 @@
-icinga_ido_db_host: 'db11.int.wikiforge.work'
-icingaweb_db_host: 'db11.int.wikiforge.work'
-grafana_db_host: 'db11.int.wikiforge.work'
+icinga_ido_db_host: 'db1.inside.wf'
+icingaweb_db_host: 'db1.inside.wf'
+grafana_db_host: 'db1.inside.wf'
 
 
 icinga2_api_bind_host: '::'
@@ -142,5 +142,3 @@ icinga2::globals::reserved:
 
 nginx::use_graylog: true
 base::syslog::rsyslog_udp_localhost: true
-
-puppetserver_hostname: 'puppet1.wikiforge.net'

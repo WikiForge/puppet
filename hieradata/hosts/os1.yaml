@@ -1,9 +1,8 @@
 role::opensearch::master: true
 role::opensearch::data: true
 role::opensearch::discovery_host:
-  - os11.wikiforge.net
+  - os1.inside.wf
 role::opensearch::master_hosts:
-  - os11
+  - os1
 
 base::syslog::rsyslog_udp_localhost: true
-puppetserver_hostname: 'puppet1.wikiforge.net'

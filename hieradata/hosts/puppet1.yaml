@@ -1,11 +1,11 @@
 puppetserver: true
 puppetserver_java_opts: '-Xms2G -Xmx2G'
 puppetdb_enable: true
-puppetdb_hostname: puppet1.wikiforge.net
+puppetdb_hostname: puppet1.inside.wf
 puppetdb::db_ssl: true
-puppetdb::db_rw_host: puppet1.wikiforge.net
+puppetdb::db_rw_host: puppet1.inside.wf
 postgresql::ssl: true
 puppetdb::command_processing_threads: 10
-puppetserver_hostname: 'puppet1.wikiforge.net'
-role::salt::minions::salt_master: 'puppet1.wikiforge.net'
+puppetserver_hostname: 'puppet1.inside.wf'
+role::salt::minions::salt_master: 'puppet1.inside.wf'
 role::salt::minions::salt_master_key: true

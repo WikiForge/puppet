@@ -13,7 +13,7 @@ amazon-s3.region: 'auto'
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phorge'
-mysql.host: 'db11.int.wikiforge.work'
+mysql.host: 'db1.inside.wf'
 
 # https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize

@@ -35,8 +35,6 @@ nginx::keepalive_requests: 150
 nginx::logrotate_number: 2
 nginx::use_graylog: true
 
-puppetserver_hostname: 'puppet1.wikiforge.net'
-
 # memcached
 role::memcached::threads: ~
 role::memcached::version: 'present'
