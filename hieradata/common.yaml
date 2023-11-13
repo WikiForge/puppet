@@ -16,8 +16,8 @@ mediawiki::multiversion::versions:
   '1.41':
     branch: 'REL1_41'
 
-puppetserver_hostname: puppet1.wikiforge.net
-role::salt::minions::salt_master: 'puppet1.wikiforge.net'
+puppetserver_hostname: puppet1.inside.wf
+role::salt::minions::salt_master: 'puppet1.inside.wf'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
@@ -65,4 +65,9 @@ varnish::backends:
     ip_address: 2604:4300:a:37::105
 
 # Logging
+<<<<<<< HEAD
+base::syslog::syslog_daemon: syslog
+base::syslog::syslog_host: [ 'graylog1.inside.wf:12210' ]
+=======
 base::syslog::syslog_host: [ 'graylog11.int.wikiforge.work:12210' ]
+>>>>>>> 42e392f87162c99fb06c151ca80a7583b3618f14
