@@ -65,5 +65,4 @@ varnish::backends:
     ip_address: 2604:4300:a:37::105
 
 # Logging
-base::syslog::syslog_daemon: syslog
 base::syslog::syslog_host: [ 'graylog11.int.wikiforge.work:12210' ]
