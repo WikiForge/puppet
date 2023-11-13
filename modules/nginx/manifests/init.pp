@@ -1,6 +1,7 @@
 # nginx
 class nginx (
     Variant[String, Integer] $nginx_worker_processes                  = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
+    Boolean                  $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
     Integer                  $logrotate_number                        = lookup('nginx::logrotate_number', {'default_value' => 12}),
     Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 60}),
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),

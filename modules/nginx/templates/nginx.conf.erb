@@ -88,10 +88,12 @@ http {
 		'"$http_referer" "$http_user_agent" $request_time '
 		'$ssl_protocol/$ssl_cipher';
 
+	# Logging
+	<%- if @use_graylog -%>
 	access_log syslog:server=127.0.0.1:10514 graylog2_json;
 	error_log syslog:server=127.0.0.1:10514 error;
+	<%- end -%>
 
-	# Logging
 	access_log /var/log/nginx/access.log wikiforge;
 	error_log /var/log/nginx/error.log error;
 

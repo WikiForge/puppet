@@ -1,1 +1,2 @@
 puppetserver_hostname: 'puppet1.wikiforge.net'
+nginx::use_graylog: true
