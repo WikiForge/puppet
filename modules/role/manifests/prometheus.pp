@@ -4,8 +4,8 @@ class role::prometheus {
 
     $blackbox_web_urls = [
         'https://support.wikiforge.net',
-        'https://matomo.wikiforge.net',
-        'https://logging.wikiforge.work'
+        'https://matomo.inside.wf',
+        'https://logging.inside.wf'
     ]
 
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':

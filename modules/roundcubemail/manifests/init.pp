@@ -194,11 +194,11 @@ class roundcubemail (
         require => File['/var/log/roundcubemail'],
     }
 
-    monitoring::services { 'webmail.wikiforge.work HTTPS':
+    monitoring::services { 'webmail.inside.wf HTTPS':
         check_command => 'check_http',
         vars          => {
             http_ssl   => true,
-            http_vhost => 'webmail.wikiforge.work',
+            http_vhost => 'webmail.inside.wf',
         },
     }
 }

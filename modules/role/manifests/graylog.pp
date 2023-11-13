@@ -7,7 +7,7 @@ class role::graylog {
 
     nginx::site { 'graylog_proxy':
         ensure => present,
-        source => 'puppet:///modules/role/graylog/logging.wikiforge.work.conf',
+        source => 'puppet:///modules/role/graylog/logging.inside.wf.conf',
     }
 
     class { 'mongodb::globals':

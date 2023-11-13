@@ -66,7 +66,7 @@ class monitoring (
     }
 
     class { '::icinga2::feature::gelf':
-        host => 'logging.wikiforge.work',
+        host => 'logging.inside.wf',
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':

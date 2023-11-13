@@ -13,8 +13,8 @@ class role::openldap (
     class { 'openldap::server':
         ldaps_ifs => ['/'],
         ssl_ca    => '/etc/ssl/certs/ISRG_Root_X1.pem',
-        ssl_cert  => '/etc/ssl/localcerts/wildcard.wikiforge.net.crt',
-        ssl_key   => '/etc/ssl/private/wildcard.wikiforge.net.key',
+        ssl_cert  => '/etc/ssl/localcerts/inside.wf.crt',
+        ssl_key   => '/etc/ssl/private/inside.wf.key',
         require   => Ssl::Wildcard['openldap wildcard']
     }
 

@@ -39,8 +39,8 @@ icinga2::globals::constants:
   PluginDir: '/usr/lib/nagios/plugins'
   PluginContribDir: '/usr/lib/nagios/plugins'
   ManubulonPluginDir: '/usr/lib/nagios/plugins'
-  NodeName: 'mon11.wikiforge.net'
-  ZoneName: 'mon11.wikiforge.net'
+  NodeName: 'mon1.inside.wf'
+  ZoneName: 'mon1.inside.wf'
   TicketSalt: ''
   MaxConcurrentChecks: 40
 icinga2::globals::user: 'nagios'
