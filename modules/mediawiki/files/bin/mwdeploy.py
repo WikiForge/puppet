@@ -37,16 +37,16 @@ prod: Environment = {
     'wikidbname': 'hubwiki',
     'wikiurl': 'hub.wikiforge.net',
     'servers': [
-        'mw11',
-        'mw12',
-        'mw13',
-        'jobrunner11',
+        'mw1',
+        'mw2',
+        'mw3',
+        'jobrunner1',
     ],
 }
 test: Environment = {
     'wikidbname': 'test1wiki',
-    'wikiurl': 'test11.wikiforge.net',
-    'servers': ['test11'],
+    'wikiurl': 'test1.wikiforge.net',
+    'servers': ['test1'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'prod': prod,
@@ -249,7 +249,7 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikiforge.net:{dest}'
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.inside.wf:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
