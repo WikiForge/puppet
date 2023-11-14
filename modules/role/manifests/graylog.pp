@@ -31,7 +31,7 @@ class role::graylog {
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
             'elasticsearch_hosts'       => $elasticsearch_host,
             'ignore_migration_failures' => true,
-            'message_journal_max_size'  => '3gb',
+            'message_journal_max_size'  => '2gb',
         }
     }
 
