@@ -9,7 +9,7 @@ ruleset(name="rsyslog_udp_localhost_rule" queue.type="LinkedList") {
 <%- @syslog_host.sort.each do |log_host| -%>
   <% host, port = log_host.split(':') %>
   action(type="omfwd" name="fwd_udp_<%= log_host %>_rule" Target="<%= host %>" Port="<%= port or '6514' %>"
-    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
+    StreamDriver="ossl" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
     Protocol="tcp" template="RSYSLOG_SyslogProtocol23Format"
     action.resumeRetryCount="-1"
 <%- if @syslog_queue_size > 0 -%>
