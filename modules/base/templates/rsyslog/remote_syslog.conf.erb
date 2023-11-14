@@ -1,8 +1,8 @@
 # NOTE: This file is managed by Puppet.
 
 $DefaultNetstreamDriverCAFile /etc/ssl/certs/LetsEncrypt.crt
-# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
-# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
+$DefaultNetstreamDriverCertFile /etc/ssl/localcerts/inside.wf.crt
+$DefaultNetstreamDriverKeyFile /etc/ssl/private/inside.wf.key
 
 if ($syslogseverity-text == 'info' and
     $syslogfacility-text != 'cron' and
@@ -11,7 +11,7 @@ if ($syslogseverity-text == 'info' and
 <%- @syslog_host.sort.each do |log_host| -%>
   <% host, port = log_host.split(':') %>
   action(type="omfwd" name="fwd_<%= log_host %>" Target="<%= host %>" Port="<%= port or '6514' %>"
-    StreamDriver="gtls" StreamDriverAuthMode="anon" StreamDriverMode="1"
+    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
     Protocol="tcp" template="RSYSLOG_SyslogProtocol23Format"
     action.resumeRetryCount="-1"
 <%- if @syslog_queue_size > 0 -%>
