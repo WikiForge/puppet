@@ -1,8 +1,8 @@
 # NOTE: This file is managed by Puppet.
 
 $DefaultNetstreamDriverCAFile /etc/ssl/certs/LetsEncrypt.crt
-# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
-# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
+$DefaultNetstreamDriverCertFile /etc/ssl/localcerts/inside.wf.crt
+$DefaultNetstreamDriverKeyFile /etc/ssl/private/inside.wf.key
 
 ruleset(name="rsyslog_udp_localhost_rule_parse_json" queue.type="LinkedList") {
 
