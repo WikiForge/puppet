@@ -178,4 +178,11 @@ class puppetdb(
         syslog_tag_prefix => '',
         use_udp           => true,
     }
+
+    monitoring::services { 'puppetdb':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '8081',
+        },
+    }
 }
