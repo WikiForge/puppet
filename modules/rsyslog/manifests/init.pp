@@ -5,7 +5,6 @@
 #
 class rsyslog {
     ensure_packages('rsyslog')
-    ensure_packages('rsyslog-openssl')
 
     file { '/etc/rsyslog.d':
         ensure  => directory,
