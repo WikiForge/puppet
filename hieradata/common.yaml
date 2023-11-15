@@ -65,4 +65,4 @@ varnish::backends:
     ip_address: 2604:4300:a:37::105
 
 # Logging
-base::syslog::syslog_host: [ 'graylog1.inside.wf:12210' ]
+base::syslog::syslog_host: [ '10.0.0.113:10514' ]
