@@ -32,8 +32,6 @@ class base::syslog (
         }
 
         if !empty( $syslog_host ) {
-                ensure_packages('rsyslog-gnutls')
-
                 ssl::wildcard { 'rsyslog wildcard': }
 
                 rsyslog::conf { 'remote_syslog_rule':
