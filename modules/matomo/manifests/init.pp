@@ -8,7 +8,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.13.3', # Current stable
+        branch             => '4.15.1', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -56,7 +56,7 @@ class matomo (
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -153,8 +153,8 @@ class matomo (
         monitor => true,
     }
 
-    $salt = lookup('passwords::piwik::salt')
-    $password = lookup('passwords::db::piwik')
+    $salt = lookup('passwords::matomo::salt')
+    $password = lookup('passwords::db::matomo')
     $noreply_password = lookup('passwords::mail::noreply')
 
     file { '/srv/matomo/config/config.ini.php':
