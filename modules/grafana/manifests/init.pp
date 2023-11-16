@@ -6,7 +6,7 @@ class grafana (
     String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db1.inside.wf'}),
 ) {
 
-    include ::apt
+    include apt
 
     file { '/usr/share/keyrings/grafana.key':
         ensure => present,
@@ -60,16 +60,16 @@ class grafana (
 
     ssl::wildcard { 'grafana wildcard': }
 
-    nginx::site { 'grafana.miraheze.org':
+    nginx::site { 'grafana.inside.wf':
         ensure => present,
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
 
-#    monitoring::services { 'grafana.miraheze.org HTTPS':
-#        check_command => 'check_http',
-#        vars          => {
-#            http_ssl   => true,
-#            http_vhost => 'grafana.miraheze.org',
-#        },
-#    }
+    monitoring::services { 'grafana.inside.wf HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'grafana.inside.wf',
+        },
+    }
 }
