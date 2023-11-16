@@ -19,7 +19,7 @@ class role::elasticsearch {
         config      => {
             'cluster.initial_master_nodes'                   => $es_master_hosts,
             'discovery.seed_hosts'                           => $es_discovery,
-            'cluster.name'                                   => 'miraheze-general',
+            'cluster.name'                                   => 'wikiforge-general',
             'node.master'                                    => $es_master,
             'node.data'                                      => $es_data,
             'network.host'                                   => $facts['networking']['fqdn'],
