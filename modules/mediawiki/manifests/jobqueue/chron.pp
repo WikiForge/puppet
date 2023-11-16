@@ -23,6 +23,6 @@ class mediawiki::jobqueue::chron (
 
     monitoring::nrpe { 'JobChron Service':
         command => '/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#JobChron_Service'
+        docs    => 'https://tech.wikiforge.net/wiki/Tech:Icinga/MediaWiki_Monitoring#JobChron_Service'
     }
 }
