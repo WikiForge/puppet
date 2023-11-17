@@ -4,7 +4,7 @@ users::groups:
 
 redis::heap: '1GB'
 
-mediawiki::jobqueue::runner::redis_ip: '10.0.0.103:6379'
+mediawiki::jobqueue::runner::redis_ip: '10.0.0.105:6379'
 mediawiki::php::enable_fpm: false
 mediawiki::use_shellbox: false
 
