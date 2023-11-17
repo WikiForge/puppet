@@ -189,7 +189,7 @@ def test_construct_rsync_no_server_remote() -> None:
 def test_construct_rsync_conflict_options_remote() -> None:
     failed = False
     try:
-        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False, server='meta')
+        mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False, server='test')
     except Exception as e:
         assert str(e) == 'Error constructing command. Either server was missing or garbage != /srv/mediawiki/version/'
         failed = True
@@ -215,11 +215,11 @@ def test_construct_rsync_local_file_update() -> None:
 
 
 def test_construct_rsync_remote_dir_update() -> None:
-    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@hub.wikiforge.net:/srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/', local=False, server='test') == 'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@test.inside.wf:/srv/mediawiki/version/'
 
 
 def test_construct_rsync_remote_file_update() -> None:
-    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@hub.wikiforge.net:/srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=False, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='test') == 'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@test.inside.wf:/srv/mediawiki/version/test.txt'
 
 
 def test_construct_rsync_local_dir_time() -> None:
@@ -231,11 +231,11 @@ def test_construct_rsync_local_file_time() -> None:
 
 
 def test_construct_rsync_remote_dir_time() -> None:
-    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', local=False, server='meta') == 'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@hub.wikiforge.net:/srv/mediawiki/version/'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/', local=False, server='test') == 'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@test.inside.wf:/srv/mediawiki/version/'
 
 
 def test_construct_rsync_remote_file_time() -> None:
-    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == 'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@hub.wikiforge.net:/srv/mediawiki/version/test.txt'
+    assert mwdeploy._construct_rsync_command(time=True, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='test') == 'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@test.inside.wf:/srv/mediawiki/version/test.txt'
 
 
 def test_construct_git_pull() -> None:
