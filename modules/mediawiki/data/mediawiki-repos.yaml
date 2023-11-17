@@ -644,6 +644,10 @@ Math:
   branch: _branch_
   path: extensions/Math
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Math
+MatomoAnalytics:
+  branch: master
+  path: extensions/MatomoAnalytics
+  repo_url: https://github.com/WikiForge/MatomoAnalytics
 MediaSearch:
   branch: _branch_
   path: extensions/MediaSearch
