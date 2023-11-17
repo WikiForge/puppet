@@ -56,7 +56,7 @@ server {
 	listen [::]:443 ssl http2;
 
 	server_name wikiforge.net try.wf;
-	root /srv/mediawiki/wikiforge-landing;
+	root /srv/mediawiki/landing;
 	index index.php index.html;
 
 	if ($http_user_agent ~* "WordPress") {
@@ -213,12 +213,6 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
-<%- if name == "wikitide" -%>
-
-	location = /sitemap-index.xml {
-		rewrite ^(.*)$ /wikitide-sitemap-index.php;
-	}
-<%- end -%>
 }
 
 <%- end -%>
