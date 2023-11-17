@@ -37,7 +37,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     try:
         if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikitide') or args.arguments[0].endswith('nexttide') or args.arguments[0] in [*['all', 'wikiforge', 'wikitide', 'nexttide' ], *validDBLists]:
+        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikitide') or args.arguments[0].endswith('nexttide') or args.arguments[0] in [*['all', 'wikiforge', 'wikitide', 'nexttide'], *validDBLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:
@@ -88,7 +88,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     else:
         script = f'{runner}{script}'
 
-    if wiki in ('all', 'wikiforge', 'wikitide', 'nexttide' ):
+    if wiki in ('all', 'wikiforge', 'wikitide', 'nexttide'):
         long = True
         while True:
             try:
