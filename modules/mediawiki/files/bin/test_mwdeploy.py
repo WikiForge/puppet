@@ -293,7 +293,7 @@ def test_UpgradePackAction():
     parser.add_argument('--versions', action='store', default=None)
     parser.add_argument('--upgrade-pack', action=UpgradePackAction)
     namespace = parser.parse_args(['--upgrade-pack', 'wikiforge'])
-    assert namespace.upgrade_extensions == ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'WikiTideMagic', 'YouTube']
+    assert namespace.upgrade_extensions == ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'YouTube']
 
 
 def test_LangAction():
