@@ -363,6 +363,7 @@ EventStreamConfig:
   branch: _branch_
   path: extensions/EventStreamConfig
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventStreamConfig
+  removed: true
 ExternalData:
   branch: master
   path: extensions/ExternalData
