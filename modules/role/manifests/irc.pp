@@ -1,7 +1,7 @@
 # role: irc
 class role::irc {
     include irc::irclogbot
-#    include irc::relaybot
+    include irc::relaybot
 
     class { 'irc::ircrcbot':
         nickname     => 'WikiForgeRC',
