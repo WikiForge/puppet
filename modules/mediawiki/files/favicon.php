@@ -15,11 +15,7 @@ function streamFavicon() {
 
 	$favicon = $wgFavicon;
 	if ( $favicon === '/favicon.ico' ) {
-		if ( WikiForgeFunctions::getWikiFarm() === 'wikitide' ) {
-			$favicon = '/favicons/default-wikitide.ico';
-		} else {
-			$favicon = '/favicons/default-wikiforge.ico';
-		}
+		$favicon = '/favicons/default.ico';
 	}
 
 	$req = RequestContext::getMain()->getRequest();
@@ -36,11 +32,7 @@ function streamFavicon() {
 
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
-		if ( WikiForgeFunctions::getWikiFarm() === 'wikitide' ) {
-			$favicon = '/favicons/default-wikitide.ico';
-		} else {
-			$favicon = '/favicons/default-wikiforge.ico';
-		}
+		$favicon = '/favicons/default.ico';
 
 		$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
 		$client = MediaWikiServices::getInstance()
