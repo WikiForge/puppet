@@ -447,6 +447,7 @@ GlobalUsage:
   branch: _branch_
   path: extensions/GlobalUsage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUsage
+  removed: true
 GlobalUserPage:
   branch: _branch_
   path: extensions/GlobalUserPage

@@ -124,15 +124,6 @@ class mediawiki::jobqueue::runner (
             hour     => '5',
             monthday => [ '5', '20' ],
         }
-
-        cron { 'clean_gu_cache':
-            ensure   => present,
-            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json ${runner}/srv/mediawiki/${version}/extensions/GlobalUsage/maintenance/refreshGlobalimagelinks.php --pages=existing,nonexisting > /dev/null",
-            user     => 'www-data',
-            minute   => '0',
-            hour     => '5',
-            monthday => [ '6', '21' ],
-        }
     }
 
     monitoring::nrpe { 'JobRunner Service':
