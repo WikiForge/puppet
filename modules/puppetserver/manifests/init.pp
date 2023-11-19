@@ -180,6 +180,17 @@ class puppetserver(
         notify => Service['puppetserver'],
     }
 
+    file { '/var/lib/.ssh':
+        ensure  => directory,
+        mode    => '0775',
+        require => Package['puppetserver'],
+    }
+
+    file { '/var/lib/.ssh/id_ed25519':
+        ensure => present,
+        source => 'puppet:///private/readbot/id_ed25519',
+    }
+
     rsyslog::input::file { 'puppetserver':
         path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
         syslog_tag_prefix => '',
