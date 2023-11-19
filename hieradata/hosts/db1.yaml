@@ -1,2 +1,1 @@
-puppetserver_hostname: 'puppet1.wikiforge.net'
-role::db::weekly_misc: ['prodglobal', 'wtglobal']
+role::db::weekly_misc: ['wfglobal', 'wtglobal']

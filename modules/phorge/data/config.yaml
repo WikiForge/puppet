@@ -1,20 +1,25 @@
+# WARNING! Settings here OVERRIDE indiviual per-instance settings.
+# This file is used by multiple independent Phorge instances.
+# If you want to change the setting on only one instance,
+# Please edit files/<instance> instead or risk setting the value
+# on all instances. --Agent Isai
+
+# Amazon S3
+amazon-s3.region: 'auto'
+
 # Logo/Wordmark
-ui.logo:
-  'logoImagePHID': 'PHID-FILE-mth7fuhx5l42v5qupryl'
-  'wordmarkText': 'WikiForge'
+# Now set via individual config
 
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phorge'
-mysql.host: 'db1-private.wikiforge.net'
+mysql.host: 'db1.inside.wf'
 
 # https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
 # Needs to match php.ini post_max_size for conduit
 storage.mysql-engine.max-size: 10000000
-storage.default-namespace: 'phorge'
 
-metamta.default-address: 'noreply@wikiforge.net'
 metamta.single-reply-handler-prefix: 'phorge'
 
 # Auth
@@ -24,19 +29,11 @@ auth.require-email-verification: true
 
 # Phabricator
 phabricator.show-prototypes: true
-phabricator.base-uri: "https://support.wikiforge.net/"
-phabricator.allowed-uris: [
-  "https://phorge.wikitide.com/",
-  "https://phorge1.wikiforge.net/"
-]
 phabricator.timezone: 'UTC'
-security.alternate-file-domain: "https://phorge-storage.wikiforge.net/"
 security.require-https: true
 security.strict-transport-security: true
-repository.default-local-path: "/srv/phorge/repos/"
 policy.allow-public: true
 user.require-real-name: false
-storage.local-disk.path: "/srv/phorge/images/"
 
 # Maniphest priorities
 maniphest.priorities:
@@ -130,10 +127,9 @@ phabricator.uninstalled-applications:
   PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera
-  PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
+  PhabricatorPhrequentApplication: true # UO spends all of his time well, we don't need to track it
   PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
   PhabricatorPhurlApplication: true # we already have a URL shortener
-  PhabricatorPonderApplication: true # I wonder if we need a Q&A system
   PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
   PhabricatorSlowvoteApplication: true # we're not a polling station
   

@@ -1,0 +1,1 @@
+mail._domainkey.wikiforge.net wikiforge.net:mail:/etc/opendkim/keys/mail.private

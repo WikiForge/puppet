@@ -1,0 +1,9 @@
+server_host = ldaps://ldap.inside.wf
+bind = yes
+bind_dn = cn=write-user,dc=wikiforge,dc=net
+bind_pw = <%= @ldap_password %>
+search_base = ou=people,dc=wikiforge,dc=net
+scope = sub
+
+query_filter = maildrop=%s
+result_attribute = uid

@@ -4,10 +4,8 @@ users::groups:
 
 redis::heap: '1GB'
 
-mediawiki::jobqueue::runner::redis_ip: '172.31.5.111:6379'
+mediawiki::jobqueue::runner::redis_ip: '10.0.0.105:6379'
 mediawiki::php::enable_fpm: false
 mediawiki::use_shellbox: false
 
 php::php_version: '8.2'
-
-puppetserver_hostname: 'puppet1.wikiforge.net'

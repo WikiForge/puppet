@@ -8,8 +8,8 @@ class dns {
         ensure    => latest,
         directory => '/etc/gdnsd',
         origin    => 'https://github.com/WikiForge/dns',
-        owner     => 'root',
-        group     => 'root',
+        owner     => 'gdnsd',
+        group     => 'gdnsd',
         before    => Package['gdnsd'],
         notify    => Exec['gdnsd-syntax'],
     }

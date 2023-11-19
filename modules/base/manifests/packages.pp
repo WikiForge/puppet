@@ -27,7 +27,6 @@ class base::packages {
         'python3-distro',
         'python3-pip',
         'ruby',
-        'ruby-safe-yaml',
         'screen',
         'strace',
         'tcpdump',

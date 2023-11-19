@@ -54,6 +54,17 @@ sub vcl_init {
 <%- end -%>
 }
 
+# Debug ACL: those exempt from requiring an access key
+acl debug {
+<%- @backends.each_pair.with_index do |(name, property), index| -%>
+	# <%= name %>
+	"<%= property['ip_address'] %>";
+<%- if index != @backends.size - 1 -%>
+
+<%- end -%>
+<%- end -%>
+}
+
 # Purge ACL
 acl purge {
 	# localhost
@@ -90,12 +101,11 @@ sub mobile_detection {
 	# and the cookie does NOT explicitly state the user does not want the mobile version, we
 	# set X-Device to phone-tablet. This will make vcl_backend_fetch add ?useformat=mobile to the URL sent to the backend.
 	if (req.http.User-Agent ~ "(?i)(mobi|240x240|240x320|320x320|alcatel|android|audiovox|bada|benq|blackberry|cdm-|compal-|docomo|ericsson|hiptop|htc[-_]|huawei|ipod|kddi-|kindle|meego|midp|mitsu|mmp\/|mot-|motor|ngm_|nintendo|opera.m|palm|panasonic|philips|phone|playstation|portalmmm|sagem-|samsung|sanyo|sec-|semc-browser|sendo|sharp|silk|softbank|symbian|teleca|up.browser|vodafone|webos)" && req.http.Cookie !~ "(stopMobileRedirect=true|mf_useformat=desktop)") {
-		set req.http.X-Device = "phone-tablet";
+		set req.http.X-Subdomain = "M";
+	}
 
-		# In vcl_backend_fetch we'll decide in which situations we should actually do something with this.
-		set req.http.X-Use-Mobile = "1";
-	} else {
-		set req.http.X-Device = "desktop";
+	if (req.http.Cookie ~ "mf_useformat=") {
+		set req.http.X-Subdomain = "M";
 	}
 }
 
@@ -104,7 +114,7 @@ sub rate_limit {
 	# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
 	# Exempts rate limit for IABot
 	if (
-		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.com") || req.url ~ "^/(w/)?(api|index)\.php")
+		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.org") || req.url ~ "^/(w/)?(api|index)\.php")
 		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 	) {
 		if (req.url ~ "^/(wiki/)?\S+\:MathShowImage\?hash=[0-9a-z]+&mode=mathml") {
@@ -136,6 +146,13 @@ sub vcl_synth {
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
 	}
+
+	if (resp.reason == "Main Page Redirect") {
+		set resp.reason = "Moved Permanently";
+		set resp.http.Location = "https://wikitide.org/";
+		set resp.http.Connection = "keep-alive";
+		set resp.http.Content-Length = "0";
+	}
 }
 
 # Purge Handling
@@ -155,12 +172,15 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
+
+	if (req.http.X-WikiForge-Debug-Access-Key == "<%= @debug_access_key %>" || client.ip ~ debug) {
 <%- @backends.each_pair do | name, property | -%>
-	if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
-		set req.backend_hint = <%= name %>;
-		return (pass);
-	}
+		if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
+			set req.backend_hint = <%= name %>;
+			return (pass);
+		}
 <%- end -%>
+	}
 
 	# Handling thumb_handler.php requests
 	if (req.url ~ "^/((1\.\d{2,})|w)/thumb_handler.php") {
@@ -171,8 +191,6 @@ sub mw_request {
 
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
-		# Zero reason to append ?useformat=true here
-		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
 
@@ -183,7 +201,7 @@ sub mw_request {
 
 	# We can rewrite those to one domain name to increase cache hits
 	if (req.url ~ "^/(1\.\d{2,})/(skins|resources|extensions)/" ) {
-		set req.http.Host = "meta.wikiforge.net";
+		set req.http.Host = "hub.wikiforge.net";
 	}
 
 	# api & rest.php are not safe when cached
@@ -191,7 +209,7 @@ sub mw_request {
 		return (pass);
 	}
 
-	# A requet via OAuth should not be cached or use a cached response elsewhere
+	# A request via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
@@ -208,6 +226,10 @@ sub vcl_recv {
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.wikiforge.net" && req.url == "/check") {
 		return (synth(200));
+	}
+
+	if (req.http.host == "meta.wikitide.org" && req.url == "/wiki/WikiTide_Meta" && req.http.User-Agent ~ "(G|g)ooglebot") {
+		return (synth(301, "Main Page Redirect"));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
@@ -227,23 +249,30 @@ sub vcl_recv {
 		req.http.Host == "ssl.wikiforge.net" ||
 		req.http.Host == "acme.wikiforge.net"
 	) {
-		set req.backend_hint = puppet1;
+		set req.backend_hint = puppet11;
 		return (pass);
 	}
 
- 	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1)\.(wikiforge\.net|wikitide\.com)") {
-                set req.backend_hint = test1;
+ 	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1|test)\.(wikiforge\.net|wikitide\.org)") {
+		set req.backend_hint = test11;
                 return (pass);
         }
 
+	#if (req.http.Host ~ "^(.*\.)?nexttide\.org") {
+	#	set req.backend_hint = test11;
+	#	return (pass);
+	#}
+
 	# Do not cache requests from this domain
 	if (
-		req.http.Host == "phorge.wikitide.com" ||
+		req.http.Host == "issue-tracker.wikitide.org" ||
+		req.http.Host == "phorge-static.wikitide.org" ||
+		req.http.Host == "support-archive.wikiforge.net" ||
 		req.http.Host == "support.wikiforge.net" ||
-		req.http.Host == "phorge-storage.wikiforge.net" ||
+		req.http.Host == "phorge-static.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
 	) {
-		set req.backend_hint = phorge1;
+		set req.backend_hint = phorge11;
 		return (pass);
 	}
 
@@ -256,8 +285,8 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/(wiki/)? only?
-	if ((req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.com" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
-		hash_data(req.http.X-Device);
+	if ((req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+		hash_data(req.http.X-Subdomain);
 	}
 }
 
@@ -271,24 +300,36 @@ sub vcl_pipe {
 
 # Initiate a backend fetch
 sub vcl_backend_fetch {
-	# Modify the end of the URL if mobile device
-	if ((bereq.url ~ "^/(wiki/)?[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1" && bereq.url !~ "(.*)(?:\?|&)useformat=mobile(?:&|$)" && bereq.http.Host != "wikiforge.net" && bereq.http.Host != "wikitide.com") {
-		if (bereq.url ~ "\?") {
-			set bereq.url = bereq.url + "&useformat=mobile";
-		} else {
-			set bereq.url = bereq.url + "?useformat=mobile";
-		}
-	}
-	
 	# Restore original cookies
 	if (bereq.http.X-Orig-Cookie) {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
 		unset bereq.http.X-Orig-Cookie;
 	}
+	if (bereq.http.X-Range) {
+		set bereq.http.Range = bereq.http.X-Range;
+		unset bereq.http.X-Range;
+	}
 }
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	// This prevents the application layer from setting this in a response.
+	// We'll be setting this same variable internally in VCL in hit-for-pass
+	// cases later.
+	unset beresp.http.X-CDIS;
+
+	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
+		set bereq.http.Cookie = "Token=1";
+	} else {
+		unset bereq.http.Cookie;
+	}
+
+	if (beresp.http.Content-Range) {
+		// Varnish itself doesn't ask for ranges, so this must have been
+		// a passed range request
+		set beresp.http.X-Content-Range = beresp.http.Content-Range;
+	}
+
 	# Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
 		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
@@ -300,6 +341,18 @@ sub vcl_backend_response {
 	if (beresp.http.Cache-Control ~ "(?i:private|no-cache|no-store)") {
 		set beresp.ttl = 0s;
 		// translated to hit-for-pass below
+	}
+
+	/* Especially don't cache Set-Cookie responses. */
+	if ((beresp.ttl > 0s || beresp.http.Cache-Control ~ "public") && beresp.http.Set-Cookie) {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
+	// be created later on, and we want to put a limit on the amount of time
+	// it takes for new resources to be visible.
+	elsif (beresp.status == 404 && beresp.ttl > 10m) {
+		set beresp.ttl = 10m;
 	}
 
 	# Cookie magic as we did before
@@ -412,10 +465,39 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-	# We set Access-Control-Allow-Origin to * for some images hosted
-	# on the same site as the wiki (private).
-	if (req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$") {
-		set resp.http.Access-Control-Allow-Origin = "*";
+	if (req.method != "PURGE") {
+		// we copy through from beresp->resp->req here for the initial hit-for-pass case
+		if (resp.http.X-CDIS) {
+			set req.http.X-CDIS = resp.http.X-CDIS;
+			unset resp.http.X-CDIS;
+		}
+
+		if (!req.http.X-CDIS) {
+			set req.http.X-CDIS = "bug";
+		}
+	}
+
+	if (resp.http.X-Content-Range) {
+		set resp.http.Content-Range = resp.http.X-Content-Range;
+		unset resp.http.X-Content-Range;
+	}
+
+	if ( req.http.Host == "static.wikiforge.net" ) {
+		unset resp.http.Set-Cookie;
+		unset resp.http.Cache-Control;
+
+		if (req.http.X-Content-Disposition == "attachment") {
+			set resp.http.Content-Disposition = "attachment";
+		}
+
+		// Prevent browsers from content sniffing.
+		set resp.http.X-Content-Type-Options = "nosniff";
+
+		call add_upload_cors_headers;
+	}
+
+	if ( req.url ~ "^(?i)\/w\/img_auth\.php\/(.+)" ) {
+		call add_upload_cors_headers;
 	}
 
 	# Client side caching for load.php
@@ -429,7 +511,7 @@ sub vcl_deliver {
 	}
 
 	# Disable Google ad targeting (FLoC)
-	set resp.http.Permissions-Policy = "interest-cohort=()";
+	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
 
 	# Content Security Policy
 	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
@@ -454,8 +536,27 @@ sub vcl_deliver {
 	return (deliver);
 }
 
+sub add_upload_cors_headers {
+	set resp.http.Access-Control-Allow-Origin = "*";
+
+	// Headers exposed for CORS:
+	// - Age, Content-Length, Date, X-Cache
+	//
+	// - X-Content-Duration: used for OGG audio and video files.
+	//   Firefox 41 dropped support for this header, but OGV.js still supports it.
+	//   See <https://bugzilla.mozilla.org/show_bug.cgi?id=1160695#c27> and
+	//   <https://github.com/brion/ogv.js/issues/88>.
+	//
+	// - Content-Range: indicates total file and actual range returned for RANGE
+	//   requests. Used by ogv.js to eliminate an extra HEAD request
+	//   to get the total file size.
+	set resp.http.Access-Control-Expose-Headers = "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache";
+}
+
 # Hit code, default logic is appended
 sub vcl_hit {
+	set req.http.X-CDIS = "hit";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
 
@@ -467,12 +568,24 @@ sub vcl_hit {
 
 # Miss code, default logic is appended
 sub vcl_miss {
+	set req.http.X-CDIS = "miss";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
+
+    // Convert range requests into pass
+    if (req.http.Range) {
+        // Varnish strips the Range header before copying req into bereq. Save it into
+        // a header and restore it in vcl_backend_fetch
+        set req.http.X-Range = req.http.Range;
+        return (pass);
+}
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
+	set req.http.X-CDIS = "pass";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
 }
@@ -540,9 +653,9 @@ sub vcl_backend_error {
 		<div class="container" style="padding: 70px 0; text-align: center;">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<img src="https://static.wikiforge.net/metawiki/8/88/WikiForge_Logo.svg" width="130" height="130" alt="WikiForge Logo" />
+				<img src="https://static.wikiforge.net/hubwiki/8/88/WikiForge_Logo.svg" width="130" height="130" alt="WikiForge Logo" />
 				<h1>Something went wrong</h1>
-				<p class="lead">If this keeps happening, <a href="https://wikiforge.github.io/503.html">let us know</a>.</p>
+				<p class="lead">Give it a bit and try again. <a href="https://static-help.wikiforge.net/docs/errors/503">Learn more</a>.</p>
 				<a href="javascript:document.location.reload(true);" class="btn btn-outline-primary" role="button">Try this action again</a>
 			</div>
 		</div>

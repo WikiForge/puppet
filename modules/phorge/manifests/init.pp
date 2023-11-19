@@ -4,6 +4,9 @@ class phorge (
 ) {
     ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
+$wikiforge_s3_access                = lookup('mediawiki::aws_s3_access_key')
+$wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_key')
+
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
         'error_log'                       => 'syslog',
@@ -86,6 +89,17 @@ class phorge (
             package_name => "php${php_version}-mysql";
     }
 
+    # XML
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
+
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
@@ -99,9 +113,9 @@ class phorge (
         }
     }
 
-    nginx::site { 'phorge-storage.wikiforge.net':
+    nginx::site { 'support-archive.wikiforge.net':
         ensure => present,
-        source => 'puppet:///modules/phorge/phorge-storage.wikiforge.net.conf',
+        source => 'puppet:///modules/phorge/support-archive.wikiforge.net.conf',
     }
 
     nginx::site { 'support.wikiforge.net':
@@ -113,12 +127,21 @@ class phorge (
 
     file { '/srv/phorge':
         ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
     }
 
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phorge/arcanist',
         origin    => 'https://we.phorge.it/source/arcanist',
+        require   => File['/srv/phorge'],
+    }
+
+    git::clone { 'errorpages':
+        ensure    => present,
+        directory => '/srv/phorge/ErrorPages',
+        origin    => 'https://github.com/WikiForge/ErrorPages',
         require   => File['/srv/phorge'],
     }
 
@@ -136,11 +159,25 @@ class phorge (
         require   => File['/srv/phorge'],
     }
 
+    file { '/srv/phorge/phorge/conf/custom':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/phorge'],
+    }
+
     file { '/srv/phorge/repos':
         ensure => directory,
         mode   => '0755',
         owner  => 'www-data',
         group  => 'www-data',
+    }
+
+    file { '/srv/phorge/repos/wikitide':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/phorge/repos'],
     }
 
     file { '/srv/phorge/images':
@@ -153,6 +190,8 @@ class phorge (
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
+        'amazon-s3.access-key' => lookup('mediawiki::aws_s3_access_key'),
+        'amazon-s3.secret-key' => lookup('mediawiki::aws_s3_access_secret_key'),
         'mysql.pass' => lookup('passwords::db::phorge'),
     }
 
@@ -163,11 +202,12 @@ class phorge (
                 'key'          => 'wikiforge-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'email-smtp.us-east-1.amazonaws.com',
+                    'host'     => 'mail.wikiforge.net',
                     'port'     => 587,
                     'user'     => lookup('passwords::mail::noreply_username'),
                     'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'tls',
+                    'message-id' => true,
                 },
             },
         ],
@@ -178,13 +218,26 @@ class phorge (
     file { '/srv/phorge/phorge/conf/local/local.json':
         ensure  => present,
         content => to_json_pretty($phorge_settings),
-        notify  => Service['phd'],
+        notify  => Service['phd-wikiforge'],
         require => Git::Clone['phorge'],
     }
 
-    systemd::service { 'phd':
+    file { '/srv/phorge/phorge/conf/custom/archive.conf.php':
         ensure  => present,
-        content => systemd_template('phd'),
+        source  => 'puppet:///modules/phorge/archive.conf.php',
+        require => Git::Clone['phorge'],
+    }
+
+    file { '/srv/phorge/phorge/conf/custom/wikiforge.conf.php':
+        ensure  => present,
+        source  => 'puppet:///modules/phorge/wikiforge.conf.php',
+        notify  => Service['phd-wikiforge'],
+        require => Git::Clone['phorge'],
+    }
+
+    systemd::service { 'phd-wikiforge':
+        ensure  => present,
+        content => systemd_template('phd-wikiforge'),
         restart => true,
         require => File['/srv/phorge/phorge/conf/local/local.json'],
     }

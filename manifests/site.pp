@@ -1,53 +1,84 @@
 # servers
 
-node /^cp[1234]\.wikiforge\.net$/ {
+node 'cloud1.inside.wf' {
     include base
-    include role::varnish
+    include role::cloud
 }
 
-node 'db1.wikiforge.net' {
+node 'bast1.inside.wf' {
+    include base
+    include role::bastion
+}
+
+node 'db1.inside.wf' {
     include base
     include role::db
 }
 
-node 'jobchron1.wikiforge.net' {
+node 'jobchron1.inside.wf' {
     include base
     include role::redis
     include mediawiki::jobqueue::chron
 }
 
-node 'jobrunner1.wikiforge.net' {
+node 'graylog1.inside.wf' {
+    include base
+    include role::graylog
+}
+
+node 'jobrunner1.inside.wf' {
     include base
     include role::mediawiki
     include role::irc
 }
 
-node 'jobrunner2.wikiforge.net' {
+node 'mail1.inside.wf' {
     include base
-    include role::mediawiki
+    include role::mail
+    include role::roundcubemail
 }
 
-node 'mem1.wikiforge.net' {
+node 'ldap1.inside.wf' {
+    include base
+    include role::openldap
+}
+
+node 'mem1.inside.wf' {
     include base
     include role::memcached
 }
 
-node /^mw[12]\.wikiforge\.net$/ {
+node 'mon1.inside.wf' {
+    include base
+    include role::grafana
+    include role::icinga2
+}
+node /^mw[123]\.inside\.wf$/ {
     include base
     include role::mediawiki
 }
 
-node /^ns[12]\.wikiforge\.net$/ {
+node 'ns1.inside.wf' {
     include base
     include role::dns
 }
 
-node 'phorge1.wikiforge.net' {
+node 'os1.inside.wf' {
+    include base
+    include role::opensearch
+}
+
+node 'phorge1.inside.wf' {
     include base
     include role::phorge
 }
 
-node 'puppet1.wikiforge.net' {
+node 'prometheus1.inside.wf' {
+    include base
+    include role::prometheus
+}
+
+node 'puppet1.inside.wf' {
     include base
     include role::postgresql
     include puppetdb::database
@@ -56,14 +87,17 @@ node 'puppet1.wikiforge.net' {
     include role::ssl
 }
 
-node 'services1.wikiforge.net' {
+node 'services1.inside.wf' {
     include base
     include role::services
 }
 
-node 'test1.wikiforge.net' {
+node 'test1.inside.wf' {
     include base
     include role::mediawiki
+    include role::memcached
+    include role::redis
+    include mediawiki::jobqueue::chron
 }
 
 # ensures all servers have basic class if puppet runs

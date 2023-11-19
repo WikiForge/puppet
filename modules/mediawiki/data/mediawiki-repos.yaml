@@ -124,10 +124,12 @@ CentralAuth:
   branch: _branch_
   path: extensions/CentralAuth
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralAuth
+  removed: true
 CentralNotice:
   branch: _branch_
   path: extensions/CentralNotice
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralNotice
+  removed: true
 CharInsert:
   branch: _branch_
   path: extensions/CharInsert
@@ -197,6 +199,10 @@ CommonsMetadata:
   branch: _branch_
   path: extensions/CommonsMetadata
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CommonsMetadata
+ConfirmAccount:
+  branch: _branch_
+  path: extensions/ConfirmAccount
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-ConfirmAccount
 ConfirmEdit:
   branch: _branch_
   path: extensions/ConfirmEdit
@@ -357,6 +363,7 @@ EventStreamConfig:
   branch: _branch_
   path: extensions/EventStreamConfig
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventStreamConfig
+  removed: true
 ExternalData:
   branch: master
   path: extensions/ExternalData
@@ -420,30 +427,37 @@ GlobalBlocking:
   branch: _branch_
   path: extensions/GlobalBlocking
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalBlocking
+  removed: true
 GlobalCssJs:
   branch: _branch_
   path: extensions/GlobalCssJs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalCssJs
+  removed: true
 GlobalNewFiles:
   branch: master
   path: extensions/GlobalNewFiles
   repo_url: https://github.com/WikiForge/GlobalNewFiles
+  removed: true
 GlobalPreferences:
   branch: _branch_
   path: extensions/GlobalPreferences
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalPreferences
+  removed: true
 GlobalUsage:
   branch: _branch_
   path: extensions/GlobalUsage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUsage
+  removed: true
 GlobalUserPage:
   branch: _branch_
   path: extensions/GlobalUserPage
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUserPage
+  removed: true
 GlobalWatchlist:
   branch: _branch_
   path: extensions/GlobalWatchlist
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalWatchlist
+  removed: true
 GoogleDocs4MW:
   branch: _branch_
   path: extensions/GoogleDocs4MW
@@ -566,6 +580,10 @@ LastModified:
   branch: _branch_
   path: extensions/LastModified
   repo_url: https://github.com/wikimedia/mediawiki-extensions-LastModified
+LdapAuthentication:
+  branch: _branch_
+  path: extensions/LdapAuthentication
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-LdapAuthentication
 Lingo:
   branch: _branch_
   path: extensions/Lingo
@@ -636,6 +654,10 @@ Math:
   branch: _branch_
   path: extensions/Math
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Math
+MatomoAnalytics:
+  branch: master
+  path: extensions/MatomoAnalytics
+  repo_url: https://github.com/WikiForge/MatomoAnalytics
 MediaSearch:
   branch: _branch_
   path: extensions/MediaSearch
@@ -1024,6 +1046,11 @@ SemanticMediaWiki:
   path: extensions/SemanticMediaWiki
   repo_url: https://github.com/SemanticMediaWiki/SemanticMediaWiki
   composer: true
+SemanticScribunto:
+  branch: master
+  path: extensions/SemanticScribunto
+  repo_url: https://github.com/SemanticMediaWiki/SemanticScribunto
+  composer: true
 Share:
   branch: master
   path: extensions/Share
@@ -1180,7 +1207,7 @@ TorBlock:
   path: extensions/TorBlock
   repo_url: https://github.com/wikimedia/mediawiki-extensions-TorBlock
 Translate:
-  branch: master
+  branch: _branch_
   path: extensions/Translate
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Translate
   composer: true
@@ -1232,6 +1259,10 @@ UserFunctions:
   branch: _branch_
   path: extensions/UserFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UserFunctions
+UserMerge:
+  branch: _branch_
+  path: extensions/UserMerge
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-UserMerge
 UserPageEditProtection:
   branch: _branch_
   path: extensions/UserPageEditProtection
@@ -1315,10 +1346,6 @@ WikiTextLoggedInOut:
   branch: _branch_
   path: extensions/WikiTextLoggedInOut
   repo_url: https://github.com/wikimedia/mediawiki-extensions-WikiTextLoggedInOut
-WikiTideMagic:
-  branch: master
-  path: extensions/WikiTideMagic
-  repo_url: https://github.com/WikiForge/WikiTideMagic
 Wikibase:
   branch: _branch_
   path: extensions/Wikibase

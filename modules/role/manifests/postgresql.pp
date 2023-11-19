@@ -24,6 +24,6 @@ class role::postgresql {
     }
 
     motd::role { 'role::postgresql':
-        description => 'hosting postgresql server',
+        description => 'PostgreSQL server',
     }
 }

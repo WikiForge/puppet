@@ -15,7 +15,7 @@ mw_versions = os.popen('getMWVersions').read().strip()
 versions = {'version': 'version'}
 if mw_versions:
     versions = json.loads(mw_versions)
-repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'wikiforge-landing': 'wikiforge-landing', 'wikitide-landing': 'wikitide-landing'}
+repos = {**versions, 'config': 'config', 'errorpages': 'ErrorPages', 'landing': 'landing'}
 
 del mw_versions
 
@@ -34,13 +34,13 @@ class EnvironmentList(TypedDict):
 
 
 prod: Environment = {
-    'wikidbname': 'metawiki',
-    'wikiurl': 'meta.wikiforge.net',
+    'wikidbname': 'hubwiki',
+    'wikiurl': 'hub.wikiforge.net',
     'servers': [
         'mw1',
         'mw2',
+        'mw3',
         'jobrunner1',
-        'jobrunner2',
     ],
 }
 test: Environment = {
@@ -87,7 +87,7 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'wikiforge': ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'WikiTideMagic', 'YouTube'],
+        'wikiforge': ['CreateWiki', 'DataDump', 'FileStorageMonitor', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SearchVue', 'SpriteSheet', 'WikiDiscover', 'WikiForgeMagic', 'YouTube'],
     }
     return packs.get(pack_name, [])
 
@@ -169,13 +169,13 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.wikiforge.net', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'hub.wikiforge.net', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
-        server = f'{Debug}.wikiforge.net'
+        server = f'{Debug}.inside.wf'
         headers = {'X-WikiForge-Debug': server}
         location = f'{domain}@{server}'
     else:
@@ -249,7 +249,7 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikiforge.net:{dest}'
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.inside.wf:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
@@ -304,7 +304,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'wikiforge-landing': args.wikiforge_landing and not version, 'wikitide-landing': args.wikitide_landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     loginfo = {}
     rsyncpaths = []
@@ -644,8 +644,7 @@ if __name__ == '__main__':
     parser.add_argument('--upgrade-vendor', dest='upgrade_vendor', action='store_true')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
-    parser.add_argument('--wikiforge-landing', dest='wikiforge_landing', action='store_true')
-    parser.add_argument('--wikitide-landing', dest='wikitide_landing', action='store_true')
+    parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', '--i18n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extension_list', action='store_true')

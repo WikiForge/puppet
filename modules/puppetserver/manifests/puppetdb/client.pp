@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet1.wikiforge.net
+# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet1.inside.wf
 #
 class puppetserver::puppetdb::client(
     String $puppetdb_hostname,

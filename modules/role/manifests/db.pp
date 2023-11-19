@@ -22,8 +22,9 @@ class role::db (
     }
 
     class { 'mariadb::config':
-        config   => 'mariadb/config/mw.cnf.erb',
-        password => lookup('passwords::db::root'),
+        config          => 'mariadb/config/mw.cnf.erb',
+        icinga_password => lookup('passwords::db::icinga'),
+        password        => lookup('passwords::db::root'),
     }
 
     file { '/etc/mysql/wikiforge/mediawiki-grants.sql':
@@ -80,7 +81,7 @@ class role::db (
     }
 
     motd::role { 'role::db':
-        description => 'general database server',
+        description => 'MySQL server',
     }
 
     # Backups
@@ -88,45 +89,73 @@ class role::db (
         ensure => directory,
     }
 
+    # Logs for the backups
+    file { '/var/log/backup-logs':
+        ensure => directory,
+    }
     cron { 'backups-sql':
         ensure   => present,
-        command  => '/usr/local/bin/wikiforge-backup backup sql > /var/log/sql-backup.log 2>&1',
+        command  => '/usr/local/bin/wikiforge-backup backup sql > /var/log/backup-logs/sql-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '3',
         monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
     }
 
+    monitoring::nrpe { 'Backups SQL':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/backup-logs/sql-backup.log',
+        docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
+
     $weekly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure  => present,
-            command => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
+            command => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/backup-logs/sql-${db}-backup-weekly.log 2>&1",
             user    => 'root',
             minute  => '0',
             hour    => '5',
             weekday => '0',
+        }
+
+        monitoring::nrpe { "Backups SQL ${db}":
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/backup-logs/sql-${db}-backup-weekly.log",
+            docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+            critical => true
         }
     }
 
     $fortnightly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
+            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/backup-logs/sql-${db}-backup-fortnightly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
             monthday => ['1', '15'],
+        }
+
+        monitoring::nrpe { "Backups SQL ${db}":
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/backup-logs/sql-${db}-backup-fortnightly.log",
+            docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+            critical => true
         }
     }
 
     $monthly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
+            command  => "/usr/local/bin/wikiforge-backup backup sql --database=${db} > /var/log/backup-logs/sql-${db}-backup-monthly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
             monthday => ['24'],
+        }
+
+        monitoring::nrpe { "Backups SQL ${db}":
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/backup-logs/sql-${db}-backup-monthly.log",
+            docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+            critical => true
         }
     }
 }

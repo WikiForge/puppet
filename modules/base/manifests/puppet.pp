@@ -2,7 +2,7 @@
 class base::puppet (
     Optional[String] $puppet_cron_time = lookup('puppet_cron_time', {'default_value' => undef}),
     Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 7}),
-    String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet1.wikiforge.net'}),
+    String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet1.inside.wf'}),
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
 
@@ -13,6 +13,9 @@ class base::puppet (
 
     apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
+        # Once Puppet is out for bullseye,
+        # remove this!
+        release  => 'bullseye',
         repos    => "puppet${puppet_major_version}",
         require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
         notify   => Exec['apt_update_puppetlabs'],

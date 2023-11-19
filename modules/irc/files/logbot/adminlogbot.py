@@ -37,7 +37,7 @@ class logbot(ircbot.SingleServerIRCBot):
 
     def get_version(self):
         return ('WikiForge Log Bot -- '
-                'https://meta.wikiforge.net/wiki/Tech:Server_admin_log')
+                'https://hub.wikiforge.net/wiki/Tech:Server_admin_log')
 
     def get_cloak(self, source):
         if re.search("/", source) and re.search("@", source):

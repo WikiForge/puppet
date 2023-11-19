@@ -1,8 +1,8 @@
 # NOTE: This file is managed by Puppet.
 
-$DefaultNetstreamDriverCAFile /etc/ssl/certs/LetsEncrypt.crt
-# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
-# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
+#$DefaultNetstreamDriverCAFile /etc/ssl/certs/ISRG_Root_X1.pem
+#$DefaultNetstreamDriverCertFile /etc/ssl/localcerts/inside.wf.crt
+#$DefaultNetstreamDriverKeyFile /etc/ssl/private/inside.wf.key
 
 ruleset(name="rsyslog_udp_localhost_rule_parse_json" queue.type="LinkedList") {
 
@@ -11,8 +11,7 @@ ruleset(name="rsyslog_udp_localhost_rule_parse_json" queue.type="LinkedList") {
 <%- @syslog_host.sort.each do |log_host| -%>
   <% host, port = log_host.split(':') %>
   action(type="omfwd" name="fwd_udp_<%= log_host %>_rule_parse_json" Target="<%= host %>" Port="<%= port or '6514' %>"
-    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
-    Protocol="tcp" template="RSYSLOG_SyslogProtocol23Format"
+    Protocol="udp" template="RSYSLOG_SyslogProtocol23Format"
     action.resumeRetryCount="-1"
 <%- if @syslog_queue_size > 0 -%>
     queue.type="LinkedList" queue.size="<%= @syslog_queue_size %>" queue.filename="fwd_udp_<%= log_host %>_rule_parse_json"

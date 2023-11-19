@@ -15,7 +15,7 @@ define users::groupmembers(
         $joined_user_list = $default_member
     }
 
-    if 'posix_name' in $gdata {
+    if ('posix_name' in $gdata) {
         $group_name = $gdata['posix_name']
     } else {
         $group_name = $name

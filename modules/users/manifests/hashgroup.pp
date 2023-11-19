@@ -9,7 +9,7 @@ define users::hashgroup(
     }
 
     $gdata = $phash['groups'][$name]
-    if 'posix_name' in $gdata {
+    if ('posix_name' in $gdata) {
         $group_name = $gdata['posix_name']
     } else {
         $group_name = $name

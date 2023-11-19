@@ -15,13 +15,13 @@ info:
         of contact pages work well.
 
       By using this API, you agree to WikiForge's
-      [Terms of Service](https://meta.wikiforge.net/wiki/Terms_of_Service) and
-      [Privacy Policy](https://meta.wikiforge.net/wiki/Privacy_Policy).
+      [Terms of Service](https://hub.wikiforge.net/wiki/Terms_of_Service) and
+      [Privacy Policy](https://hub.wikiforge.net/wiki/Privacy_Policy).
 
-  termsOfService: https://meta.wikiforge.net/wiki/Terms_of_Service
+  termsOfService: https://hub.wikiforge.net/wiki/Terms_of_Service
   contact:
     name: the WikiForge Staff team
-    url: https://meta.wikiforge.net
+    url: https://hub.wikiforge.net
   license:
     name: Apache2
     url: http://www.apache.org/licenses/LICENSE-2.0

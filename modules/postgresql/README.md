@@ -69,7 +69,7 @@ Just specify absent as ensure
 
 Set up your master
 	class { 'postgresql::master':
-		master_server => $::fqdn,
+		master_server => $facts['networking']['fqdn'],
 	}
 
 Create a replication user for connections from the slave host
@@ -87,7 +87,7 @@ Create a replication user for connections from the slave host
 
 #### Slave node ####
 	class { 'postgresql::slave':
-		master_server => $::fqdn,
+		master_server => $facts['networking']['fqdn'],
 		replication_password => 'mypass',
 	}
 

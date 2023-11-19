@@ -20,6 +20,7 @@ ExecStart=/usr/bin/memcached \
           -o ssl_key=<%= @ssl_key %> \
           <%- end -%>
           -n <%= @min_slab_size %>
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

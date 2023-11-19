@@ -1,8 +1,9 @@
 jobrunner: false
 jobrunner::intensive: false
 
-puppetserver: false
 dns: false
+mailserver: false
+puppetserver: false
 
 puppet_major_version: 8
 
@@ -12,61 +13,56 @@ mediawiki::multiversion::versions:
   '1.40':
     branch: 'REL1_40'
     default: true
+  '1.41':
+    branch: 'REL1_41'
 
-puppetserver_hostname: puppet1.wikiforge.net
-role::salt::minions::salt_master: 'puppet1.wikiforge.net'
+puppetserver_hostname: puppet1.inside.wf
+role::salt::minions::salt_master: 'puppet1.inside.wf'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: true
-mediawiki::jobqueue::wiki: 'metawiki'
+mediawiki::jobqueue::wiki: 'hubwiki'
+mediawiki::monitoring::host: 'hub.wikiforge.net'
 memcached_servers:
-  - 172.31.28.186:11211:1
+  - 10.0.0.106:11211:1
 
 varnish::interval-check: '5s'
 varnish::interval-timeout: '5s'
 varnish::backends:
-  mw1:
+  mw11:
     port: 8100
     probe: mwhealth
-    pool: true
+    pool: false
     thumb: true
-    ip_address: 18.191.12.113
-  mw2:
+    ip_address: 2604:4300:a:37::100
+  mw12:
     port: 8101
     probe: mwhealth
+    pool: false
+    thumb: true
+    ip_address: 2604:4300:a:37::106
+  mw13:
+    port: 8102
+    probe: mwhealth
     pool: true
     thumb: true
-    ip_address: 18.222.166.40
-  jobrunner1:
-    port: 8150
-    probe: mwhealth
-    pool: false
-    thumb: true
-    ip_address: 13.58.205.57
-  jobrunner2:
-    port: 8151
-    probe: mwhealth
-    pool: false
-    thumb: true
-    ip_address: 3.15.17.20
-  test1:
+    ip_address: 2604:4300:a:37::119
+  test11:
     port: 8180
-    probe: mwhealth
-    pool: false
+    probe: false
     thumb: true
-    ip_address: 52.14.195.40
-  phorge1:
+    ip_address: 2604:4300:a:37::108
+  phorge11:
     port: 8200
     probe: false
     pool: false
-    ip_address: 3.135.195.194
-  puppet1:
+    ip_address: 2604:4300:a:37::107
+  puppet11:
     port: 8201
     probe: false
     pool: false
-    ip_address: 18.117.56.175
+    ip_address: 2604:4300:a:37::105
 
 # Logging
-base::syslog::syslog_daemon: syslog
-base::syslog::syslog_host: []
+base::syslog::syslog_host: [ '10.0.0.113:10514' ]

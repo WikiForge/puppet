@@ -53,8 +53,7 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
-    "WikiForgeLSBot": "WikiTideLSBot",
-    "WikiForgeLSBot_": "WikiTideLSBot",
+    "WikiForgeLSBot_": "WikiForgeLSBot",
     "CosmicAlpha": "Universal Omega"
 }
 
@@ -62,7 +61,7 @@ author_map = {
 title_map = {"example": "Master"}
 
 # Scheme and wiki hostname to connect to
-wiki_connection = "meta.wikitide.com"
+wiki_connection = "tech.your.wf"
 
 # Url path
 wiki_path = "/w/"

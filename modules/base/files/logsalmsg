@@ -7,4 +7,4 @@ else
   ACTOR=$USER
 fi
 
-echo '!log' "[$ACTOR@${HOSTNAME%%.*}] $*" | nc -q0 -u jobrunner1-private.wikiforge.net 5071
+echo '!log' "[$ACTOR@${HOSTNAME%%.*}] $*" | nc -q0 -u jobrunner1.inside.wf 5071

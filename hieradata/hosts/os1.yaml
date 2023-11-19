@@ -1,0 +1,8 @@
+role::opensearch::master: true
+role::opensearch::data: true
+role::opensearch::discovery_host:
+  - os1.inside.wf
+role::opensearch::master_hosts:
+  - os1
+
+base::syslog::rsyslog_udp_localhost: true

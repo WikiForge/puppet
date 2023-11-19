@@ -1,0 +1,7 @@
+profile default
+unpaged-help: yes
+ldap-conf: yes
+host: ldaps://<%= @fqdn %>
+user: cn=write-user,dc=wikiforge,dc=net
+base: dc=wikiforge,dc=net
+password: <%= @ldapvi_password %>

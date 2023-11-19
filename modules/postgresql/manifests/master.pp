@@ -4,7 +4,7 @@
 #
 # Parameters:
 #   master_server
-#       An FQDN. Defaults to $::fqdn. Should be the same as in slaves configured with this module
+#       An FQDN. Defaults to $facts['networking']['fqdn']. Should be the same as in slaves configured with this module
 #   includes
 #       An array of files to be included by the main configuration
 #   pgversion

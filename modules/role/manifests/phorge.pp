@@ -28,6 +28,6 @@ class role::phorge {
     }
 
     motd::role { 'role::phorge':
-        description => 'phorge instance',
+        description => 'Phorge instance',
     }
 }

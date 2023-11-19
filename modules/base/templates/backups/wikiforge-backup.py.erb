@@ -84,8 +84,8 @@ def backup_phorge(dt: str):
 
 def backup_sql(dt: str, database: str):
     if database is None:
-        os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(tide)?(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
-        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and (file[-4:] == 'wiki' or file[-8:] == 'wikitide')]
+        os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
+        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
     else:
         os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}.backup')
         dbs = [database]
@@ -105,7 +105,7 @@ def backup_sql(dt: str, database: str):
 
 def backup_mediawiki_xml(dt: str, database: str):
     if database is None:
-        dbs = json.load(open('/srv/mediawiki/cache/databases-all.json'))['combi'].keys()
+        dbs = json.load(open('/srv/mediawiki/cache/databases-wikiforge.json'))['combi'].keys()
     else:
         dbs = [database]
 

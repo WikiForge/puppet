@@ -63,6 +63,25 @@ http {
 
 	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
 
+	# Custom log format for graylog
+	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
+		'"remote_addr": "$remote_addr", '
+		'"remote_user": "$remote_user", '
+		'"time_local": "$time_local", '
+		'"request_method": "$request_method", '
+		'"request_uri": "$scheme://$host$request_uri", '
+		'"status": "$status", '
+		'"body_bytes_sent": "$body_bytes_sent",'
+		'"http_x_forwarded_for": "$http_x_forwarded_for",'
+		'"http_referrer": "$http_referer", '
+		'"http_user_agent": "$http_user_agent", '
+		'"request_time": "$request_time", '
+		'"ssl_protocol": "$ssl_protocol", '
+		'"ssl_cipher": "$ssl_cipher", '
+		'"request_host": "$host", '
+		'"request_path": "$request_uri", '
+		'"nginx_access_log": true }';
+
 	# Add response time and status to access.log
 	log_format wikiforge '$remote_addr - $remote_user [$time_local] '
 		'"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
@@ -70,6 +89,11 @@ http {
 		'$ssl_protocol/$ssl_cipher';
 
 	# Logging
+	<%- if @use_graylog -%>
+	access_log syslog:server=127.0.0.1:10514 graylog2_json;
+	error_log syslog:server=127.0.0.1:10514 error;
+	<%- end -%>
+
 	access_log /var/log/nginx/access.log wikiforge;
 	error_log /var/log/nginx/error.log error;
 

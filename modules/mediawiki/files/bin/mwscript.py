@@ -37,7 +37,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     try:
         if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikitide') or args.arguments[0] in [*['all', 'wikiforge', 'wikitide'], *validDBLists]:
+        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikitide') or args.arguments[0].endswith('nexttide') or args.arguments[0] in [*['all', 'wikiforge', 'wikitide', 'nexttide'], *validDBLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:
@@ -88,17 +88,17 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     else:
         script = f'{runner}{script}'
 
-    if wiki in ('all', 'wikiforge', 'wikitide'):
+    if wiki in ('all', 'wikiforge', 'wikitide', 'nexttide'):
         long = True
         while True:
             try:
-                list_choice = wiki if wiki != 'all' else input("Please type 'wikiforge', 'wikitide', or 'both' for what wikis you wish to run this script on: ")
+                list_choice = wiki if wiki != 'all' else input("Please type 'wikiforge', 'wikitide', 'nexttide', or 'allfarms' for what wikis you wish to run this script on: ")
             except KeyboardInterrupt:
                 sys.exit()
             list_script = {
                 'wikiforge': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json {script}',
                 'wikitide': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikitide.json {script}',
-                'both': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-all.json {script}',
+                'allfarms': lambda: f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-all.json {script}',
             }
             command_choice = list_script.get(list_choice)
             if command_choice:
@@ -112,7 +112,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 farm_choice = 'wikitide' if wiki == 'active' else input("Please type 'wikiforge' or 'wikitide' for what wiki farm you wish to run this script on: ")
             except KeyboardInterrupt:
                 sys.exit()
-            if farm_choice in ('wikiforge', 'wikitide'):
+            if farm_choice in ('wikiforge', 'wikitide', 'nexttide'):
                 command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}-{farm_choice}.json {script}'
                 break
             print('Invalid choice.')
@@ -124,8 +124,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             except KeyboardInterrupt:
                 sys.exit()
             generate_script = {
-                'wikiforge': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawiki --extension={args.extension}',
+                'wikiforge': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=hubwiki --extension={args.extension}',
                 'wikitide': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiTideMagic/maintenance/generateExtensionDatabaseList.php --wiki=metawikitide --extension={args.extension}',
+                'nexttide': lambda: f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiTideMagic/maintenance/generateExtensionDatabaseList.php --wiki=metanexttide --extension={args.extension}',
             }
             generate_choice = generate_script.get(farm_choice)
             if generate_choice:

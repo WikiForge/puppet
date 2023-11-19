@@ -8,7 +8,7 @@
 #
 # [*puppet_major_version*] Specify the puppetserver version you want to support / install.
 #
-# [*puppetserver_hostname*] Hostname of the puppetserver, eg puppet1.wikiforge.net.
+# [*puppetserver_hostname*] Hostname of the puppetserver, eg puppet1.inside.wf.
 #
 # [*puppetserver_java_opts*] Options to pass to the puppetserver, eg configuring the heap.
 #
@@ -83,6 +83,8 @@ class puppetserver(
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
         origin    => 'https://github.com/WikiForge/ssl',
+        owner     => 'puppet',
+        group     => 'puppet',
         require   => Package['puppet-agent'],
     }
 
@@ -147,6 +149,13 @@ class puppetserver(
         ],
     }
 
+    file { '/etc/puppetlabs/puppet/ssl-keys':
+        ensure  => directory,
+        owner   => 'puppet',
+        group   => 'puppet',
+        require => File['/etc/puppetlabs/puppet/ssl-cert'],
+    }
+
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,
@@ -169,6 +178,29 @@ class puppetserver(
         ensure => present,
         source => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
         notify => Service['puppetserver'],
+    }
+
+    file { '/var/lib/.ssh':
+        ensure  => directory,
+        mode    => '0775',
+        require => Package['puppetserver'],
+    }
+
+    file { '/var/lib/.ssh/id_ed25519':
+        ensure => present,
+        source => 'puppet:///private/readbot/id_ed25519',
+    }
+
+    rsyslog::input::file { 'puppetserver':
+        path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
+
+    rsyslog::input::file { 'puppetserver-access':
+        path              => '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     service { 'puppetserver':
@@ -198,7 +230,7 @@ class puppetserver(
 
     cron { 'ssl-git':
         command => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl-cert pull > /dev/null 2>&1',
-        user    => 'root',
+        user    => 'puppet',
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
@@ -246,6 +278,13 @@ class puppetserver(
         minute  => 0,
     }
 
+    monitoring::services { 'puppetserver':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '8140',
+        },
+    }
+
     # Backups
     cron { 'backups-sslkeys':
         ensure  => present,
@@ -256,6 +295,12 @@ class puppetserver(
         weekday => '0',
     }
 
+    monitoring::nrpe { 'Backups SSLKeys':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup.log',
+        docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
+
     cron { 'backups-private':
         ensure  => present,
         command => '/usr/local/bin/wikiforge-backup backup private > /var/log/private-backup.log',
@@ -263,5 +308,11 @@ class puppetserver(
         minute  => '0',
         hour    => '3',
         weekday => '0',
+    }
+
+    monitoring::nrpe { 'Backups Private':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup.log',
+        docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 }

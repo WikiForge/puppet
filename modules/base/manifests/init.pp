@@ -10,6 +10,7 @@ class base {
     include base::upgrades
     # include base::firewall
     include base::backup
+    include base::monitoring
     include ssh
     include users
 

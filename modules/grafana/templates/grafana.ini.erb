@@ -1,0 +1,47 @@
+[server]
+domain = grafana.inside.wf
+root_url = %(protocol)s://%(domain)s/
+enable_gzip = true
+
+[users]
+# user signup / registration
+allow_sign_up = false
+default_theme = light
+auto_assign_org_role = Viewer
+auto_assign_org = true
+
+[auth.anonymous]
+# enable anonymous access
+enabled = true
+org_name = WikiForge
+org_role = Viewer
+
+[auth.ldap]
+enabled = true
+config_file = /etc/grafana/ldap.toml
+allow_sign_up = true
+
+[smtp]
+enabled=true
+host = mail.wikiforge.net:25
+user = noreply
+password = <%= @mail_password %>
+from_address = noreply@wikiforge.net
+
+[database]
+url = mysql://grafana:<%= @grafana_password %>@<%= @grafana_db_host %>:3306/grafana
+type = mysql
+ssl_mode = true
+ca_cert_path = /etc/ssl/certs/ISRG_Root_X1.pem
+server_cert_name = *.inside.wf
+
+[security]
+cookie_secure = true
+strict_transport_security = true
+
+[snapshots]
+# Don't allow publishing to raintank.io.
+external_enabled = false
+
+[feature_toggles]
+enable = ngalert

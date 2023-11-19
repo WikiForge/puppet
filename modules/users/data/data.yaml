@@ -12,7 +12,7 @@ groups:
   mediawiki-admins:
     gid: 2002
     description: sudo on MediaWiki servers
-    members: [rman41]
+    members: [notaracham]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
@@ -20,6 +20,10 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service redis *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  bastion:
+    gid: 2005
+    description: users who require bastion access
+    members: [notaracham]
   mediawiki-test-admins:
     gid: 2010
     description: sudo on the MediaWiki test server
@@ -53,8 +57,14 @@ users:
     realname: Agent
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2EL//7xW4oTJdwze3Mj//PE5N93Qogre1CJbB6ySga]
   rman41:
-    ensure: present
+    ensure: absent
     uid: 1011
     name: rman41
     realname: Rman41
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyiMRpKS/pOT4VRdJ1aT9/YeO16FinmSqPjocT+B77f]
+    ssh_keys: []
+  notaracham:
+    ensure: present
+    uid: 1012
+    name: notaracham
+    realname: NotAracham
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFNwBn4iuC8qQDC+hAhPBzoo7fRPF00qLw7WteBzeFCA]
