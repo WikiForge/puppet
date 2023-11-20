@@ -12,7 +12,7 @@ class irc::irclogserverbot(
 
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
-        content => template('irc/ircrcbot.py'),
+        content => template('irc/irclogserverbot.py'),
         mode    => '0755',
         notify  => Service['irclogserverbot'],
     }
