@@ -252,11 +252,11 @@ class icingaweb2 (
         source => 'puppet:///modules/icingaweb2/icinga2.conf',
     }
 
-    monitoring::services { 'icinga.inside.wf HTTPS':
+    monitoring::services { 'monitoring.inside.wf HTTPS':
         check_command => 'check_http',
         vars          => {
             http_ssl   => true,
-            http_vhost => 'icinga.inside.wf',
+            http_vhost => 'monitoring.inside.wf',
         },
     }
 }
