@@ -7,12 +7,9 @@ class irc {
         'python3-requests-oauthlib',
     ])
 
-    ensure_packages(
-        'git+https://github.com/anisse/irc',
-        {
-            ensure   => present,
-            provider => 'pip3',
-            require  => Package['python3-pip'],
-        },
-    )
+    exec { 'install_anisse_irc':
+        command => '/usr/bin/pip3 install git+https://github.com/anisse/irc',
+        creates => '/usr/local/lib/python3.11/dist-packages/irc',
+        require => Package['python3-pip'],
+    }
 }
