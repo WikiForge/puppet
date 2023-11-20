@@ -165,25 +165,69 @@ class matomo (
         require => Git::Clone['matomo'],
     }
 
-    file { '/usr/local/bin/fileLockScript.sh':
-        ensure => absent,
-        mode   => '0755',
-        owner  => 'www-data',
-        group  => 'www-data',
+    file { '/var/log/matomo':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
+        require => Git::Clone['matomo'],
     }
 
-    file { '/usr/local/bin/runMatomoArchive.sh':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/matomo/runMatomoArchive.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+    # Install a systemd timer to run the Archive task periodically.
+    # Running it once a day to avoid performance penalties on high trafficated websites
+    # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://matomo.inside.wf/\""
+
+    # Create concurrent archivers
+    # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
+    $concurrentHash = {
+        '1' => '*-*-* 00/8:00:00',
+        '2' => '*-*-* 00/8:01:00',
+        '3' => '*-*-* 00/8:02:00',
+        '4' => '*-*-* 00/8:03:00',
+    }
+    $concurrentHash.each | String $concurrent, String $interval | {
+        systemd::timer::job { "matomo-archiver-${concurrent}":
+            description               => "Runs the Matomo's archive process.",
+            command                   => "/bin/bash -c '${archiver_command}'",
+            interval                  => {
+                'start'    => 'OnCalendar',
+                'interval' => $interval,
+            },
+            logfile_basedir           => '/var/log/matomo',
+            logfile_name              => "matomo-archive-${concurrent}.log",
+            syslog_identifier         => "matomo-archiver-${concurrent}",
+            user                      => 'www-data',
+        }
     }
 
-    cron { 'archive_matomo':
-        ensure  => present,
-        command => '/usr/local/bin/runMatomoArchive.sh',
-        user    => 'www-data',
-        special => 'daily',
+    ['last2', 'january'].each | $key | {
+        $optimize_command = "/usr/bin/php /srv/matomo/console database:optimize-archive-tables ${key}"
+        systemd::timer::job { "matomo-optimize-${key}":
+            description               => "Runs the Matomo's Optimize ${key} process.",
+            command                   => "/bin/bash -c '${optimize_command}'",
+            interval                  => {
+                'start'    => 'OnCalendar',
+                'interval' => 'monthly',
+            },
+            logfile_basedir           => '/var/log/matomo',
+            logfile_name              => "matomo-optimize-${key}.log",
+            syslog_identifier         => "matomo-optimize-${key}",
+            user                      => 'www-data',
+        }
+    }
+
+    $queuedtracking_command = "/usr/bin/php /srv/matomo/console queuedtracking:process"
+    systemd::timer::job { 'matomo-queuedtracking':
+        description               => "Runs the Matomo's Plugin QueuedTracking process.",
+        command                   => "/bin/bash -c '${queuedtracking_command}'",
+        interval                  => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:*:00',
+        },
+        logfile_basedir           => '/var/log/matomo',
+        logfile_name              => 'matomo-queuedtracking.log',
+        syslog_identifier         => 'matomo-queuedtracking',
+        user                      => 'www-data',
     }
 }
