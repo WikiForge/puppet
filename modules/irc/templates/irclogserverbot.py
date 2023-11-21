@@ -9,7 +9,7 @@ import base64
 recver = None
 
 
-class RCBot(irc.IRCClient):
+class LSBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
     password = "<%= @wikiforgebots_password %>"
     channel = "<%= @channel %>"
@@ -53,8 +53,8 @@ class RCBot(irc.IRCClient):
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
 
 
-class RCFactory(protocol.ClientFactory):
-    protocol = RCBot
+class LSFactory(protocol.ClientFactory):
+    protocol = LSBot
 
     def clientConnectionLost(self, connector, reason):
         print("Lost connection (%s), reconnecting." % (reason,))
@@ -75,8 +75,8 @@ class Echo(DatagramProtocol):
 
 reactor.listenUDP(<%= @udp_port %>, Echo())  # noqa: E225,E999
 <% if @network_port == '6697' %>  # noqa: E225
-reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
+reactor.connectSSL("<%= @network %>", <%= @network_port %>, LSFactory(), ssl.ClientContextFactory())  # noqa: E225
 <% else %>  # noqa: E225
-reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())  # noqa: E225
+reactor.connectTCP("<%= @network %>", <%= @network_port %>, LSFactory())  # noqa: E225
 <% end %>  # noqa: E225
 reactor.run()
