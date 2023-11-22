@@ -8,15 +8,6 @@ apply Service "wc.wikiforge.net" {
   assign where "sslchecks" in host.groups
 }
 
-apply Service "m.wikiforge.net - LetsEncrypt" {
-  import "generic-service"
-  check_command = "check_ssl_expire"
-  notes_url = "https://tech.wikiforge.net/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
-  vars.host = "m.wikiforge.net"
-  vars.time = "15"
-  assign where "sslchecks" in host.groups
-}
-
 <% @sslcerts.each_pair do | name, property | -%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
@@ -31,7 +22,7 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   assign where "sslchecks" in host.groups
 }
 
-apply Service "<%= property['url'] %> - pointing to WF/WT" {
+apply Service "<%= property['url'] %> - pointing to WikiForge" {
   import "generic-service"
   check_command = "check_dns"
   check_interval = 30m
