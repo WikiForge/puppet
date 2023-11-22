@@ -238,6 +238,28 @@ class phorge (
         require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
 
+    monitoring::services { 'phorge-static.wikiforge.net HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_expect => 'HTTP/1.1 200',
+            http_ssl    => true,
+            http_vhost  => 'phorge-static.wikiforge.net',
+            http_uri    => 'https://phorge-static.wikiforge.net/file/data/TODO'
+        },
+    }
+
+    monitoring::services { 'support.wikiforge.net HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'support.wikiforge.net',
+        },
+    }
+
+    monitoring::nrpe { 'phd':
+        command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
+    }
+
     cron { 'backups-phorge':
         ensure   => present,
         command  => '/usr/local/bin/wikiforge-backup backup phorge > /var/log/phorge-backup.log',
@@ -245,5 +267,11 @@ class phorge (
         minute   => '0',
         hour     => '1',
         monthday => ['1', '15'],
+    }
+
+    monitoring::nrpe { 'Backups Phorge Static':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup.log',
+        docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 }
