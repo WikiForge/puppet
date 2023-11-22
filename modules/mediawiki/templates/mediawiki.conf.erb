@@ -158,11 +158,7 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 <%- if property['additional_domain'] -%>
-<%- if name == "wikitide" -%>
-	server_name <%= property['additional_domain'] %>;
-<%- else -%>
 	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
-<%- end -%>
 <%- else -%>
 	server_name <%= property['url'] %>;
 <%- end -%>
