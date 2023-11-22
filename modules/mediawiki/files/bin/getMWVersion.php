@@ -3,7 +3,7 @@
 
 error_reporting( 0 );
 
-require_once '/srv/mediawiki/config/initialise/WikiForgeFunctions.php';
+require_once '/srv/mediawiki/config/initialize/WikiForgeFunctions.php';
 
 if ( count( $argv ) < 2 ) {
 	print "Usage: getMWVersion <dbname> \n";
