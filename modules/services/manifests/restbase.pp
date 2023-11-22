@@ -2,7 +2,7 @@
 class services::restbase {
     include services
 
-    ensure_packages('libsqlite3-dev')
+    stdlib::ensure_packages('libsqlite3-dev')
 
     group { 'restbase':
         ensure => present,

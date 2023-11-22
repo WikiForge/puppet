@@ -2,7 +2,7 @@
 class phorge (
     Integer $request_timeout = lookup('phorge::php::request_timeout', {'default_value' => 60}),
 ) {
-    ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
+    stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
 $wikiforge_s3_access                = lookup('mediawiki::aws_s3_access_key')
 $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_key')

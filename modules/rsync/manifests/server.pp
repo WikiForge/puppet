@@ -22,7 +22,7 @@ class rsync::server(
     Stdlib::Ensure::Service    $ensure_service    = 'running',
     Optional[Stdlib::Unixpath] $log_file          = undef,
 ) {
-    ensure_packages(['rsync'])
+    stdlib::ensure_packages(['rsync'])
 
     $rsync_fragments = '/etc/rsync.d'
     $rsync_conf      = '/etc/rsyncd.conf'
@@ -38,7 +38,7 @@ class rsync::server(
     }
 
     if $wrap_with_stunnel {
-        ensure_packages(['stunnel4'])
+        stdlib::ensure_packages(['stunnel4'])
         file { '/etc/stunnel/rsync.conf':
             ensure  => present,
             mode    => '0444',

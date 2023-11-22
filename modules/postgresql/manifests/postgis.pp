@@ -19,7 +19,7 @@ class postgresql::postgis(
         'bookworm' => 'postgresql-15-postgis-3',
     },
 ) {
-    ensure_packages(
+    stdlib::ensure_packages(
         [
             $postgresql_postgis_package,
             "${postgresql_postgis_package}-scripts",

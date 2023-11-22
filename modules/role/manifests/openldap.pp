@@ -158,7 +158,7 @@ class role::openldap (
         tls_cacert => '/etc/ssl/certs/ISRG_Root_X1.pem',
     }
 
-    ensure_packages('ldapvi')
+    stdlib::ensure_packages('ldapvi')
 
     file { '/etc/ldapvi.conf':
         content => template('role/openldap/ldapvi.conf.erb'),

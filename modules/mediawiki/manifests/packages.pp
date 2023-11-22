@@ -4,7 +4,7 @@
 class mediawiki::packages {
     include mediawiki::firejail
 
-    ensure_packages([
+    stdlib::ensure_packages([
         'djvulibre-bin',
         'dvipng',
         'ghostscript',
@@ -37,7 +37,7 @@ class mediawiki::packages {
     ])
 
     if !lookup(mediawiki::use_shellbox) {
-        ensure_packages(
+        stdlib::ensure_packages(
             'lilypond',
             {
                 ensure => absent,

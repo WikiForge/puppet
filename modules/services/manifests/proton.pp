@@ -4,7 +4,7 @@
 class services::proton {
     include services
 
-    ensure_packages('chromium')
+    stdlib::ensure_packages('chromium')
 
     group { 'proton':
         ensure => present,

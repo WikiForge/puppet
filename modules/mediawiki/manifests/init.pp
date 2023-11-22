@@ -30,7 +30,7 @@ class mediawiki {
     }
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
-        ensure_packages(
+        stdlib::ensure_packages(
             'internetarchive',
             {
                 ensure   => '3.3.0',

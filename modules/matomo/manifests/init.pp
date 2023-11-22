@@ -3,7 +3,7 @@ class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
     String $matomo_db_host = 'db1.inside.wf',
 ) {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',

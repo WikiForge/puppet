@@ -4,7 +4,7 @@ class prometheus::exporter::redis (
     String $redis_password = lookup('passwords::redis::master'),
 ) {
 
-    ensure_packages([
+    stdlib::ensure_packages([
         'python3-prometheus-client',
         'python3-redis',
     ])

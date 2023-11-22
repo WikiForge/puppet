@@ -2,7 +2,7 @@
 class ssl::web {
     include ssl::nginx
 
-    ensure_packages('python3-filelock')
+    stdlib::ensure_packages('python3-filelock')
 
     file { '/usr/local/bin/renew-ssl':
         ensure => present,

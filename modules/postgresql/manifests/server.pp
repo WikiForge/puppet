@@ -32,7 +32,7 @@ class postgresql::server(
     String $pgversion        = '13',
 ) {
 
-    ensure_packages(
+    stdlib::ensure_packages(
         [
             "postgresql-${pgversion}",
             "postgresql-${pgversion}-debversion",
@@ -46,7 +46,7 @@ class postgresql::server(
         },
     )
 
-    ensure_packages('pgtop')
+    stdlib::ensure_packages('pgtop')
 
     class { '::postgresql::dirs':
         ensure    => $ensure,
