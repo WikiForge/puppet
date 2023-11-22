@@ -67,7 +67,7 @@ wiki_connection = "tech.your.wf"
 wiki_path = "/w/"
 
 # Username of wiki bot user
-wiki_user = "WikiTideLogBot"
+wiki_user = "WikiForgeLogBot"
 
 # Password of wiki bot user
 wiki_pass = "<%= @wikiforgelogbot_password %>"
