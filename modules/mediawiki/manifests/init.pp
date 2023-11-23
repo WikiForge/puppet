@@ -47,28 +47,6 @@ class mediawiki {
         }
     }
 
-    file { '/etc/mathoid':
-        ensure  => directory,
-    }
-
-    file { '/etc/mathoid/config.yaml':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/mathoid_config.yaml',
-        require => File['/etc/mathoid'],
-    }
-
-    git::clone { 'mathoid':
-        ensure             => 'latest',
-        directory          => '/srv/mathoid',
-        origin             => 'https://github.com/WikiForge/mathoid-deploy',
-        branch             => 'master',
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        recurse_submodules => true,
-        require            => Package['librsvg2-dev'],
-    }
-
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
