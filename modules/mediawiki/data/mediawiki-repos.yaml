@@ -120,16 +120,6 @@ CategoryTree:
   branch: _branch_
   path: extensions/CategoryTree
   repo_url: https://github.com/wikimedia/mediawiki-extensions-CategoryTree
-CentralAuth:
-  branch: _branch_
-  path: extensions/CentralAuth
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralAuth
-  removed: true
-CentralNotice:
-  branch: _branch_
-  path: extensions/CentralNotice
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-CentralNotice
-  removed: true
 CharInsert:
   branch: _branch_
   path: extensions/CharInsert
@@ -281,11 +271,6 @@ DiscordNotifications:
   branch: master
   path: extensions/DiscordNotifications
   repo_url: https://github.com/Universal-Omega/DiscordNotifications
-DiscourseSsoConsumer:
-  branch: main
-  path: extensions/DiscourseSsoConsumer
-  repo_url: https://github.com/centertap/DiscourseSsoConsumer
-  removed: true
 DiscussionTools:
   branch: _branch_
   path: extensions/DiscussionTools
@@ -359,11 +344,6 @@ EventLogging:
   branch: _branch_
   path: extensions/EventLogging
   repo_url: https://github.com/wikimedia/mediawiki-extensions-EventLogging
-EventStreamConfig:
-  branch: _branch_
-  path: extensions/EventStreamConfig
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-EventStreamConfig
-  removed: true
 ExternalData:
   branch: master
   path: extensions/ExternalData
@@ -423,41 +403,6 @@ GeoGebra:
   branch: _branch_
   path: extensions/GeoGebra
   repo_url: https://github.com/wikimedia/mediawiki-extensions-GeoGebra
-GlobalBlocking:
-  branch: _branch_
-  path: extensions/GlobalBlocking
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalBlocking
-  removed: true
-GlobalCssJs:
-  branch: _branch_
-  path: extensions/GlobalCssJs
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalCssJs
-  removed: true
-GlobalNewFiles:
-  branch: master
-  path: extensions/GlobalNewFiles
-  repo_url: https://github.com/WikiForge/GlobalNewFiles
-  removed: true
-GlobalPreferences:
-  branch: _branch_
-  path: extensions/GlobalPreferences
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalPreferences
-  removed: true
-GlobalUsage:
-  branch: _branch_
-  path: extensions/GlobalUsage
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUsage
-  removed: true
-GlobalUserPage:
-  branch: _branch_
-  path: extensions/GlobalUserPage
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalUserPage
-  removed: true
-GlobalWatchlist:
-  branch: _branch_
-  path: extensions/GlobalWatchlist
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-GlobalWatchlist
-  removed: true
 GoogleDocs4MW:
   branch: _branch_
   path: extensions/GoogleDocs4MW
