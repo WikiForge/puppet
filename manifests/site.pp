@@ -17,6 +17,7 @@ node 'db1.inside.wf' {
 
 node 'jobchron1.inside.wf' {
     include base
+    include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
@@ -53,6 +54,7 @@ node 'mon1.inside.wf' {
     include role::grafana
     include role::icinga2
 }
+
 node /^mw[123]\.inside\.wf$/ {
     include base
     include role::mediawiki
@@ -96,6 +98,7 @@ node 'test1.inside.wf' {
     include base
     include role::mediawiki
     include role::memcached
+    include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
