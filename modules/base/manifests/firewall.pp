@@ -30,6 +30,38 @@ class base::firewall (
         source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',
     }
 
+    $firewall_rules_str = join(
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Icinga2]", ['networking'])
+        .map |$key, $value| {
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'nrpe':
+        proto  => 'tcp',
+        port   => '5666',
+        srange => "(${firewall_rules_str})",
+    }
+
+    $firewall_bastion_hosts = join(
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Base]", ['networking'])
+        .map |$key, $value| {
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'ssh':
+        proto  => 'tcp',
+        port   => '22',
+        srange => "(${firewall_bastion_hosts})",
+    }
+
     class { '::ulogd': }
 
     # Explicitly drop pxe/dhcp packets packets so they dont hit the log
@@ -45,8 +77,32 @@ class base::firewall (
         prio => '98',
     }
 
-    ferm::service { 'ssh':
-        proto => 'tcp',
-        port  => '22',
+    file { '/usr/lib/nagios/plugins/check_conntrack':
+        source => 'puppet:///modules/base/firewall/check_conntrack.py',
+        mode   => '0755',
+    }
+
+    monitoring::nrpe { 'conntrack_table_size':
+        command => '/usr/lib/nagios/plugins/check_conntrack 80 90',
+        docs    => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
+    }
+
+    sudo::user { 'nagios_check_ferm':
+        user       => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
+        require    => File['/usr/lib/nagios/plugins/check_ferm'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_ferm':
+        source => 'puppet:///modules/base/firewall/check_ferm',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
+
+    monitoring::nrpe { 'ferm_active':
+        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
+        docs     => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#Ferm',
+        critical => true
     }
 }
