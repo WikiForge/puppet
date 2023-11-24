@@ -1,7 +1,7 @@
-# === Class mediawiki::nginx
+# === Class blesta::nginx
 #
 # Nginx config using hiera
-class mediawiki::nginx {
+class blesta::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $php_fpm_sock = 'php/fpm-www.sock'
 
