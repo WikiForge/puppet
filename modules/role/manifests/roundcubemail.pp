@@ -36,9 +36,9 @@ class role::roundcubemail (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Varnish]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Varnish]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
