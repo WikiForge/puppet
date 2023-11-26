@@ -83,7 +83,7 @@ class role::elasticsearch {
     $firewall_es_nodes = join(
         query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Elasticsearch]", ['networking'])
         .map |$key, $value| {
-            $value['networking']['ip6']
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

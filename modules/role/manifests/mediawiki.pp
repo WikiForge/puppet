@@ -7,7 +7,7 @@ class role::mediawiki (
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services]", ['networking'])
+            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2] or Class[Role::Prometheus]", ['networking'])
             .map |$key, $value| {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
