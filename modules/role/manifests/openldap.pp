@@ -205,6 +205,16 @@ class role::openldap (
         && /bin/systemctl restart slapd >/dev/null 2>/dev/null",
     }
 
+    monitoring::services { 'LDAP':
+        check_command => 'ldap',
+        vars          => {
+            ldap_address => $facts['networking']['fqdn'],
+            ldap_base    => 'dc=wikiforge,dc=net',
+            ldap_v3      => true,
+            ldap_ssl     => true,
+        },
+    }
+
     motd::role { 'role::openldap':
         description => 'LDAP server',
     }
