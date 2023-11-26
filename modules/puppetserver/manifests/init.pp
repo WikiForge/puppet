@@ -205,6 +205,7 @@ class puppetserver(
 
     service { 'puppetserver':
         ensure   => running,
+        enable   => true,
         provider => 'systemd',
         require  => Package['puppetserver'],
     }
