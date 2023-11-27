@@ -21,7 +21,7 @@ def test_get_command_extension():
 
 @patch.dict(os.environ, {'LOGNAME': 'test'})
 @patch('os.getlogin')
-def test_get_command_extension_list(mock_input, mock_getlogin):
+def test_get_command_extension_list(mock_getlogin):
     mock_getlogin.return_value = 'test'
     args = mwscript.get_args()
     args.script = 'test.php'
@@ -78,7 +78,7 @@ def test_get_command_extension_runner():
 
 @patch.dict(os.environ, {'LOGNAME': 'test'})
 @patch('os.getlogin')
-def test_get_command_extension_list_runner(mock_input, mock_getlogin):
+def test_get_command_extension_list_runner(mock_getlogin):
     mock_getlogin.return_value = 'test'
     args = mwscript.get_args()
     args.script = 'test.php'
