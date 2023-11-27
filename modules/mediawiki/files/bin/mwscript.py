@@ -42,7 +42,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if args.arguments == []:
                 args.arguments = False
         else:
-            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
+            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *versionLists]}')
             sys.exit(2)
     except IndexError:
         print('Not enough Arguments given.')
