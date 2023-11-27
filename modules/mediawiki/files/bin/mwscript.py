@@ -27,7 +27,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
 
     del mw_versions
 
-    validDBLists = tuple([f'{key}-wikis' for key in versions.keys()])
+    versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
 
     longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
@@ -36,7 +36,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     try:
         if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:
+        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *versionLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:
@@ -90,7 +90,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     if wiki == 'all':
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json {script}'
-    elif wiki and wiki in validDBLists:
+    elif wiki and wiki in versionLists:
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}-wikiforge.json {script}'
     elif args.extension:
