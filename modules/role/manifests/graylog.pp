@@ -77,6 +77,22 @@ class role::graylog {
         srange => "(${firewall_syslog_rules_str})",
     }
 
+    # syslog-ng > graylog 10514/udp
+    $firewall_syslog_udp_rules_str = join(
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Base]", ['networking'])
+        .map |$key, $value| {
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'graylog 10514':
+        proto  => 'udp',
+        port   => '10514',
+        srange => "(${firewall_syslog_udp_rules_str})",
+    }
 
     $firewall_icinga_rules_str = join(
         query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Icinga2]", ['networking'])
