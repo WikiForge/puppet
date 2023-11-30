@@ -17,6 +17,12 @@ class base::dns {
         require => Package['pdns-recursor'],
     }
 
+    monitoring::nrpe { 'PowerDNS Recursor':
+        command  => '/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H wikiforge.net',
+        docs     => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
+        critical => true
+    }
+
     file { '/etc/resolv.conf':
         source  => 'puppet:///modules/base/dns/resolv.conf',
         require => Package['pdns-recursor'],
