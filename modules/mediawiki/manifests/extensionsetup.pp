@@ -22,15 +22,16 @@ define mediawiki::extensionsetup (
     $repos = loadyaml("${module_path}/data/mediawiki-repos.yaml")
 
     $repos.each |$name, $params| {
-        $shouldInstall = $params['versions'] ? {
+        $should_install = $params['versions'] ? {
             undef   => true,
             default => $version in split($params['versions'], /,\s?/),
         }
 
+        # lint:ignore:selector_inside_resource
         git::clone { "MediaWiki-${branch} ${name}":
             ensure             => $params['removed'] ? {
                 true    => absent,
-                default => $shouldInstall ? {
+                default => $should_install ? {
                     true    => $params['latest'] ? {
                         true    => latest,
                         default => present,
@@ -61,8 +62,9 @@ define mediawiki::extensionsetup (
             },
             require            => Git::Clone["MediaWiki-${branch} core"],
         }
+        # lint:endignore
 
-        if $shouldInstall {
+        if $should_install {
             if $params['composer'] {
                 exec { "${name}-${branch} composer":
                     command     => 'composer install --no-dev',
