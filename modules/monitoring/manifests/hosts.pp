@@ -5,7 +5,7 @@ define monitoring::hosts (
     @@icinga2::object::host { $title:
         ensure  => $ensure,
         import  => ['generic-host'],
-        address => $facts['networking']['hostname'] ? {
+        address => $facts['networking']['hostname'] ? { # lint:ignore:selector_inside_resource
             'cloud1'   => $facts['networking']['interfaces']['vmbr1']['ip'],
             'mail11'   => $facts['networking']['interfaces']['ens19']['ip'],
             'mw11'     => $facts['networking']['interfaces']['ens19']['ip'],
