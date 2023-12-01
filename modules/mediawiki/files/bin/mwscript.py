@@ -6,14 +6,12 @@ import argparse
 import os
 import json
 import sys
-from typing import TYPE_CHECKING, TypedDict
-if TYPE_CHECKING:
-    from typing import Optional
+from typing import TypedDict
 
 
 class CommandInfo(TypedDict):
     command: str
-    generate: Optional[str]
+    generate: str | None
     long: bool
     nolog: bool
     confirm: bool
