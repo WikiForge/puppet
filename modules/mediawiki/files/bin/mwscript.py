@@ -17,7 +17,13 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-def get_commands(args: argparse.Namespace) -> CommandInfo:
+def syscheck(result: CommandInfo | int) -> CommandInfo:
+    if isinstance(result, int):
+        sys.exit(result)
+    return result
+
+
+def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('getMWVersions all').read().strip()
     versions = {}
     if mw_versions:
@@ -27,7 +33,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
 
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
 
-    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+    longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
     generate = None
 
@@ -41,10 +47,10 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 args.arguments = False
         else:
             print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *versionLists]}')
-            sys.exit(2)
+            return 2
     except IndexError:
         print('Not enough Arguments given.')
-        sys.exit(2)
+        return 2
 
     if not args.version:
         dbname = wiki
@@ -55,34 +61,30 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             args.version = versions.get(wiki[:-6])
 
     script = args.script
-    if not script.endswith('.php'):
-        if float(args.version) < 1.40:
-            print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to enable MaintenanceRunner')
-            sys.exit(2)
-        if float(args.version) >= 1.40 and not args.confirm:
-            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
-            print('WARNING: Use of classes is not well tested. Please use with caution.')
-            if input(f"Type 'Y' to confirm (or any other key to stop - rerun without --version={args.version}): ").upper() != 'Y':
-                sys.exit(2)
+    if not script.endswith('.php') and float(args.version) < 1.40:
+        print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to use a class for MaintenanceRunner')
+        return 2
     if float(args.version) >= 1.40:
         runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
     else:
         runner = ''
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
-        if script in longscripts:
+        if script.split('.')[0].lower() in longscripts:
             long = True
         if len(scriptsplit) == 1:
             script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{script}'
         elif len(scriptsplit) == 2:
             script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-            if scriptsplit[1] in longscripts:
+            if scriptsplit[1].split('.')[0].lower() in longscripts:
                 long = True
         else:
             script = f'{runner}/srv/mediawiki/{args.version}/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-            if scriptsplit[2] in longscripts:
+            if scriptsplit[2].split('.')[0].lower() in longscripts:
                 long = True
     else:
+        if script.lower() in longscripts:
+            long = True
         script = f'{runner}{script}'
 
     if wiki == 'all':
@@ -138,4 +140,4 @@ def get_args() -> argparse.Namespace:
 
 
 if __name__ == '__main__':
-    run(get_commands(get_args()))
+    run(syscheck(get_commands(get_args())))
