@@ -1,14 +1,14 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, Union, TypedDict
+from typing import TypedDict
 import os
 import re
 import time
 import requests
 import socket
 import json
-from sys import exit
+import sys
 from langcodes import tag_is_valid
 
 mw_versions = os.popen('getMWVersions').read().strip()
@@ -164,12 +164,12 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
                 os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
-                exit(1)
+                sys.exit(1)
             return True
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'hub.wikiforge.net', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'hub.wikiforge.net', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
@@ -206,7 +206,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
                 print(message)
             else:
                 os.system(message)
-            exit(3)
+            sys.exit(3)
     return up
 
 
@@ -235,7 +235,7 @@ def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool = True, local: bool = True, location: Optional[str] = None, server: Optional[str] = None) -> str:
+def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True, local: bool = True, location: str | None = None, server: str | None = None) -> str:
     if time:
         params = '--inplace'
     else:
@@ -254,7 +254,7 @@ def _construct_rsync_command(time: Union[bool, str], dest: str, recursive: bool 
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None, quiet: bool = True, version: str = '') -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: str | None = None, quiet: bool = True, version: str = '') -> str:
     extrap = ' '
     if submodules:
         extrap += '--recurse-submodules '
@@ -400,7 +400,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                         for schema in newschema:
                                             print(schema)
                                     print('Operation aborted by user')
-                                    exit(1)
+                                    sys.exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'extensions/{extension}', version)
                             if tags:
@@ -449,7 +449,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                                         for schema in newschema:
                                             print(schema)
                                     print('Operation aborted by user')
-                                    exit(1)
+                                    sys.exit(1)
                         if args.show_tags:
                             tags = get_change_tags(f'skins/{skin}', version)
                             if tags:
@@ -556,7 +556,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     else:
         print(fintext)
     if failed:
-        exit(1)
+        sys.exit(1)
 
 
 class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
