@@ -112,7 +112,7 @@ class phorge (
             'request_slowlog_timeout'   => 15,
         }
     }
- 
+
     nginx::site { 'support.wikiforge.net':
         ensure => present,
         source => 'puppet:///modules/phorge/support.wikiforge.net.conf',
