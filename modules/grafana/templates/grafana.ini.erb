@@ -31,9 +31,6 @@ from_address = noreply@wikiforge.net
 [database]
 url = mysql://grafana:<%= @grafana_password %>@<%= @grafana_db_host %>:3306/grafana
 type = mysql
-ssl_mode = true
-ca_cert_path = /etc/ssl/certs/ISRG_Root_X1.pem
-server_cert_name = *.inside.wf
 
 [security]
 cookie_secure = true
