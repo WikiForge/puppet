@@ -83,7 +83,7 @@ location ~ ^/m/(.*) {
 }
 	
 location /sitemaps/ {
-	rewrite ^(.*)$ /sitemap.php;
+	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.wikiforge.net/$1/sitemaps/$2 permanent;
 }
 
 location /static/ {
