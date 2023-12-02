@@ -4,8 +4,8 @@ class phorge (
 ) {
     stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
-$wikiforge_s3_access                = lookup('mediawiki::aws_s3_access_key')
-$wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_key')
+    $s3_access = lookup('phorge::aws_s3_access_key')
+    $s3_secret = lookup('phorge::aws_s3_access_secret_key')
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
@@ -173,13 +173,6 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
         group  => 'www-data',
     }
 
-    file { '/srv/phorge/repos/wikitide':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => File['/srv/phorge/repos'],
-    }
-
     file { '/srv/phorge/images':
         ensure => directory,
         mode   => '0755',
@@ -190,8 +183,8 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
-        'amazon-s3.access-key' => lookup('mediawiki::aws_s3_access_key'),
-        'amazon-s3.secret-key' => lookup('mediawiki::aws_s3_access_secret_key'),
+        'amazon-s3.access-key' => $s3_access,
+        'amazon-s3.secret-key' => $s3_secret,
         'mysql.pass' => lookup('passwords::db::phorge'),
     }
 
@@ -218,7 +211,7 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
     file { '/srv/phorge/phorge/conf/local/local.json':
         ensure  => present,
         content => to_json_pretty($phorge_settings),
-        notify  => Service['phd-wikiforge'],
+        notify  => Service['phd'],
         require => Git::Clone['phorge'],
     }
 
@@ -231,15 +224,43 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
     file { '/srv/phorge/phorge/conf/custom/wikiforge.conf.php':
         ensure  => present,
         source  => 'puppet:///modules/phorge/wikiforge.conf.php',
-        notify  => Service['phd-wikiforge'],
+        notify  => Service['phd'],
         require => Git::Clone['phorge'],
     }
 
     systemd::service { 'phd-wikiforge':
+        ensure  => absent,
+        content => systemd_template('phd'),
+        require => File['/srv/phorge/phorge/conf/local/local.json'],
+    }
+
+    systemd::service { 'phd':
         ensure  => present,
-        content => systemd_template('phd-wikiforge'),
+        content => systemd_template('phd'),
         restart => true,
         require => File['/srv/phorge/phorge/conf/local/local.json'],
+    }
+
+    monitoring::services { 'phorge-static.wikiforge.net HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_expect => 'HTTP/1.1 200',
+            http_ssl    => true,
+            http_vhost  => 'phorge-static.wikiforge.net',
+            http_uri    => 'https://phorge-static.wikiforge.net/file/data/TODO'
+        },
+    }
+
+    monitoring::services { 'support.wikiforge.net HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'support.wikiforge.net',
+        },
+    }
+
+    monitoring::nrpe { 'phd':
+        command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 
     cron { 'backups-phorge':
@@ -249,5 +270,11 @@ $wikiforge_s3_secret                = lookup('mediawiki::aws_s3_access_secret_ke
         minute   => '0',
         hour     => '1',
         monthday => ['1', '15'],
+    }
+
+    monitoring::nrpe { 'Backups Phorge Static':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup.log',
+        docs     => 'https://tech.wikiforge.net/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 }
