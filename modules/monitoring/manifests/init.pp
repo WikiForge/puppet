@@ -56,13 +56,11 @@ class monitoring (
     include ::icinga2::feature::perfdata
 
     class{ '::icinga2::feature::idomysql':
-        host            => $db_host,
-        user            => $db_user,
-        password        => $db_password,
-        database        => $db_name,
-        import_schema   => false,
-        enable_ssl      => true,
-        ssl_cacert_path => '/etc/ssl/certs/ISRG_Root_X1.pem',
+        host          => $db_host,
+        user          => $db_user,
+        password      => $db_password,
+        database      => $db_name,
+        import_schema => false,
     }
 
     class { '::icinga2::feature::gelf':

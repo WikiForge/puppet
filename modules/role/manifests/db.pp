@@ -10,10 +10,6 @@ class role::db (
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $phorge_password = lookup('passwords::db::phorge')
 
-    ssl::wildcard { 'db wildcard':
-        ssl_cert_key_private_group => 'mysql',
-    }
-
     file { '/etc/ssl/private':
         ensure => directory,
         owner  => 'root',

@@ -112,8 +112,6 @@ class mariadb::config(
             mysql_hostname => $facts['networking']['fqdn'],
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
-            mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/ISRG_Root_X1.pem',
         },
     }
 
@@ -124,8 +122,6 @@ class mariadb::config(
             mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
-            mysql_ssl       => true,
-            mysql_cacert    => '/etc/ssl/certs/ISRG_Root_X1.pem', # Let's Encrypt
             warning         => '80%',
             critical        => '90%',
             max_connections => $max_connections,
