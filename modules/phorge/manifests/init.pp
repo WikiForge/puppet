@@ -112,12 +112,7 @@ class phorge (
             'request_slowlog_timeout'   => 15,
         }
     }
-
-    nginx::site { 'support-archive.wikiforge.net':
-        ensure => present,
-        source => 'puppet:///modules/phorge/support-archive.wikiforge.net.conf',
-    }
-
+ 
     nginx::site { 'support.wikiforge.net':
         ensure => present,
         source => 'puppet:///modules/phorge/support.wikiforge.net.conf',
@@ -157,13 +152,6 @@ class phorge (
         directory => '/srv/phorge/phorge/src/extensions',
         origin    => 'https://github.com/WikiForge/phorge-extensions',
         require   => File['/srv/phorge'],
-    }
-
-    file { '/srv/phorge/phorge/conf/custom':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => File['/srv/phorge'],
     }
 
     file { '/srv/phorge/repos':
@@ -213,25 +201,6 @@ class phorge (
         content => to_json_pretty($phorge_settings),
         notify  => Service['phd'],
         require => Git::Clone['phorge'],
-    }
-
-    file { '/srv/phorge/phorge/conf/custom/archive.conf.php':
-        ensure  => present,
-        source  => 'puppet:///modules/phorge/archive.conf.php',
-        require => Git::Clone['phorge'],
-    }
-
-    file { '/srv/phorge/phorge/conf/custom/wikiforge.conf.php':
-        ensure  => present,
-        source  => 'puppet:///modules/phorge/wikiforge.conf.php',
-        notify  => Service['phd'],
-        require => Git::Clone['phorge'],
-    }
-
-    systemd::service { 'phd-wikiforge':
-        ensure  => absent,
-        content => systemd_template('phd'),
-        require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
 
     systemd::service { 'phd':
