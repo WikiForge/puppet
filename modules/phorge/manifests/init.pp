@@ -4,6 +4,9 @@ class phorge (
 ) {
     stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
+    $s3_access = lookup('phorge::aws_s3_access_key')
+    $s3_secret = lookup('phorge::aws_s3_access_secret_key')
+
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
         'error_log'                       => 'syslog',
@@ -180,8 +183,8 @@ class phorge (
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
-        'amazon-s3.access-key' => lookup('mediawiki::aws_s3_access_key'),
-        'amazon-s3.secret-key' => lookup('mediawiki::aws_s3_access_secret_key'),
+        'amazon-s3.access-key' => $s3_access,
+        'amazon-s3.secret-key' => $s3_secret,
         'mysql.pass' => lookup('passwords::db::phorge'),
     }
 
