@@ -4,10 +4,5 @@ GRANT USAGE
     ON *.* TO 'phorge'@'%'
     IDENTIFIED BY '<%= @phorge_password %>';
 
--- WikiForge Phorge
 GRANT ALL PRIVILEGES
     ON `phorge%`.* TO 'phorge'@'%';
-
--- WikiTide Phorge
-GRANT ALL PRIVILEGES
-    ON `wtphorge%`.* TO 'phorge'@'%';
