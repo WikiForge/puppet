@@ -36,7 +36,6 @@ class postgresql::slave(
 ) {
 
     $pgversion = $facts['os']['distro']['codename'] ? {
-        'bullseye' => '13',
         'bookworm' => '15',
     }
 

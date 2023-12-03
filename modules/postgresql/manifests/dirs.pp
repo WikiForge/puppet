@@ -20,13 +20,20 @@
 #  include postgresql::dirs
 #
 class postgresql::dirs(
-    VMlib::Ensure $ensure    = 'present',
-    String $root_dir  = '/var/lib/postgresql',
-    String $pgversion = '9.6',
+    VMlib::Ensure $ensure = 'present',
+    String $root_dir = '/var/lib/postgresql',
+    Optional[Numeric] $pgversion = undef,
 ) {
-    $data_dir = "${root_dir}/${pgversion}/main"
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'bookworm' => 15,
+            default    => 15,
+        },
+        default => $pgversion,
+    }
+    $data_dir = "${root_dir}/${_pgversion}/main"
 
-    file {  [ $root_dir, "${root_dir}/${pgversion}" ] :
+    file {  [ $root_dir, "${root_dir}/${_pgversion}" ] :
         ensure => ensure_directory($ensure),
         owner  => 'postgres',
         group  => 'postgres',

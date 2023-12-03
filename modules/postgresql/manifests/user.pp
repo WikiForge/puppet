@@ -29,19 +29,24 @@ define postgresql::user(
     Optional[String] $password = undef,
     String $database = 'template1',
     String $type = 'host',
-    String $method = 'md5',
     String $cidr = '127.0.0.1/32',
     String $attrs = '',
     Boolean $master = true,
-    VMlib::Ensure $ensure = 'present'
+    VMlib::Ensure $ensure = 'present',
+    Optional[String[1]] $method = undef,
+    Optional[Numeric] $pgversion = undef,
 ) {
 
-    $pgversion = $facts['os']['distro']['codename'] ? {
-        'bullseye' => '13',
-        'bookworm' => '15',
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'bookworm' => 15,
+            default    => fail("unsupported pgversion: ${pgversion}"),
+        },
+        default => $pgversion,
     }
+    $_method = $method.lest || { ($_pgversion >= 15).bool2str('scram-sha-256', 'md5') }
 
-    $pg_hba_file = "/etc/postgresql/${pgversion}/main/pg_hba.conf"
+    $pg_hba_file = "/etc/postgresql/${_pgversion}/main/pg_hba.conf"
 
     # Check if our user exists and store it
     $userexists = "/usr/bin/psql --tuples-only -c \'SELECT rolname FROM pg_catalog.pg_roles;\' | /bin/grep -P \'^ ${user}$\'"
@@ -51,11 +56,21 @@ define postgresql::user(
 
     # xpath expression to identify the user entry in pg_hba.conf
     if $type == 'local' {
-        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][method='${method}']"
+        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][method='${_method}']"
     }
     else {
-        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${method}']"
+        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${_method}']"
     }
+
+    # Starting with Bookworm passwords are hashed with salted Scram-SHA256. The user is still tested for existance,
+    # but no password changes are supported T326325
+    $password_md5 = md5("${password}${user}")
+    if (versioncmp($facts['os']['release']['major'], '12') >= 0) {
+        $password_clause = "LIKE 'SCRAM-SHA-256\\\$4096:%'"
+    } else {
+        $password_clause = "= 'md5${password_md5}'"
+    }
+    $password_check = "/usr/bin/psql -Atc \"SELECT 1 FROM pg_authid WHERE rolname = '${user}' AND rolpassword ${password_clause};\" | grep 1"
 
     if $ensure == 'present' {
         exec { "create_user-${name}":
@@ -66,12 +81,10 @@ define postgresql::user(
 
         # This will not be run on a slave as it is read-only
         if $master and $password {
-            $password_md5 = md5("${password}${user}")
-
             exec { "pass_set-${name}":
                 command   => $pass_set,
                 user      => 'postgres',
-                onlyif    => "/usr/bin/test -n \"\$(/usr/bin/psql -Atc \"SELECT 1 FROM pg_authid WHERE rolname = '${user}' AND rolpassword IS DISTINCT FROM 'md5${password_md5}';\")\"",
+                unless    => $password_check,
                 subscribe => Exec["create_user-${name}"],
             }
         }
@@ -81,7 +94,7 @@ define postgresql::user(
                 "set 01/type \'${type}\'",
                 "set 01/database \'${database}\'",
                 "set 01/user \'${user}\'",
-                "set 01/method \'${method}\'",
+                "set 01/method \'${_method}\'",
             ]
         } else {
             $changes = [
@@ -89,7 +102,7 @@ define postgresql::user(
                 "set 01/database \'${database}\'",
                 "set 01/user \'${user}\'",
                 "set 01/address \'${cidr}\'",
-                "set 01/method \'${method}\'",
+                "set 01/method \'${_method}\'",
             ]
         }
 
