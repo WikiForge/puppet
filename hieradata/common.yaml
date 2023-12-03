@@ -8,8 +8,6 @@ puppetserver: false
 puppet_major_version: 8
 
 mediawiki::multiversion::versions:
-  '1.39':
-    branch: 'REL1_39'
   '1.40':
     branch: 'REL1_40'
     default: true
