@@ -216,7 +216,7 @@ class phorge (
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phorge-static.wikiforge.net',
-            http_uri    => 'https://phorge-static.wikiforge.net/file/data/TODO'
+            http_uri    => 'https://phorge-static.wikiforge.net/file/data/2jym57fdvuv7rfmkjnax/PHID-FILE-lhwdvoxb25xio5gvw2s3/logo'
         },
     }
 
