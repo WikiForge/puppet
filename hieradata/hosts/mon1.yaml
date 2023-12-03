@@ -1,7 +1,5 @@
 icinga_ido_db_host: 'db1.inside.wf'
 icingaweb_db_host: 'db1.inside.wf'
-grafana_db_host: 'db1.inside.wf'
-
 
 icinga2_api_bind_host: '::'
 

@@ -1,9 +1,7 @@
 # class: grafana
 class grafana (
-    String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
-    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db1.inside.wf'}),
 ) {
 
     include apt
@@ -29,7 +27,7 @@ class grafana (
         logoutput   => true,
     }
 
-    package { 'grafana':
+    package { ['grafana', 'sqlite3']:
         ensure  => present,
         require => Apt::Source['grafana_apt'],
     }

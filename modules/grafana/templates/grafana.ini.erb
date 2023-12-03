@@ -29,8 +29,8 @@ password = <%= @mail_password %>
 from_address = noreply@wikiforge.net
 
 [database]
-url = mysql://grafana:<%= @grafana_password %>@<%= @grafana_db_host %>:3306/grafana
-type = mysql
+type = sqlite3
+path = grafana.db
 
 [security]
 cookie_secure = true
