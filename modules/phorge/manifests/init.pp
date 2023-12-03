@@ -4,8 +4,8 @@ class phorge (
 ) {
     stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
-    $s3_access = lookup('phorge::aws_s3_access_key')
-    $s3_secret = lookup('phorge::aws_s3_access_secret_key')
+    $s3_access = lookup('mediawiki::aws_s3_access_key')
+    $s3_secret = lookup('mediawiki::aws_s3_access_secret_key')
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
