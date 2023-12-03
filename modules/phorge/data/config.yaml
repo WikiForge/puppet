@@ -1,14 +1,7 @@
-# WARNING! Settings here OVERRIDE indiviual per-instance settings.
-# This file is used by multiple independent Phorge instances.
-# If you want to change the setting on only one instance,
-# Please edit files/<instance> instead or risk setting the value
-# on all instances. --Agent Isai
-
 # Amazon S3
+amazon-s3.endpoint: '506ef7707567ae07d19f7be565c8515d.r2.cloudflarestorage.com'
 amazon-s3.region: 'auto'
-
-# Logo/Wordmark
-# Now set via individual config
+storage.s3.bucket: 'wikiforgephorge'
 
 # MySQL
 mysql.port: '3306'
@@ -19,7 +12,9 @@ mysql.host: 'db1.inside.wf'
 # Needs to match php.ini upload_max_filesize
 # Needs to match php.ini post_max_size for conduit
 storage.mysql-engine.max-size: 10000000
+storage.default-namespace: 'wfphorge' # TODO rename to 'phorge'
 
+metamta.default-address: 'noreply@wikiforge.net'
 metamta.single-reply-handler-prefix: 'phorge'
 
 # Auth
@@ -29,9 +24,12 @@ auth.require-email-verification: true
 
 # Phabricator
 phabricator.show-prototypes: true
+phabricator.base-uri: 'https://support.wikiforge.net/'
 phabricator.timezone: 'UTC'
+security.alternate-file-domain: 'https://phorge-static.wikiforge.net/'
 security.require-https: true
 security.strict-transport-security: true
+repository.default-local-path: '/srv/phorge/repos/'
 policy.allow-public: true
 user.require-real-name: false
 

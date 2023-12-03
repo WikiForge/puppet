@@ -7,7 +7,6 @@ Before=nginx.service
 Type=forking
 User=www-data
 Group=www-data
-Environment=PHABRICATOR_ENV=custom/wikiforge
 ExecStart=/srv/phorge/phorge/bin/phd start
 ExecStop=/srv/phorge/phorge/bin/phd stop --force
 RestartSec=10
