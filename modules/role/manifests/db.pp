@@ -5,10 +5,13 @@ class role::db (
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []})
 ) {
     include mariadb::packages
+    include prometheus::exporter::mariadb
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $phorge_password = lookup('passwords::db::phorge')
+    $exporter_password = lookup('passwords::db::exporter')
+    $icinga_password = lookup('passwords::db::icinga')
 
     file { '/etc/ssl/private':
         ensure => directory,
@@ -19,7 +22,7 @@ class role::db (
 
     class { 'mariadb::config':
         config          => 'mariadb/config/mw.cnf.erb',
-        icinga_password => lookup('passwords::db::icinga'),
+        icinga_password => $icinga_password,
         password        => lookup('passwords::db::root'),
     }
 

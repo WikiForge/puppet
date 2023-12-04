@@ -27,6 +27,8 @@ class php::fpm(
         fail('You need to declare fpm as a sapi in the php class to be able to use fpm')
     }
 
+    include prometheus::exporter::fpm
+
     $main_config_file = "${php::config_dir}/fpm/php-fpm.conf"
     # Default config values
     $default_config = {
@@ -85,5 +87,10 @@ class php::fpm(
         recurse => true,
         purge   => true,
         require => Package["php${php::version}-fpm"]
+    }
+
+    monitoring::nrpe { 'php-fpm':
+        command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${php::version} -c 1:",
+        docs    => 'https://tech.wikiforge.net/wiki/Tech:Icinga/MediaWiki_Monitoring#PHP-FPM'
     }
 }

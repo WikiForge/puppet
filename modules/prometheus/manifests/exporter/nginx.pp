@@ -18,7 +18,7 @@ class prometheus::exporter::nginx {
     }
 
     $firewall_rules = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Prometheus]", ['networking'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

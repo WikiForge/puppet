@@ -73,4 +73,7 @@ class nginx (
         ensure  => present,
         content => template('nginx/logrotate.erb'),
     }
+
+    # Include nginx prometheus exported on all hosts that use the nginx class
+    include prometheus::exporter::nginx
 }

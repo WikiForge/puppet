@@ -1,5 +1,7 @@
 # dns
 class dns {
+    include prometheus::exporter::gdnsd
+
     package { 'gdnsd':
         ensure  => installed,
     }
@@ -38,5 +40,22 @@ class dns {
         hasrestart => true,
         hasstatus  => true,
         require    => [ Package['gdnsd'], Exec['gdnsd-syntax'] ],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_gdnsd_datacenters':
+        ensure => present,
+        source => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
+        mode   => '0755',
+    }
+
+    monitoring::services { 'Auth DNS':
+        check_command => 'check_dns_auth',
+        vars          => {
+            host => 'inside.wf',
+        },
+    }
+
+    monitoring::nrpe { 'GDNSD Datacenters':
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_gdnsd_datacenters'
     }
 }

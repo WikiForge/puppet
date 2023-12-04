@@ -69,10 +69,10 @@ class base::monitoring {
         docs    => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#Puppet'
     }
 
-#    monitoring::services { 'SSH':
-#        check_command => 'ssh',
-#        docs          => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#SSH'
-#    }
+    monitoring::services { 'SSH':
+        check_command => 'ssh',
+        docs          => 'https://tech.wikiforge.net/wiki/Tech:Icinga/Base_Monitoring#SSH'
+    }
 
     monitoring::nrpe { 'APT':
         command => '/usr/lib/nagios/plugins/check_apt -o -t 60',

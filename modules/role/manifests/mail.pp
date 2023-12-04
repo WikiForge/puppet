@@ -5,6 +5,8 @@ class role::mail {
     include postfix::dmarc
     include postfix::spamassassin
     include dovecot
+    include prometheus::exporter::postfix
+
 
     ferm::service { 'smtp':
         proto => 'tcp',

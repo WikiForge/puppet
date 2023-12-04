@@ -5,6 +5,21 @@ GRANT ALL PRIVILEGES
     IDENTIFIED BY '<%= @password %>'
     WITH GRANT OPTION;
 
+-- Grants for 'icinga'@'%'
+
+GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
+    IDENTIFIED BY '<%= @icinga_password %>';
+
+-- Grants for 'exporter'@'localhost'
+
+GRANT USAGE, PROCESS, REPLICATION CLIENT, REPLICA MONITOR
+    ON *.* TO 'exporter'@'localhost'
+    IDENTIFIED BY '<%= @exporter_password %>';
+
+GRANT SELECT
+    ON mysql.user TO 'exporter'@'localhost'
+    IDENTIFIED BY '<%= @exporter_password %>';
+
 -- Grants for 'replica'@'%'
 
 GRANT REPLICATION SLAVE
