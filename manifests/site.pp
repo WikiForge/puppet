@@ -33,15 +33,15 @@ node 'jobrunner1.inside.wf' {
     include role::irc
 }
 
-node 'mail1.inside.wf' {
-    include base
-    include role::mail
-    include role::roundcubemail
-}
-
 node 'ldap1.inside.wf' {
     include base
     include role::openldap
+}
+
+node 'mail1.inside.wf' {
+    include base
+    include role::mail
+    include role::snappymail
 }
 
 node 'mem1.inside.wf' {
