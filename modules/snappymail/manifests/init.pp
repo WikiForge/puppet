@@ -136,11 +136,6 @@ class snappymail {
         source => 'puppet:///modules/snappymail/snappymail.conf',
     }
 
-    nginx::site { 'roundcubemail':
-        ensure => absent,
-        source => 'puppet:///modules/snappymail/snappymail.conf',
-    }
-
     file { '/var/lib/snappymail':
         ensure => directory,
         owner  => 'www-data',
