@@ -1,10 +1,4 @@
-class roundcubemail (
-    String $db_host               = 'db1.inside.wf',
-    String $db_name               = 'roundcubemail',
-    String $db_user_name          = 'roundcubemail',
-    String $db_user_password      = undef,
-    String $roundcubemail_des_key = undef,
-) {
+class snappymail {
     $config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -49,7 +43,7 @@ class roundcubemail (
     $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
-    class { '::php':
+    class { 'php':
         ensure         => present,
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
@@ -66,7 +60,7 @@ class roundcubemail (
         }
     }
 
-    class { '::php::fpm':
+    class { 'php::fpm':
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
@@ -123,64 +117,33 @@ class roundcubemail (
         'nodejs',
     ])
 
-    git::clone { 'roundcubemail':
-        directory => '/srv/roundcubemail',
-        origin    => 'https://github.com/roundcube/roundcubemail',
-        branch    => '1.6.5', # Current stable
-        owner     => 'www-data',
-        group     => 'www-data',
+    file { '/usr/share/snappymail/include.php':
+        ensure => present,
+        source => 'puppet:///modules/snappymail/include.php',
+        owner  => 'www-data',
+        group  => 'www-data',
     }
 
-    file { '/srv/roundcubemail/composer.json':
-        ensure  => present,
-        source  => '/srv/roundcubemail/composer.json-dist',
-        owner   => 'www-data',
-        group   => 'www-data',
-        replace => false,
-        require => Git::Clone['roundcubemail'],
-    }
-
-    exec { 'roundcubemail_composer':
-        command     => 'composer install --no-dev',
-        creates     => '/srv/roundcubemail/vendor',
-        cwd         => '/srv/roundcubemail',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/roundcubemail',
-        user        => 'www-data',
-        require     => File['/srv/roundcubemail/composer.json'],
-    }
-
-    exec { 'roundcubemail_js_deps':
-        command     => '/srv/roundcubemail/bin/install-jsdeps.sh',
-        creates     => '/srv/roundcubemail/skins/elastic/deps/less.min.js',
-        cwd         => '/srv/roundcubemail',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/roundcubemail',
-        user        => 'www-data',
-        require     => Git::Clone['roundcubemail'],
-    }
-
-    file { '/srv/roundcubemail/config/config.inc.php':
-        ensure  => present,
-        content => template('roundcubemail/config.inc.php.erb'),
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => Git::Clone['roundcubemail'],
-    }
-
-    ssl::wildcard { 'roundcubemail wildcard': }
+    ssl::wildcard { 'snappymail wildcard': }
 
     nginx::site { 'mail':
         ensure => present,
-        source => 'puppet:///modules/roundcubemail/mail.wikiforge.net.conf',
+        source => 'puppet:///modules/snappymail/mail.wikiforge.net.conf',
     }
 
-    nginx::site { 'roundcubemail':
+    nginx::site { 'snappymail':
         ensure => present,
-        source => 'puppet:///modules/roundcubemail/roundcubemail.conf',
+        source => 'puppet:///modules/snappymail/snappymail.conf',
     }
 
-    file { '/var/log/roundcubemail':
+    file { '/var/lib/snappymail':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0640',
+    }
+
+    file { '/var/log/snappymail':
         ensure  => directory,
         owner   => 'www-data',
         group   => 'www-data',
@@ -188,10 +151,10 @@ class roundcubemail (
         require => Package['nginx'],
     }
 
-    logrotate::conf { 'roundcubemail':
+    logrotate::conf { 'snappymail':
         ensure  => present,
-        source  => 'puppet:///modules/roundcubemail/roundcubemail.logrotate.conf',
-        require => File['/var/log/roundcubemail'],
+        source  => 'puppet:///modules/snappymail/snappymail.logrotate.conf',
+        require => File['/var/log/snappymail'],
     }
 
     monitoring::services { 'webmail.inside.wf HTTPS':
