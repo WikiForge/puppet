@@ -7,7 +7,6 @@ class role::mail {
     include dovecot
     include prometheus::exporter::postfix
 
-
     ferm::service { 'smtp':
         proto => 'tcp',
         port  => '25',
