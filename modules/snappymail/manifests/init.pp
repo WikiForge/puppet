@@ -118,10 +118,10 @@ class snappymail {
     ])
 
     file { '/usr/share/snappymail/include.php':
-        ensure  => present,
+        ensure => present,
         source => 'puppet:///modules/snappymail/include.php',
-        owner   => 'www-data',
-        group   => 'www-data',
+        owner  => 'www-data',
+        group  => 'www-data',
     }
 
     ssl::wildcard { 'snappymail wildcard': }
