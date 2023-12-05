@@ -68,7 +68,7 @@ class mediawiki::jobqueue::runner (
             stdlib::ensure_packages(
                 'boto3',
                 {
-                    ensure   => '1.26.144',
+                    ensure   => '1.33.7',
                     provider => 'pip3',
                     require  => Package['python3-pip'],
                 },
