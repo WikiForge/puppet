@@ -5,7 +5,7 @@ flake8==6.1.0
 flake8-unused-arguments==0.0.13
 flake8-sfs==1.0.0
 flake8-builtins==2.2.0
-flake8-commas==2.1.0
+flake8-commas==2.1.0; python_version < '3.12'
 flake8-comprehensions==3.14.0
 flake8-fixme==1.1.1
 flake8-multiline-containers==0.0.19
