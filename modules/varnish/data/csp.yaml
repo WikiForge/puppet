@@ -124,6 +124,7 @@ frame-src:
   - 'www.bing.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'player.vimeo.com'
 
 connect-src:
   - "'self'"
