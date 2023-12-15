@@ -26,7 +26,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 3;
 	.threshold = 2;
-        .initial = 2;
+	.initial = 2;
 	.expected_response = 204;
 }
 
@@ -38,24 +38,30 @@ backend <%= name %> {
 	.probe = <%= property['probe'] %>;
 <%- end -%>
 }
+
+<%- if property['xdebug'] -%>
+backend <%= name %>_test {
+	.host = "127.0.0.1";
+	.port = "<%= property['port'] %>";
+}
+<%- end -%>
 <%- end -%>
 
-# Initialise vcl
+# Initialize vcl
 sub vcl_init {
 	new mediawiki = directors.random();
-	new thumb = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['pool'] -%>
-	mediawiki.add_backend(<%= name %>, 1);
-<%- end -%>
-<%- if property['thumb'] -%>
-	thumb.add_backend(<%= name %>, 1);
+	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
 }
 
 # Debug ACL: those exempt from requiring an access key
 acl debug {
+	# cloud1
+	"208.110.84.234";
+
 <%- @backends.each_pair.with_index do |(name, property), index| -%>
 	# <%= name %>
 	"<%= property['ip_address'] %>";
@@ -86,7 +92,7 @@ sub evaluate_cookie {
 		unset req.http.X-Orig-Cookie;
 		if (req.http.Cookie) {
 			set req.http.X-Orig-Cookie = req.http.Cookie;
-			if (req.http.Cookie ~ "([Ss]ession|Token)=") {
+			if (req.http.Cookie ~ "([sS]ession|Token)=") {
 				set req.http.Cookie = "Token=1";
 			} else {
 				unset req.http.Cookie;
@@ -111,21 +117,28 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
-	# Exempts rate limit for IABot
-	if (
-		((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.org") || req.url ~ "^/(w/)?(api|index)\.php")
-		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-	) {
-		if (req.url ~ "^/(wiki/)?\S+\:MathShowImage\?hash=[0-9a-z]+&mode=mathml") {
-			# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
-			if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
-				return (synth(429, "Varnish Rate Limit Exceeded"));
-			}
-		} else {
-			# Fallback
-			if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 24, 2s)) {
-				return (synth(429, "Varnish Rate Limit Exceeded"));
+	# Allow higher limits for static.wikiforge.net
+	if (req.http.Host == "static.wikiforge.net") {
+		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
+			return (synth(429, "Varnish Rate Limit Exceeded"));
+		}
+	} else {
+		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
+		# Exempts rate limit for IABot
+		if (
+			((req.url ~ "^/(wiki)?" && req.url !~ "^/w/" && req.url !~ "^/(1\.\d{2,})/" && req.http.Host != "wikiforge.net") || req.url ~ "^/(w/)?(api|index)\.php")
+			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+		) {
+			if (req.url ~ "^/(wiki/)?\S+\:MathShowImage\?hash=[0-9a-z]+&mode=mathml") {
+				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
+				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
+					return (synth(429, "Varnish Rate Limit Exceeded"));
+				}
+			} else {
+				# Fallback
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 24, 2s)) {
+					return (synth(429, "Varnish Rate Limit Exceeded"));
+				}
 			}
 		}
 	}
@@ -133,25 +146,47 @@ sub rate_limit {
 
 # Artificial error handling/redirects within Varnish
 sub vcl_synth {
-	if (resp.status == 752) {
-		set resp.http.Location = resp.reason;
-		set resp.status = 302;
-		return (deliver);
-	}
+	if (req.method != "PURGE") {
+		set resp.http.X-CDIS = "int";
 
-	// Homepage redirect to commons
-	if (resp.reason == "Commons Redirect") {
-		set resp.reason = "Moved Permanently";
-		set resp.http.Location = "https://commons.wikiforge.net/";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-	}
+		if (resp.status == 752) {
+			set resp.http.Location = resp.reason;
+			set resp.status = 302;
+			return (deliver);
+		}
 
-	if (resp.reason == "Main Page Redirect") {
-		set resp.reason = "Moved Permanently";
-		set resp.http.Location = "https://wikitide.org/";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
+		// Homepage redirect to WikiForge Hub
+		if (resp.reason == "WikiForge Hub Redirect") {
+			set resp.reason = "Moved Permanently";
+			set resp.http.Location = "https://hub.wikiforge.net/";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+		}
+
+		if (resp.reason == "Main Page Redirect") {
+			set resp.reason = "Moved Permanently";
+			set resp.http.Location = "https://wikiforge.net/";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+		}
+
+		// Handle CORS preflight requests
+		if (
+			req.http.Host == "static.wikiforge.net" &&
+			resp.reason == "CORS Preflight"
+		) {
+			set resp.reason = "OK";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+
+			// allow Range requests, and avoid other CORS errors when debugging with X-WikiForge-Debug
+			set resp.http.Access-Control-Allow-Origin = "*";
+			set resp.http.Access-Control-Allow-Headers = "Range,X-WikiForge-Debug";
+			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+			set resp.http.Access-Control-Max-Age = "86400";
+		} else {
+			call add_upload_cors_headers;
+		}
 	}
 }
 
@@ -166,32 +201,94 @@ sub recv_purge {
 	}
 }
 
+sub normalize_request_nonmisc {
+    // Sort query parameters to improve cache efficiency.
+    set req.url = std.querysort(req.url);
+}
+
 # Main MediaWiki Request Handling
 sub mw_request {
 	call rate_limit;
 	call mobile_detection;
+
+	call normalize_request_nonmisc;
 	
 	# Assigning a backend
-
-	if (req.http.X-WikiForge-Debug-Access-Key == "<%= @debug_access_key %>" || client.ip ~ debug) {
+	if (req.http.X-WikiForge-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ debug) {
 <%- @backends.each_pair do | name, property | -%>
-		if (req.http.X-WikiForge-Debug == "<%= name %>.wikiforge.net") {
-			set req.backend_hint = <%= name %>;
+<%- if property['xdebug'] -%>
+		if (req.http.X-WikiForge-Debug == "<%= name %>.inside.wf") {
+			set req.backend_hint = <%= name %>_test;
 			return (pass);
 		}
 <%- end -%>
-	}
-
-	# Handling thumb_handler.php requests
-	if (req.url ~ "^/((1\.\d{2,})|w)/thumb_handler.php") {
-		set req.backend_hint = thumb.backend();
+<%- end -%>
 	} else {
-		set req.backend_hint = mediawiki.backend();
+		unset req.http.X-WikiForge-Debug;
 	}
 
-	# Don't cache a non-GET or HEAD request
-	if (req.method != "GET" && req.method != "HEAD") {
-		return (pass);
+	set req.backend_hint = mediawiki.backend();
+
+	# Rewrite hostname to static.wikiforge.net for caching
+	if (req.url ~ "^/static/") {
+		set req.http.Host = "static.wikiforge.net";
+	}
+
+	# Numerous static.wikiforge.net specific code
+	if (req.http.Host == "static.wikiforge.net") {
+		unset req.http.X-Range;
+
+		if (req.http.Range) {
+			set req.hash_ignore_busy = true;
+		}
+
+		# We can do this because static.wikiforge.net should not be capable of serving such requests anyway
+		# This could also increase cache hit rates as Cookies will be stripped entirely
+		unset req.http.Cookie;
+		unset req.http.Authorization;
+
+		# CORS Prelight
+		if (req.method == "OPTIONS" && req.http.Origin) {
+			return (synth(200, "CORS Preflight"));
+		}
+
+		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
+		# required for Extension:MultiMediaViewer
+		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
+			set req.http.X-Content-Disposition = "attachment";
+		}
+
+		// Strip away all query parameters
+		set req.url = regsub(req.url, "\?.*$", "");
+		
+		// Replace double slashes
+		set req.url = regsuball(req.url, "/{2,}", "/");
+
+		// Thumb fixups
+		if (req.url ~ "(?i)/thumb/") {
+			// Normalize end of thumbnail URL (redundant filename)
+			// Lowercase last part of the URL, to avoid case variations on extension or thumbnail parameters
+			// eg. /hubwiki/thumb/0/06/Foo.jpg/120px-FOO.JPG => /hubwiki/thumb/0/06/Foo.jpg/120px-foo.jpg
+			set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+
+			// Copy canonical filename from beginning of URL to thumbnail parameters at the end
+			// eg. /hubwiki/thumb/0/06/Foo.jpg/120px-bar.jpg => /hubwiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg
+			// Skips timestamps for archived files
+			// eg. /hubwiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-bar.jpg => /hubwiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-Foo.jpg.jpg
+			set req.url = regsub(req.url, "/(archive/\w/\w\w/\d{14}(?:%21|!))?([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-[-]?(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1\2/\3\2.\4");
+
+			// Last pass, clean up any redundant extension
+			// .jpg.jpg => .jpg, .JPG.jpg => .JPG
+			// eg. /hubwiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg => /hubwiki/thumb/0/06/Foo.jpg/120px-Foo.jpg
+			if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
+				set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
+			}
+		}
+
+		// Fixup borked client Range: headers
+		if (req.http.Range ~ "(?i)bytes:") {
+			set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
+		}
 	}
 
 	# If a user is logged out, do not give them a cached page of them logged in
@@ -199,13 +296,35 @@ sub mw_request {
 		unset req.http.If-Modified-Since;
 	}
 
+	# Don't cache a non-GET or HEAD request
+	if (req.method != "GET" && req.method != "HEAD") {
+		return (pass);
+	}
+
+	# Do not cache dumps and also pipe requests.
+	if ( req.http.Host == "static.wikiforge.net" && req.url ~ "^/.*wiki/dumps" ) {
+		return (pipe);
+	}
+
+	# Don't cache certain things on static
+	if (
+		req.http.Host == "static.wikiforge.net" &&
+		(
+			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
+			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
+		)
+	) {
+		return (pass);
+	}
+
 	# We can rewrite those to one domain name to increase cache hits
 	if (req.url ~ "^/(1\.\d{2,})/(skins|resources|extensions)/" ) {
 		set req.http.Host = "hub.wikiforge.net";
 	}
 
-	# api & rest.php are not safe when cached
-	if (req.url ~ "^/w/(api|rest).php/.*" ) {
+	call evaluate_cookie;
+
+	if (req.url ~ "^/w/rest.php/.*" ) {
 		return (pass);
 	}
 
@@ -214,7 +333,9 @@ sub mw_request {
 		return (pass);
 	}
 
-	call evaluate_cookie;
+	if (req.http.Authorization ~ "^OAuth ") {
+		return (pass);
+	}
 }
 
 # Initial sub route executed on a Varnish request, the heart of everything
@@ -223,56 +344,75 @@ sub vcl_recv {
 
 	unset req.http.Proxy; # https://httpoxy.org/
 
+	unset req.http.X-CDIS;
+
+	if (req.restarts == 0) {
+		unset req.http.X-Subdomain;
+	}
+
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.wikiforge.net" && req.url == "/check") {
 		return (synth(200));
 	}
 
-	if (req.http.host == "meta.wikitide.org" && req.url == "/wiki/WikiTide_Meta" && req.http.User-Agent ~ "(G|g)ooglebot") {
+	if (req.http.host == "hub.wikiforge.net" && req.url == "/wiki/WikiForge" && req.http.User-Agent ~ "(G|g)ooglebot") {
 		return (synth(301, "Main Page Redirect"));
 	}
 
-	# Normalise Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding) {
-		if (req.http.Accept-Encoding ~ "gzip") {
-			set req.http.Accept-Encoding = "gzip";
-		} elseif (req.http.Accept-Encoding ~ "deflate") {
-			set req.http.Accept-Encoding = "deflate";
-		} else {
-			# We don't understand this
-			unset req.http.Accept-Encoding;
-		}
+	if (req.http.host == "static.wikiforge.net" && req.url == "/") {
+		return (synth(301, "WikiForge Hub Redirect"));
 	}
 
 	if (
 		req.url ~ "^/\.well-known" ||
-		req.http.Host == "ssl.wikiforge.net" ||
-		req.http.Host == "acme.wikiforge.net"
+		req.http.Host == "ssl.inside.wf" ||
+		req.http.Host == "acme.inside.wf"
 	) {
-		set req.backend_hint = puppet11;
+		set req.backend_hint = puppet1;
 		return (pass);
 	}
 
- 	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1|test)\.(wikiforge\.net|wikitide\.org)") {
-		set req.backend_hint = test11;
-                return (pass);
-        }
+	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1|test)\.(wikiforge\.net)") {
+		set req.backend_hint = test1;
+		return (pass);
+	}
 
-	#if (req.http.Host ~ "^(.*\.)?nexttide\.org") {
-	#	set req.backend_hint = test11;
-	#	return (pass);
-	#}
+	# Only cache js files from Matomo
+	if (req.http.Host == "analytics.inside.wf") {
+		set req.backend_hint = matomo1;
+
+		# Yes, we only care about this file
+		if (req.url ~ "^/matomo.js") {
+			return (hash);
+		} else {
+			return (pass);
+		}
+	}
+
+	# Do not cache requests from this domain
+	if (req.http.Host == "monitoring.inside.wf" || req.http.Host == "grafana.inside.wf") {
+		# set req.backend_hint = mon1;
+
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
+
+		return (pass);
+	}
 
 	# Do not cache requests from this domain
 	if (
-		req.http.Host == "issue-tracker.wikitide.org" ||
-		req.http.Host == "phorge-static.wikitide.org" ||
-		req.http.Host == "support-archive.wikiforge.net" ||
 		req.http.Host == "support.wikiforge.net" ||
 		req.http.Host == "phorge-static.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
 	) {
-		set req.backend_hint = phorge11;
+		set req.backend_hint = phorge1;
+		return (pass);
+	}
+
+	# Do not cache requests from this domain
+	if (req.http.Host == "webmail.inside.wf") {
+		set req.backend_hint = mail1;
 		return (pass);
 	}
 
@@ -284,18 +424,18 @@ sub vcl_recv {
 
 # Defines the uniqueness of a request
 sub vcl_hash {
-	# FIXME: try if we can make this ^/(wiki/)? only?
-	if ((req.http.Host != "wikiforge.net" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+	# FIXME: try if we can make this ^/wiki/ only?
+	if ((req.http.Host != "wikiforge.net" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
 
 sub vcl_pipe {
-    // for websockets over pipe
-    if (req.http.upgrade) {
-        set bereq.http.upgrade = req.http.upgrade;
-        set bereq.http.connection = req.http.connection;
-    }
+	// for websockets over pipe
+	if (req.http.upgrade) {
+		set bereq.http.upgrade = req.http.upgrade;
+		set bereq.http.connection = req.http.connection;
+	}
 }
 
 # Initiate a backend fetch
@@ -305,10 +445,29 @@ sub vcl_backend_fetch {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
 		unset bereq.http.X-Orig-Cookie;
 	}
+
 	if (bereq.http.X-Range) {
 		set bereq.http.Range = bereq.http.X-Range;
 		unset bereq.http.X-Range;
 	}
+}
+
+sub mf_admission_policies {
+	// hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
+	if (bereq.http.Host == "static.wikiforge.net" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
+		// HFP
+		set beresp.http.X-CDIS = "pass";
+		return(pass(beresp.ttl));
+	}
+
+	// hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
+	if (bereq.http.Host != "static.wikiforge.net" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+		// HFP
+		set beresp.http.X-CDIS = "pass";
+		return(pass(beresp.ttl));
+	}
+
+	return (deliver);
 }
 
 # Backend response, defines cacheability
@@ -362,11 +521,6 @@ sub vcl_backend_response {
 		unset bereq.http.Cookie;
 	}
 
-	# Distribute caching re-calls where possible
-	if (beresp.ttl >= 60s) {
-		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
-	}
-
 	# Do not cache a backend response if HTTP code is above 400, except a 404, then limit TTL
 	if (beresp.status >= 400 && beresp.status != 404) {
 		set beresp.uncacheable = true;
@@ -374,25 +528,32 @@ sub vcl_backend_response {
 		set beresp.ttl = 10m;
 	}
 
-	# If we have a cookie, we can't cache it, unless we can?
-	# We can cache when cookies are stripped, and no other cookies are present
-	if (
-		bereq.http.Cookie == "Token=1"
-		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
-	) {
-		# We can cache when:
-		# * Wiki is public; and
-		# * action=raw
-		if (
-			beresp.http.X-Wiki-Visibility == "Public"
-			&& bereq.url ~ "(&|\?)action=raw"
-		) {
-			unset bereq.http.Cookie;
-			unset beresp.http.Set-Cookie;
-		} else {
-			return(pass(607s));
+	// Set keep, which influences the amount of time objects are kept available
+	// in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
+	// TTL.
+	if (beresp.ttl > 0s) {
+		if (beresp.http.ETag || beresp.http.Last-Modified) {
+			if (beresp.ttl < 1d) {
+				set beresp.keep = beresp.ttl;
+			} else {
+				set beresp.keep = 1d;
+			}
 		}
-	} elseif (beresp.http.Set-Cookie) {
+
+		// Hard TTL cap on all fetched objects (default 1d)
+		if (beresp.ttl > 1d) {
+			set beresp.ttl = 1d;
+		}
+
+		set beresp.grace = 20m;
+	}
+
+	# Distribute caching re-calls where possible
+	if (beresp.ttl >= 60s) {
+		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
+	}
+
+	if (beresp.http.Set-Cookie) {
 		set beresp.uncacheable = true; # We do this just to be safe - but we should probably log this to eliminate it?
 	}
 
@@ -424,6 +585,7 @@ sub vcl_backend_response {
 		&& (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
 			set beresp.do_gzip = true;
 	}
+
 	// SVGs served by MediaWiki are part of the interface. That makes them
 	// very hot objects, as a result the compression time overhead is a
 	// non-issue. Several of them tend to be requested at the same time,
@@ -447,25 +609,49 @@ sub vcl_backend_response {
 	//    avoids us accidentally replacing a good stale/grace object with
 	//    an hfp (and then repeatedly passing on potentially-cacheable
 	//    content) due to an isolated 5xx response.
-	if (beresp.ttl <= 0s && beresp.status < 500) {
+	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
 		return(pass(601s));
 	}
 
-	// hit-for-pass objects >= 67108864 size.
-	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 67108864) {
-		// HFP
-		return(pass(beresp.ttl));
+	if (beresp.ttl > 60s && (bereq.url ~ "mobileaction=" || bereq.url ~ "useformat=")) {
+		set beresp.ttl = 60 s;
 	}
 
-	return (deliver);
+	// set a 607s hit-for-pass object based on response conditions in vcl_backend_response:
+	//    Token=1 + Vary:Cookie:
+	//    All requests with real login session|token cookies share the
+	//    Cookie:Token=1 value for Vary purposes.  This allows them to
+	//    share a single hit-for-pass object here if the response
+	//    shouldn't be shared between users (Vary:Cookie).
+	if (
+		bereq.http.Cookie == "Token=1"
+		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
+	) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
+		// HFP
+		return(pass(607s));
+	}
+
+	// It is important that this happens after the code responsible for translating TTL<=0
+	// (uncacheable) responses into hit-for-pass.
+	call mf_admission_policies;
+
+	// return (deliver);
 }
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
 	if (req.method != "PURGE") {
+		if(req.http.X-CDIS == "hit") {
+			// obj.hits isn't known in vcl_hit, and not useful for other states
+			set req.http.X-CDIS = "hit/" + obj.hits;
+		}
+
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
 			set req.http.X-CDIS = resp.http.X-CDIS;
@@ -475,6 +661,44 @@ sub vcl_deliver {
 		if (!req.http.X-CDIS) {
 			set req.http.X-CDIS = "bug";
 		}
+
+		if (resp.http.X-Cache-Int) {
+			set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		} else {
+			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		}
+
+		set resp.http.X-Cache = resp.http.X-Cache-Int;
+
+		set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9] (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
+
+		unset resp.http.X-Cache-Int;
+		unset resp.http.Via;
+
+		if (resp.http.X-Cache-Status ~ "hit$") {
+			set resp.http.X-Cache-Status = "hit-front";
+		} elsif (resp.http.X-Cache-Status ~ "hit,[^,]+$") {
+			set resp.http.X-Cache-Status = "hit-local";
+		} elsif (resp.http.X-Cache-Status ~ "hit") {
+			set resp.http.X-Cache-Status = "hit-remote";
+		} elsif (resp.http.X-Cache-Status ~ "int$") {
+			set resp.http.X-Cache-Status = "int-front";
+		} elsif (resp.http.X-Cache-Status ~ "int,[^,]+$") {
+			set resp.http.X-Cache-Status = "int-local";
+		} elsif (resp.http.X-Cache-Status ~ "int") {
+			set resp.http.X-Cache-Status = "int-remote";
+		} elsif (resp.http.X-Cache-Status ~ "miss$") {
+			set resp.http.X-Cache-Status = "miss";
+		} elsif (resp.http.X-Cache-Status ~ "pass$") {
+			set resp.http.X-Cache-Status = "pass";
+		} else {
+			set resp.http.X-Cache-Status = "unknown";
+		}
+	}
+
+	// Provides custom error html if error response has no body
+	if (resp.http.Content-Length == "0" && resp.status >= 400) {
+		return(synth(resp.status));
 	}
 
 	if (resp.http.X-Content-Range) {
@@ -521,14 +745,6 @@ sub vcl_deliver {
 		unset resp.http.Set-Cookie;
 	}
 
-	# Set X-Cache from request
-	set resp.http.X-Cache = req.http.X-Cache;
-
-	# Identify uncacheable content
-	if (obj.uncacheable) {
-		set resp.http.X-Cache = resp.http.X-Cache + " UNCACHEABLE";
-	}
-
 	if (req.http.X-Content-Disposition == "attachment") {
 		set resp.http.Content-Disposition = "attachment";
 	}
@@ -556,48 +772,59 @@ sub add_upload_cors_headers {
 # Hit code, default logic is appended
 sub vcl_hit {
 	set req.http.X-CDIS = "hit";
-
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
-
-	# Is the request graced?
-	if (obj.ttl <= 0s && obj.grace > 0s) {
-		set req.http.X-Cache = req.http.X-Cache + " GRACE";
-	}
 }
 
 # Miss code, default logic is appended
 sub vcl_miss {
 	set req.http.X-CDIS = "miss";
 
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
+	// Convert range requests into pass
+	if (req.http.Range) {
+		// Varnish strips the Range header before copying req into bereq. Save it into
+		// a header and restore it in vcl_backend_fetch
+		set req.http.X-Range = req.http.Range;
+		return (pass);
+	}
 
-    // Convert range requests into pass
-    if (req.http.Range) {
-        // Varnish strips the Range header before copying req into bereq. Save it into
-        // a header and restore it in vcl_backend_fetch
-        set req.http.X-Range = req.http.Range;
-        return (pass);
-}
+	return (fetch);
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
 	set req.http.X-CDIS = "pass";
 
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
+	return (fetch);
 }
 
 # Synthetic code, default logic is appended
 sub vcl_synth {
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> SYNTH";
+	if (req.method != "PURGE") {
+		set resp.http.X-CDIS = "int";
+
+		// we copy through from beresp->resp->req here for the initial hit-for-pass case
+		if (resp.http.X-CDIS) {
+			set req.http.X-CDIS = resp.http.X-CDIS;
+			unset resp.http.X-CDIS;
+		}
+
+		if (!req.http.X-CDIS) {
+			set req.http.X-CDIS = "bug";
+		}
+
+		// X-Cache-Int gets appended-to as we traverse cache layers
+		if (resp.http.X-Cache-Int) {
+			set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		} else {
+			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		}
+	}
+
+	return (deliver);
 }
 
 # Backend response when an error occurs
 sub vcl_backend_error {
+	set beresp.http.X-CDIS = "int";
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
 
 	synthetic( {"<!DOCTYPE html>

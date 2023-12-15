@@ -2,8 +2,10 @@
 class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '22G',
+    Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
 ) {
     include varnish::nginx
+    include prometheus::exporter::varnish
 
     stdlib::ensure_packages(['varnish', 'varnish-modules'])
 
@@ -17,6 +19,25 @@ class varnish (
         mode   => '0555',
     }
 
+    # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
+    file { '/var/lib/varnish':
+        ensure  => directory,
+        owner   => 'varnish',
+        group   => 'varnish',
+        require => Package['varnish'],
+    }
+
+    mount { '/var/lib/varnish':
+        ensure  => mounted,
+        device  => 'tmpfs',
+        fstype  => 'tmpfs',
+        options => 'noatime,defaults,size=256M',
+        pass    => 0,
+        dump    => 0,
+        require => File['/var/lib/varnish'],
+        notify  => Service['varnish'],
+    }
+
     $module_path = get_module_path($module_name)
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
@@ -24,6 +45,14 @@ class varnish (
     $interval_timeout = lookup('varnish::interval-timeout')
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
+
+    # (1024.0 * 1024.0) converts to megabytes.
+    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
+    if ($mem_gb < 90.0) {
+        $v_mem_gb = 1
+    } else {
+        $v_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
+    }
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
@@ -39,10 +68,8 @@ class varnish (
     }
 
     # TODO: On bigger memory hosts increase Transient size
-    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,${v_mem_gb}G"
 
-    # Default is 5000 in varnish
-    $max_threads = max(floor($facts['processors']['count'] * 250), 5000)
     systemd::service { 'varnish':
         ensure         => present,
         content        => systemd_template('varnish'),

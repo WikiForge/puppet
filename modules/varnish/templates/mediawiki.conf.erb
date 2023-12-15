@@ -9,10 +9,11 @@ server {
 	listen [::]:<%= property['port'] %> deferred backlog=16384 reuseport;
 
 	server_name localhost;
+
 	access_log  off;
 
 	location / {
-		proxy_pass https://<%= name %>.wikitide.net;
+		proxy_pass https://<%= name %>.inside.wf;
 		proxy_http_version 1.1;
 		proxy_set_header Connection $connection_upgrade;
 		proxy_set_header Upgrade $http_upgrade;
@@ -35,7 +36,7 @@ server {
 	server_name ~.;
 
 	location ~ ^/check$ {
-                proxy_pass http://127.0.0.1:81;
+		proxy_pass http://127.0.0.1:81;
 		proxy_http_version 1.1;
 		proxy_set_header Connection close;
 		proxy_set_header Host $host;
