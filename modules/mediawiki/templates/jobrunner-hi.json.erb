@@ -11,12 +11,32 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
+                "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "parsoidCachePrewarm",
+                "PublishStashedFile",
                 "RecordLintJob",
-                "RequestWikiAIJob",
                 "refreshLinks",
+                "refreshLinksDynamic",
+                "refreshLinksPrioritized",
+                "uploadFromUrl",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized"
+                "webVideoTranscodePrioritized",
+                "NamespaceMigrationJob",
+                "smw.changePropagationClassUpdate"
+            ],
+            "low-priority": [
+                "htmlCacheUpdate"
+            ]
+        },
+        "html": {
+            // Number of runner processes in this group
+            "runners": 1,
+            "include": [
+                "htmlCacheUpdate",
+                "refreshLinks",
+                "refreshLinksDynamic",
+                "refreshLinksPrioritized"
             ]
         },
         "hi": {
@@ -25,9 +45,31 @@
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
-                "RequestWikiAIJob",
-                "RecordLintJob",
-                "refreshLinks"
+                "RecordLintJob"
+            ]
+        },
+        "managewiki": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "NamespaceMigrationJob"
+            ]
+        },
+        "parsoidcache": {
+            // Number of runner processes in this group
+            "runners": 4,
+            // Job types to include ("*" means "all")
+            "include": [
+                "parsoidCachePrewarm"
+            ]
+        },
+        "smw": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "smw.changePropagationClassUpdate"
             ]
         },
         "transcode": {
@@ -36,33 +78,55 @@
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
             ]
+        },
+        "upload": {
+            "runners": 1,
+            "include": [
+                "AssembleUploadChunks",
+                "PublishStashedFile",
+                "uploadFromUrl"
+            ]
         }
     },
 
     "limits": {
         // How many times to let jobs be recycled before abandoning
         "attempts": {
-            "*": 3
+            "*": 3,
+            "renameUser": 6
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
             "*": 3600,
             "DataDumpGenerateJob": 86400,
+            "NamespaceMigrationJob": 9000,
+            "parsoidCachePrewarm": 9000,
+            "refreshLinks": 9000,
+            "refreshLinksDynamic": 9000,
+            "refreshLinksPrioritized": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130,
-            "DataDumpGenerateJob": 9000,
+            "*": 300,
+            "DataDumpGenerateJob": 21600,
+            "NamespaceMigrationJob": 9000,
+            "parsoidCachePrewarm": 9000,
+            "refreshLinks": 9000,
+            "refreshLinksDynamic": 9000,
+            "refreshLinksPrioritized": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "300M",
-            "RequestWikiAIJob": "500M",
-            "refreshLinks": "500M"
+            "*": "500M",
+            "DataDumpGenerateJob": "512M",
+            "parsoidCachePrewarm": "1400M",
+            "refreshLinks": "1400M",
+            "refreshLinksDynamic": "1400M",
+            "refreshLinksPrioritized": "1400M"
         }
     },
 
@@ -79,5 +143,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -15 ionice php <%= @runner %>/srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --procs=1 --result=json"
+    "dispatcher": "nice -15 ionice php <%= @runner %>/srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }
