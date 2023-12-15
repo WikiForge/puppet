@@ -28,35 +28,36 @@ memcached_servers:
 varnish::interval-check: '5s'
 varnish::interval-timeout: '5s'
 varnish::backends:
-  mw11:
+  mw1:
     port: 8100
     probe: mwhealth
     pool: false
-    thumb: true
+    xdebug: true
     ip_address: 2604:4300:a:37::100
-  mw12:
+  mw2:
     port: 8101
     probe: mwhealth
     pool: false
-    thumb: true
+    xdebug: true
     ip_address: 2604:4300:a:37::106
-  mw13:
+  mw3:
     port: 8102
     probe: mwhealth
-    pool: true
-    thumb: true
+    pool: false
+    xdebug: true
     ip_address: 2604:4300:a:37::119
-  test11:
+  test1:
     port: 8180
     probe: false
-    thumb: true
+    pool: false
+    xdebug: true
     ip_address: 2604:4300:a:37::108
-  phorge11:
+  phorge1:
     port: 8200
     probe: false
     pool: false
     ip_address: 2604:4300:a:37::107
-  puppet11:
+  puppet1:
     port: 8201
     probe: false
     pool: false
