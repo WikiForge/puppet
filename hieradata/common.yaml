@@ -68,6 +68,12 @@ varnish::backends:
     probe: false
     pool: false
     ip_address: 2604:4300:a:37::100
+  mail1:
+    port: 8102
+    probe: mwhealth
+    pool: false
+    xdebug: true
+    ip_address: 2604:4300:a:37::109
 
 # Logging
 base::syslog::syslog_host: [ '10.0.0.113:10514' ]

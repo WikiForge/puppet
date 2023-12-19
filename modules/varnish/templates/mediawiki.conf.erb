@@ -13,7 +13,7 @@ server {
 	access_log  off;
 
 	location / {
-		proxy_pass https://<%= name %>.inside.wf;
+		proxy_pass https://<%= name %>-public.inside.wf;
 		proxy_http_version 1.1;
 		proxy_set_header Connection $connection_upgrade;
 		proxy_set_header Upgrade $http_upgrade;
