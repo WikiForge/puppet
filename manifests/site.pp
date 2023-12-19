@@ -10,6 +10,11 @@ node 'bast1.inside.wf' {
     include role::bastion
 }
 
+node /^cp[1-6]\.inside\.wf$/ {
+    include base
+    include role::varnish
+}
+
 node 'db1.inside.wf' {
     include base
     include role::db
@@ -55,12 +60,12 @@ node 'mon1.inside.wf' {
     include role::icinga2
 }
 
-node /^mw[123]\.inside\.wf$/ {
+node /^mw(?:dedi[1-9]|[1-9])\.inside\.wf$/ {
     include base
     include role::mediawiki
 }
 
-node 'ns1.inside.wf' {
+node /^ns[12]\.inside\.wf$/ {
     include base
     include role::dns
 }
