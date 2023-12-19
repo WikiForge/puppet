@@ -1,0 +1,7 @@
+varnish::cache_file_size: '10G'
+varnish::thread_pool_max: 15000
+nginx::worker_processes: 4
+
+base::syslog::rsyslog_udp_localhost: true
+base::firewall::use_public_bastion: true
+nginx::logrotate_number: 2
