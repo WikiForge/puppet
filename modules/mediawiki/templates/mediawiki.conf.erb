@@ -112,6 +112,45 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
+	server_name *.inside.wf inside.wf;
+	root /srv/mediawiki/landing;
+	index index.php index.html;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/inside.wf.crt;
+	ssl_certificate_key /etc/ssl/private/inside.wf.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+		rewrite ^(.*)$ /robots.php;
+	}
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
+	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
 	server_name *.your.wf your.wf;
 	root /srv/mediawiki/landing;
 	index index.php index.html;
