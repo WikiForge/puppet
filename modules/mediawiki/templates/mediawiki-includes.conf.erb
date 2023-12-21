@@ -94,3 +94,19 @@ location /static/ {
 location ~ ^/entity/(.*) {
 	return 301 /wiki/Special:EntityData/$1;
 }
+
+# Client errors
+error_page 400 /ErrorPages/400.html;
+error_page 401 /ErrorPages/401.html;
+error_page 403 /ErrorPages/403.html;
+error_page 404 /ErrorPages/404.php;
+error_page 405 /ErrorPages/405.html;
+error_page 406 /ErrorPages/406.html;
+error_page 410 /ErrorPages/410.html;
+error_page 413 /ErrorPages/413.html;
+error_page 414 /ErrorPages/414.html;
+
+# Server errors
+error_page 500 /ErrorPages/500.html;
+error_page 502 /ErrorPages/502.html;
+error_page 504 /ErrorPages/504.html;
