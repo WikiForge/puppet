@@ -31,13 +31,13 @@ varnish::backends:
   mw1:
     port: 8100
     probe: mwhealth
-    pool: false
+    pool: true
     xdebug: true
     ip_address: 2604:4300:a:37::101
   mw2:
     port: 8101
     probe: mwhealth
-    pool: false
+    pool: true
     xdebug: true
     ip_address: 2604:4300:a:37::102
   mwdedi1:
