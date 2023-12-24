@@ -22,4 +22,8 @@ class irc::irclogserverbot(
         content => systemd_template('irclogserverbot'),
         restart => true,
     }
+
+    monitoring::nrpe { 'IRC Log Server Bot':
+        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1'
+    }
 }
