@@ -44,4 +44,8 @@ class irc::irclogbot {
         content => systemd_template('logbot'),
         restart => true,
     }
+
+    monitoring::nrpe { 'IRC Log Bot':
+        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1'
+    }
 }
