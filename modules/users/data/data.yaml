@@ -55,7 +55,7 @@ users:
     uid: 1010
     name: agent
     realname: Agent
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2EL//7xW4oTJdwze3Mj//PE5N93Qogre1CJbB6ySga]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAZSM2hWwLO7GPxwOmMGKDGFl22b4Minb/JvYZQYZmhF]
   rman41:
     ensure: absent
     uid: 1011
