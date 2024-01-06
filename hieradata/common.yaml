@@ -81,3 +81,12 @@ varnish::backends:
 
 # Logging
 base::syslog::syslog_host: [ '10.0.0.113:10514' ]
+
+# Swift
+# TODO: Add support for class based hiera
+swift::storage::object_server_default_workers: 100
+
+role::swift::stats_reporter_host: swiftproxy1.wikitide.net
+
+swift::storage::devices:
+  - sda

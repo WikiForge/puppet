@@ -117,8 +117,8 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.wikiforge.net
-	if (req.http.Host == "static.wikiforge.net") {
+	# Allow higher limits for static.inside.wf
+	if (req.http.Host == "static.inside.wf") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -172,7 +172,7 @@ sub vcl_synth {
 
 		// Handle CORS preflight requests
 		if (
-			req.http.Host == "static.wikiforge.net" &&
+			req.http.Host == "static.inside.wf" &&
 			resp.reason == "CORS Preflight"
 		) {
 			set resp.reason = "OK";
@@ -229,20 +229,20 @@ sub mw_request {
 
 	set req.backend_hint = mediawiki.backend();
 
-	# Rewrite hostname to static.wikiforge.net for caching
+	# Rewrite hostname to static.inside.wf for caching
 	if (req.url ~ "^/static/") {
-		set req.http.Host = "static.wikiforge.net";
+		set req.http.Host = "static.inside.wf";
 	}
 
-	# Numerous static.wikiforge.net specific code
-	if (req.http.Host == "static.wikiforge.net") {
+	# Numerous static.inside.wf specific code
+	if (req.http.Host == "static.inside.wf") {
 		unset req.http.X-Range;
 
 		if (req.http.Range) {
 			set req.hash_ignore_busy = true;
 		}
 
-		# We can do this because static.wikiforge.net should not be capable of serving such requests anyway
+		# We can do this because static.inside.wf should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
 		unset req.http.Authorization;
@@ -302,13 +302,13 @@ sub mw_request {
 	}
 
 	# Do not cache dumps and also pipe requests.
-	if ( req.http.Host == "static.wikiforge.net" && req.url ~ "^/.*wiki/dumps" ) {
+	if ( req.http.Host == "static.inside.wf" && req.url ~ "^/.*wiki/dumps" ) {
 		return (pipe);
 	}
 
 	# Don't cache certain things on static
 	if (
-		req.http.Host == "static.wikiforge.net" &&
+		req.http.Host == "static.inside.wf" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
@@ -359,7 +359,7 @@ sub vcl_recv {
 		return (synth(301, "Main Page Redirect"));
 	}
 
-	if (req.http.host == "static.wikiforge.net" && req.url == "/") {
+	if (req.http.host == "static.inside.wf" && req.url == "/") {
 		return (synth(301, "WikiForge Hub Redirect"));
 	}
 
@@ -403,7 +403,7 @@ sub vcl_recv {
 	# Do not cache requests from this domain
 	if (
 		req.http.Host == "support.wikiforge.net" ||
-		req.http.Host == "phorge-static.wikiforge.net" ||
+		req.http.Host == "phorge-static.inside.wf" ||
 		req.http.Host == "blog.wikiforge.net"
 	) {
 		set req.backend_hint = phorge1;
@@ -454,14 +454,14 @@ sub vcl_backend_fetch {
 
 sub mf_admission_policies {
 	// hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host == "static.wikiforge.net" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
+	if (bereq.http.Host == "static.inside.wf" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
 	}
 
 	// hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host != "static.wikiforge.net" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+	if (bereq.http.Host != "static.inside.wf" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
@@ -706,7 +706,7 @@ sub vcl_deliver {
 		unset resp.http.X-Content-Range;
 	}
 
-	if ( req.http.Host == "static.wikiforge.net" ) {
+	if ( req.http.Host == "static.inside.wf" ) {
 		unset resp.http.Set-Cookie;
 		unset resp.http.Cache-Control;
 
@@ -880,7 +880,7 @@ sub vcl_backend_error {
 		<div class="container" style="padding: 70px 0; text-align: center;">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<img src="https://static.wikiforge.net/hubwiki/8/88/WikiForge_Logo.svg" width="130" height="130" alt="WikiForge Logo" />
+				<img src="https://static.inside.wf/hubwiki/8/88/WikiForge_Logo.svg" width="130" height="130" alt="WikiForge Logo" />
 				<h1>Something went wrong</h1>
 				<p class="lead">Give it a bit and try again. <a href="https://static-help.wikiforge.net/docs/errors/503">Learn more</a>.</p>
 				<a href="javascript:document.location.reload(true);" class="btn btn-outline-primary" role="button">Try this action again</a>
