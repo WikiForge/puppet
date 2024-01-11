@@ -110,6 +110,7 @@ class mediawiki {
     $mediawiki_secretkey      = lookup('passwords::mediawiki::wikiforge::secretkey')
     $hcaptcha_secretkey       = lookup('passwords::hcaptcha::secretkey')
     $shellbox_secretkey       = lookup('passwords::shellbox::secretkey')
+    $swift_password           = lookup('mediawiki::swift_password')
     $aws_s3_access_key        = lookup('mediawiki::aws_s3_access_key')
     $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
 
