@@ -25,11 +25,11 @@ class swift::proxy (
     }
 
     # Supports bullseye
-    file { '/usr/local/lib/python3.9/dist-packages/miraheze/':
+    file { '/usr/local/lib/python3.11/dist-packages/wikiforge/':
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        source  => 'puppet:///modules/swift/SwiftMedia/miraheze/',
+        source  => 'puppet:///modules/swift/SwiftMedia/wikiforge/',
         recurse => 'remote',
         notify  => Service['swift-proxy'],
     }

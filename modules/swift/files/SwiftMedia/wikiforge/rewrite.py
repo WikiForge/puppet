@@ -76,7 +76,7 @@ class _WikiForgeRewriteContext(WSGIContext):
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
-                hostname = '%s.miraheze.org' % (proj)
+                hostname = '%s.your.wf' % (proj)
                 # ok, replace the URL with just the part starting with thumb/
                 # take off the first two parts of the path.
                 encodedurl = 'https://%s/w/thumb_handler.php/%s' % (
@@ -339,9 +339,9 @@ class _WikiForgeRewriteContext(WSGIContext):
             # Create a path to our object's name.
             # Make the correct unicode string we want
             if zone:
-                 container = "miraheze-%s-%s-%s" % (proj, repo, zone)
+                 container = "wikiforge-%s-%s-%s" % (proj, repo, zone)
             else:
-                 container = "miraheze-%s-%s" % (proj, repo)
+                 container = "wikiforge-%s-%s" % (proj, repo)
             newpath = "/v1/%s/%s/%s" % (self.account, container,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
@@ -398,9 +398,9 @@ def filter_factory(global_conf, **local_conf):
     conf = global_conf.copy()
     conf.update(local_conf)
 
-    def mirahezerewrite_filter(app):
+    def wikiforgerewrite_filter(app):
         return WikiForgeRewrite(app, conf)
 
-    return mirahezerewrite_filter
+    return wikiforgerewrite_filter
 
 # vim: set expandtab tabstop=4 shiftwidth=4 autoindent:
