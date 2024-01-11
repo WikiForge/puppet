@@ -18,7 +18,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.inside.wf";
+	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
 
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;
