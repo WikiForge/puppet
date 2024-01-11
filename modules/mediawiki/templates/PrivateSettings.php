@@ -14,6 +14,9 @@ $wgHCaptchaSecretKey = '<%= @hcaptcha_secretkey %>';
 // LDAP 'write-user' password
 $wmgLdapPassword = "<%= @ldap_password %>";
 
+// Swift password for mw
+$wmgSwiftPassword = '<%= @swift_password %>';
+
 // MediaWiki secret keys
 $wgUpgradeKey = '<%= @mediawiki_upgradekey %>';
 $wgSecretKey = '<%= @mediawiki_secretkey %>';
