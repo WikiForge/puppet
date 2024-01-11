@@ -46,12 +46,10 @@ class swift::proxy (
     nginx::site { 'swift':
         ensure  => present,
         source  => 'puppet:///modules/swift/nginx/swift.conf',
-        monitor => false,
     }
 
     nginx::site { 'default':
         ensure  => absent,
-        monitor => false,
     }
 
     monitoring::services { 'HTTP':
