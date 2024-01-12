@@ -183,9 +183,9 @@ class phorge (
                 'key'          => 'wikiforge-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'mail.wikiforge.net',
+                    'host'     => 'tuesday.mxrouting.net',
                     'port'     => 587,
-                    'user'     => 'noreply',
+                    'user'     => 'noreply@wikiforge.net',
                     'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'tls',
                     'message-id' => true,
