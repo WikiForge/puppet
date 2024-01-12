@@ -420,15 +420,18 @@ sub vcl_recv {
 	# AVID
 	if (
 		req.http.Host == "www.avid.wiki" ||
-		req.http.Host == "avid.wiki"
+		req.http.Host == "avid.wiki" ||
+		req.http.Host == "avid.your.wf"
 	) {
 		set req.backend_hint = mwdedi1;
 	}
 
 	# Harry Potter
 	if (
-		req.http.Host == "www.theharrypotter.wiki" ||
-		req.http.Host == "theharrypotter.wiki"
+		req.http.Host == "harrypotter.wiki" ||
+		req.http.Host == "www.harrypotter.wiki" ||
+		req.http.Host == "theharrypotter.wiki" ||
+		req.http.Host == "www.theharrypotter.wiki"
 	) {
 		set req.backend_hint = mwdedi2;
 	}
