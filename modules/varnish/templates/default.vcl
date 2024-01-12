@@ -416,6 +416,23 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	# Redirect requests to dedicated hosts
+	# AVID
+	if (
+		req.http.Host == "www.avid.wiki" ||
+		req.http.Host == "avid.wiki"
+	) {
+		set req.backend_hint = mwdedi1;
+	}
+
+	# Harry Potter
+	if (
+		req.http.Host == "www.theharrypotter.wiki" ||
+		req.http.Host == "theharrypotter.wiki"
+	) {
+		set req.backend_hint = mwdedi2;
+	}
+
 	# MediaWiki specific
 	call mw_request;
 

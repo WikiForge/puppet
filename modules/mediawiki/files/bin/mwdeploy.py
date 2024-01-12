@@ -40,6 +40,7 @@ prod: Environment = {
         'mw1',
         'mw2',
         'mwdedi1',
+        'mwdedi2',
         'jobrunner1',
     ],
 }
