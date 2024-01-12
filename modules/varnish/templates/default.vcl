@@ -424,6 +424,7 @@ sub vcl_recv {
 		req.http.Host == "avid.your.wf"
 	) {
 		set req.backend_hint = mwdedi1;
+		return (hash);
 	}
 
 	# Harry Potter
@@ -434,6 +435,7 @@ sub vcl_recv {
 		req.http.Host == "www.theharrypotter.wiki"
 	) {
 		set req.backend_hint = mwdedi2;
+		return (hash);
 	}
 
 	# MediaWiki specific
