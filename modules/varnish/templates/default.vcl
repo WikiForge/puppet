@@ -227,7 +227,25 @@ sub mw_request {
 		unset req.http.X-WikiForge-Debug;
 	}
 
-	set req.backend_hint = mediawiki.backend();
+	# Redirect requests to dedicated hosts
+	if (
+		# AVID
+		req.http.Host == "www.avid.wiki" ||
+		req.http.Host == "avid.wiki" ||
+		req.http.Host == "avid.your.wf"
+	) {
+		set req.backend_hint = mwdedi1;
+	} elseif (
+		# Harry Potter
+		req.http.Host == "harrypotter.wiki" ||
+		req.http.Host == "www.harrypotter.wiki" ||
+		req.http.Host == "theharrypotter.wiki" ||
+		req.http.Host == "www.theharrypotter.wiki"
+	) {
+		set req.backend_hint = mwdedi2;
+	} else {
+		set req.backend_hint = mediawiki.backend();
+	}
 
 	# Rewrite hostname to static.wikiforge.net for caching
 	if (req.url ~ "^/static/") {
@@ -414,28 +432,6 @@ sub vcl_recv {
 	if (req.http.Host == "webmail.inside.wf") {
 		set req.backend_hint = mail1;
 		return (pass);
-	}
-
-	# Redirect requests to dedicated hosts
-	# AVID
-	if (
-		req.http.Host == "www.avid.wiki" ||
-		req.http.Host == "avid.wiki" ||
-		req.http.Host == "avid.your.wf"
-	) {
-		set req.backend_hint = mwdedi1;
-		return (hash);
-	}
-
-	# Harry Potter
-	if (
-		req.http.Host == "harrypotter.wiki" ||
-		req.http.Host == "www.harrypotter.wiki" ||
-		req.http.Host == "theharrypotter.wiki" ||
-		req.http.Host == "www.theharrypotter.wiki"
-	) {
-		set req.backend_hint = mwdedi2;
-		return (hash);
 	}
 
 	# MediaWiki specific
