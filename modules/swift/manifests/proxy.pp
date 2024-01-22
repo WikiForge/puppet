@@ -1,7 +1,7 @@
 # == Class: swift::proxy
 
 class swift::proxy (
-    Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $::processorcount}),
+    Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $facts['processors']['count']}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
 ){
@@ -44,8 +44,8 @@ class swift::proxy (
     ssl::wildcard { 'swift wildcard': }
 
     nginx::site { 'swift':
-        ensure  => present,
-        source  => 'puppet:///modules/swift/nginx/swift.conf',
+        ensure => present,
+        source => 'puppet:///modules/swift/nginx/swift.conf',
     }
 
     nginx::site { 'default':
@@ -55,7 +55,7 @@ class swift::proxy (
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['ipaddress6'],
+            address6         => $facts['networking']['ip6'],
             http_vhost       => 'swift-lb.inside.wf',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
@@ -67,7 +67,7 @@ class swift::proxy (
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['ipaddress6'],
+            address6         => $facts['networking']['ip6'],
             http_vhost       => 'swift-lb.inside.wf',
             http_ssl         => true,
             http_ignore_body => true,
