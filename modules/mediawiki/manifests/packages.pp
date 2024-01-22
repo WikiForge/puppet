@@ -34,6 +34,7 @@ class mediawiki::packages {
         'python3-requests',
         'rsync',
         'webp',
+        'python3-swiftclient',
     ])
 
     if !lookup(mediawiki::use_shellbox) {
