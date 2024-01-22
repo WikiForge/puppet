@@ -181,9 +181,9 @@ class mediawiki {
         ],
     }
 
-    file { '/etc/s3-env.sh':
-        ensure  => present,
-        content => template('mediawiki/s3-env.sh.erb'),
+    file { '/etc/swift-env.sh':
+        ensure  => 'present',
+        content => template('mediawiki/swift-env.sh.erb'),
         mode    => '0755',
     }
 
