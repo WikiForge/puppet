@@ -5,3 +5,5 @@ php::php_version: '8.2'
 nginx::use_graylog: true
 
 nginx::client_max_body_size: "10M"
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

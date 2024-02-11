@@ -12,8 +12,8 @@ mediawiki::multiversion::versions:
     branch: 'REL1_41'
     default: true
 
-puppetserver_hostname: puppet1.inside.wf
-role::salt::minions::salt_master: 'puppet1.inside.wf'
+puppetserver_hostname: puppet21-private.inside.wf
+role::salt::minions::salt_master: 'puppet21-private.inside.wf'
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
@@ -21,70 +21,71 @@ mediawiki::use_shellbox: true
 mediawiki::jobqueue::wiki: 'hubwiki'
 mediawiki::monitoring::host: 'hub.wikiforge.net'
 memcached_servers:
-  - 10.0.0.106:11211:1
+  - 10.0.2.9:11211:1
 
 varnish::interval-check: '5s'
 varnish::interval-timeout: '5s'
 varnish::backends:
-  mw1:
+  mw21:
     port: 8100
     probe: mwhealth
     pool: true
     xdebug: true
-    ip_address: 2604:4300:a:37::101
-  mw2:
+    ip_address: 2602:294:0:a9e::203
+  mw22:
     port: 8101
     probe: mwhealth
     pool: true
     xdebug: true
-    ip_address: 2604:4300:a:37::102
-  mwdedi1:
+    ip_address: 2602:294:0:a9e::204
+  mw23:
+    port: 8101
+    probe: mwhealth
+    pool: true
+    xdebug: true
+    ip_address: 2602:294:0:a9e::205
+  mwdedi21:
     port: 8151
     probe: mwhealth
     pool: false
     xdebug: true
-    ip_address: 2604:4300:a:37::151
-  mwdedi2:
+    ip_address: 2602:294:0:a9e::251
+  mwdedi22:
     port: 8152
     probe: mwhealth
     pool: false
     xdebug: true
-    ip_address: 2604:4300:a:37::152
-  test1:
+    ip_address: 2602:294:0:a9e::252
+  staging21:
     port: 8180
     probe: false
     pool: false
     xdebug: true
-    ip_address: 2604:4300:a:37::108
-  phorge1:
+    ip_address: 2602:294:0:a9e::210
+  phorge21:
     port: 8200
     probe: false
     pool: false
-    ip_address: 2604:4300:a:37::108
-  puppet1:
+    ip_address: 2602:294:0:a9e::211
+  puppet21:
     port: 8201
     probe: false
     pool: false
-    ip_address: 2604:4300:a:37::100
-  mail1:
-    port: 8202
-    pool: false
-    xdebug: true
-    ip_address: 2604:4300:a:37::109
+    ip_address: 2602:294:0:a9e::202
   matomo1:
     port: 8203
     pool: false
     xdebug: true
-    ip_address: 2604:4300:a:37::119
+    ip_address: 2602:294:0:a9e::220
 
 # Logging
-base::syslog::syslog_host: [ '10.0.0.113:10514' ]
+base::syslog::syslog_host: [ '10.0.2.18:10514' ]
 
 # Swift
 # TODO: Add support for class based hiera
 swift::storage::object_server_default_workers: 100
 
-role::swift::stats_reporter_host: swiftproxy1.inside.wf
+role::swift::stats_reporter_host: swiftproxy21.inside.wf
 
 swift::storage::devices:
   - sda

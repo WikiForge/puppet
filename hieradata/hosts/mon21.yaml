@@ -1,5 +1,5 @@
-icinga_ido_db_host: 'db1.inside.wf'
-icingaweb_db_host: 'db1.inside.wf'
+icinga_ido_db_host: 'db21.inside.wf'
+icingaweb_db_host: 'db21.inside.wf'
 
 icinga2_api_bind_host: '::'
 
@@ -140,3 +140,5 @@ icinga2::globals::reserved:
 
 nginx::use_graylog: true
 base::syslog::rsyslog_udp_localhost: true
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

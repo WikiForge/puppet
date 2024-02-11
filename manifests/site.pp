@@ -1,11 +1,11 @@
 # servers
 
-node 'cloud1.inside.wf' {
+node 'cloud2.inside.wf' {
     include base
     include role::cloud
 }
 
-node 'bast1.inside.wf' {
+node 'bast21.inside.wf' {
     include base
     include role::bastion
 }
@@ -15,52 +15,41 @@ node /^cp[1-6]\.inside\.wf$/ {
     include role::varnish
 }
 
-node 'db1.inside.wf' {
+node 'db21.inside.wf' {
     include base
     include role::db
 }
 
-node 'jobchron1.inside.wf' {
+node 'jobchron21.inside.wf' {
     include base
     include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
 
-node 'graylog1.inside.wf' {
+node 'graylog21.inside.wf' {
     include base
     include role::graylog
 }
 
-node 'jobrunner1.inside.wf' {
+node 'mwtask21.inside.wf' {
     include base
     include role::mediawiki
     include role::irc
 }
 
-node 'ldap1.inside.wf' {
-    include base
-    include role::openldap
-}
-
-node 'mail1.inside.wf' {
-    include base
-    include role::mail
-    include role::snappymail
-}
-
-node 'mem1.inside.wf' {
+node 'mem21.inside.wf' {
     include base
     include role::memcached
 }
 
-node 'mon1.inside.wf' {
+node 'mon21.inside.wf' {
     include base
     include role::grafana
     include role::icinga2
 }
 
-node /^mw(?:dedi[1-9]|[1-9])\.inside\.wf$/ {
+node /^mw(?:dedi[1-9][1-9])\.inside\.wf$/ {
     include base
     include role::mediawiki
 }
@@ -70,22 +59,22 @@ node /^ns[12]\.inside\.wf$/ {
     include role::dns
 }
 
-node 'os1.inside.wf' {
+node 'os21.inside.wf' {
     include base
     include role::opensearch
 }
 
-node 'phorge1.inside.wf' {
+node 'phorge21.inside.wf' {
     include base
     include role::phorge
 }
 
-node 'prometheus1.inside.wf' {
+node 'prometheus21.inside.wf' {
     include base
     include role::prometheus
 }
 
-node 'puppet1.inside.wf' {
+node 'puppet21.inside.wf' {
     include base
     include role::postgresql
     include puppetdb::database
@@ -94,27 +83,27 @@ node 'puppet1.inside.wf' {
     include role::ssl
 }
 
-node 'services1.inside.wf' {
+node 'services21.inside.wf' {
     include base
     include role::services
 }
 
-node 'swiftac1.inside.wf' {
+node 'swiftac21.inside.wf' {
     include base
     include role::swift
 }
 
-node 'swiftobject1.inside.wf' {
+node 'swiftobject21.inside.wf' {
     include base
     include role::swift
 }
 
-node 'swiftproxy1.inside.wf' {
+node 'swiftproxy21.inside.wf' {
     include base
     include role::swift
 }
 
-node 'test1.inside.wf' {
+node 'staging21.inside.wf' {
     include base
     include role::mediawiki
     include role::memcached

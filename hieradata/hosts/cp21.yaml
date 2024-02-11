@@ -1,6 +1,8 @@
-varnish::cache_file_size: '45G'
+varnish::cache_file_size: '135G'
 varnish::thread_pool_max: 15000
 nginx::worker_processes: 4
 
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

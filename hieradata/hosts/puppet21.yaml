@@ -1,0 +1,13 @@
+puppetserver: true
+puppetserver_java_opts: '-Xms2G -Xmx2G'
+puppetdb_enable: true
+puppetdb_hostname: puppet21.inside.wf
+puppetdb::db_ssl: true
+puppetdb::db_rw_host: puppet21.inside.wf
+postgresql::ssl: true
+puppetdb::command_processing_threads: 10
+puppetserver_hostname: 'puppet21.inside.wf'
+role::salt::minions::salt_master: 'puppet21.inside.wf'
+role::salt::minions::salt_master_key: true
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

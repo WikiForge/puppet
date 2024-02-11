@@ -17,12 +17,10 @@ mediawiki::php::enable_request_profiling: true
 mediawiki::use_staging: true
 
 mediawiki::multiversion::versions:
-  '1.39':
-    branch: 'REL1_39'
-  '1.40':
-    branch: 'REL1_40'
-    default: true
   '1.41':
+    branch: 'REL1_41'
+    default: true
+  '1.42':
     branch: 'master'
 
 php::php_version: '8.2'
@@ -44,3 +42,5 @@ role::memcached::max_seq_reqs: 200
 role::memcached::size: 512
 role::memcached::extended_options: []
 role::memcached::port: 11211
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

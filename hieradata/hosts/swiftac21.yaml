@@ -130,3 +130,5 @@ prometheus::exporter::statsd_exporter::mappings:
     labels:
       method: "$2"
       status: "$3"
+
+puppetserver_hostname: 'puppet21-private.inside.wf'

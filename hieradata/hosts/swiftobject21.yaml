@@ -56,3 +56,5 @@ prometheus::exporter::statsd_exporter::mappings:
     name: swift_object_updater_seconds
   - match: swift.*.object-updater.unlinks
     name: swift_object_updater_unlinks_total
+
+puppetserver_hostname: 'puppet21-private.inside.wf'
