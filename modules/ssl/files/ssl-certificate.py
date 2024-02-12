@@ -159,6 +159,8 @@ class SslCertificate:
         if self.private:
             print('Private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{self.domain}.key')
+            print('Running chown to ensure /etc/puppetlabs/puppet/ssl-keys is owned by puppet:puppet')
+            os.system('chown -R puppet:puppet /etc/puppetlabs/puppet/ssl-keys')
 
     def renew_letsencrypt_certificate(self):
         self.newprivate = False
@@ -209,12 +211,10 @@ class SslCertificate:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
         domain = self.domain
-        if domain == 'wikiforge.net':
-            domain = 'wildcard.wikiforge.net'
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
-        os.system('git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
+        os.system('git -C /srv/ssl/ssl/ config user.email "sre@wikiforge.net"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{domain}.crt')
@@ -225,6 +225,8 @@ class SslCertificate:
         if self.private and self.newprivate is True:
             print('New private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{domain}.key')
+            print('Running chown to ensure /etc/puppetlabs/puppet/ssl-keys is owned by puppet:puppet')
+            os.system('chown -R puppet:puppet /etc/puppetlabs/puppet/ssl-keys')
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
