@@ -10,6 +10,11 @@ node 'bast21.inside.wf' {
     include role::bastion
 }
 
+node 'bots21.inside.wf' {
+    include base
+    include role::irc
+}
+
 node /^cp[1-6]\.inside\.wf$/ {
     include base
     include role::varnish
@@ -35,7 +40,6 @@ node 'graylog21.inside.wf' {
 node 'mwtask21.inside.wf' {
     include base
     include role::mediawiki
-    include role::irc
 }
 
 node 'mem21.inside.wf' {
