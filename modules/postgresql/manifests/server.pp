@@ -80,9 +80,9 @@ class postgresql::server(
             group  => 'postgres',
         }
 
-        file { "/etc/postgresql/${_pgversion}/main/ssl/wildcard.wikiforge.net.key":
+        file { "/etc/postgresql/${_pgversion}/main/ssl/inside.wf.key":
             ensure  => 'present',
-            source  => 'puppet:///ssl-keys/wildcard.wikiforge.net.key',
+            source  => 'puppet:///ssl-keys/inside.wf.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
@@ -96,7 +96,7 @@ class postgresql::server(
             group   => 'root',
             mode    => '0444',
             before  => Service['postgresql'],
-            require => File["/etc/postgresql/${_pgversion}/main/ssl/wildcard.wikiforge.net.key"],
+            require => File["/etc/postgresql/${_pgversion}/main/ssl/inside.wf.key"],
         }
     }
 
