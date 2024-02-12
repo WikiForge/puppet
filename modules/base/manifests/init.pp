@@ -8,7 +8,7 @@ class base {
     include base::sysctl
     include base::timezone
     include base::upgrades
-    # include base::firewall
+    include base::firewall
     include base::monitoring
     include base::backup
     include ssh
