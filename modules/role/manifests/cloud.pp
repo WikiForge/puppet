@@ -3,9 +3,13 @@ class role::cloud {
     include ::cloud
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Cloud]", ['networking'])
+        query_facts('Class[Role::Cloud]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['vmbr1'] ) {
+                "${value['networking']['interfaces']['vmbr1']['ip']} ${value['networking']['ip']} ${value['networking']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -34,7 +38,7 @@ class role::cloud {
     ferm::service { 'proxmox port 8006':
         proto  => 'tcp',
         port   => '8006',
-        srange => "(${firewall_rules_str})",
+        #srange => "(${firewall_rules_str})",
     }
 
     ferm::service { 'proxmox port 111':
