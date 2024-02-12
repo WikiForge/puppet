@@ -30,15 +30,7 @@ class mediawiki {
     }
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
-        stdlib::ensure_packages(
-            'internetarchive',
-            {
-                ensure   => '3.3.0',
-                provider => 'pip3',
-                before   => File['/usr/local/bin/iaupload'],
-                require  => Package['python3-pip'],
-            },
-            )
+        stdlib::ensure_packages(['python3-internetarchive'])
 
         file { '/usr/local/bin/iaupload':
             ensure => present,
