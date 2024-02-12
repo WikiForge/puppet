@@ -38,7 +38,7 @@ class mediawiki {
                 before   => File['/usr/local/bin/iaupload'],
                 require  => Package['python3-pip'],
             },
-        )
+            )
 
         file { '/usr/local/bin/iaupload':
             ensure => present,

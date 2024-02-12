@@ -63,20 +63,11 @@ class mediawiki::jobqueue::runner (
         }
 
         if $wiki == 'hubwiki' {
-            $aws_s3_access_key = lookup('mediawiki::aws_s3_access_key')
-            $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
-            stdlib::ensure_packages(
-                'boto3',
-                {
-                    ensure   => '1.33.7',
-                    provider => 'pip3',
-                    require  => Package['python3-pip'],
-                },
-            )
+            $swift_password = lookup('mediawiki::swift_password')
 
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py -B static.wikiforge.net -K ${aws_s3_access_key} -S ${aws_s3_access_secret_key} >> /var/log/mediawiki/cron/generate-sitemap-index.log",
+                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/WikiForgeMagic/py/generateSitemapIndex.py -A https://swift-lb.inside.wf/auth/v1.0 -U mw:media -K ${swift_password} >> /var/log/mediawiki/cron/generate-sitemap-index.log",
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
