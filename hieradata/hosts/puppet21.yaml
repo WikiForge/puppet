@@ -9,5 +9,3 @@ puppetdb::command_processing_threads: 10
 puppetserver_hostname: 'puppet21.inside.wf'
 role::salt::minions::salt_master: 'puppet21.inside.wf'
 role::salt::minions::salt_master_key: true
-
-puppetserver_hostname: 'puppet21-private.inside.wf'
