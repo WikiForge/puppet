@@ -107,6 +107,21 @@ node 'swiftproxy21.inside.wf' {
     include role::swift
 }
 
+node 'swiftac1.inside.wf' {
+    include base
+    include role::swift
+}
+
+node 'swiftobject1.inside.wf' {
+    include base
+    include role::swift
+}
+
+node 'swiftproxy1.inside.wf' {
+    include base
+    include role::swift
+}
+
 node 'staging21.inside.wf' {
     include base
     include role::mediawiki
