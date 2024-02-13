@@ -53,7 +53,7 @@ node 'mon21.inside.wf' {
     include role::icinga2
 }
 
-node /^mw(?:dedi[1-9][1-9])\.inside\.wf$/ {
+node /^mw(?:dedi[1-9][1-9]|[1-9][1-9])\.inside\.wf$/ {
     include base
     include role::mediawiki
 }
