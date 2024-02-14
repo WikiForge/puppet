@@ -37,17 +37,18 @@ prod: Environment = {
     'wikidbname': 'hubwiki',
     'wikiurl': 'hub.wikiforge.net',
     'servers': [
-        'mw1',
-        'mw2',
-        'mwdedi1',
-        'mwdedi2',
-        'jobrunner1',
+        'mw21',
+        'mw22',
+        'mw23',
+        'mwdedi21',
+        'mwdedi22',
+        'mwtask21',
     ],
 }
 test: Environment = {
-    'wikidbname': 'test1wiki',
-    'wikiurl': 'test1.wikiforge.net',
-    'servers': ['test1'],
+    'wikidbname': 'test21wiki',
+    'wikiurl': 'test21.wikiforge.net',
+    'servers': ['test21'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'prod': prod,
