@@ -72,10 +72,10 @@ varnish::backends:
     probe: false
     pool: false
     ip_address: 2602:294:0:a9e::202
-  matomo1:
+  matomo21:
     port: 8203
+    probe: false
     pool: false
-    xdebug: true
     ip_address: 2602:294:0:a9e::220
 
 # Logging
