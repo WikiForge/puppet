@@ -972,7 +972,7 @@ Scribunto:
 SearchVue:
   branch: _branch_
   path: extensions/SearchVue
-  repo_url: https://github.com/miraheze/mediawiki-extensions-SearchVue
+  repo_url: https://github.com/WikiForge/mediawiki-extensions-SearchVue
 SecureLinkFixer:
   branch: _branch_
   path: extensions/SecureLinkFixer
