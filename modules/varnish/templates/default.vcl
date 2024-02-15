@@ -55,6 +55,13 @@ sub vcl_init {
 	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
+
+	new swift = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['swiftpool'] -%>
+	swift.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- end -%>
 }
 
 # Debug ACL: those exempt from requiring an access key
@@ -218,7 +225,11 @@ sub mw_request {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-WikiForge-Debug == "<%= name %>.inside.wf") {
-			set req.backend_hint = <%= name %>_test;
+			if (req.http.Host == "static.wikiforge.net") {
+				set req.backend_hint = swift.backend();
+			} else {
+				set req.backend_hint = <%= name %>_test;
+			}
 			return (pass);
 		}
 <%- end -%>
@@ -254,6 +265,8 @@ sub mw_request {
 
 	# Numerous static.wikiforge.net specific code
 	if (req.http.Host == "static.wikiforge.net") {
+		set req.backend_hint = swift.backend();
+
 		unset req.http.X-Range;
 
 		if (req.http.Range) {

@@ -77,6 +77,12 @@ varnish::backends:
     probe: false
     pool: false
     ip_address: 2602:294:0:a9e::220
+  swiftproxy21:
+    port: 8204
+    probe: false
+    pool: false
+    swiftpool: true
+    ip_address: 2602:294:0:a9e::224
 
 # Logging
 base::syslog::syslog_host: [ '10.0.2.18:10514' ]
