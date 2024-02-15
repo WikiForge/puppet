@@ -5,3 +5,5 @@ nginx::worker_processes: 4
 base::syslog::rsyslog_udp_localhost: true
 base::firewall::use_public_bastion: true
 nginx::logrotate_number: 2
+
+puppetserver_hostname: 'puppet21.inside.wf'

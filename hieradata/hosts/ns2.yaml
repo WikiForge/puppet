@@ -1,1 +1,3 @@
 dns: true
+
+puppetserver_hostname: 'puppet21.inside.wf'
