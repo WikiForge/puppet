@@ -15,7 +15,7 @@ node 'bots21.inside.wf' {
     include role::irc
 }
 
-node /^cp[1-6]\.inside\.wf$/ {
+node /^cp(2[1]|[2-6])\.inside\.wf$/ {
     include base
     include role::varnish
 }
