@@ -1,4 +1,4 @@
-varnish::cache_file_size: '135G'
+varnish::cache_file_size: '125G'
 varnish::thread_pool_max: 15000
 nginx::worker_processes: 4
 
