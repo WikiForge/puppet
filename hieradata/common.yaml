@@ -39,7 +39,7 @@ varnish::backends:
     xdebug: true
     ip_address: 2602:294:0:a9e::204
   mw23:
-    port: 8101
+    port: 8102
     probe: mwhealth
     pool: true
     xdebug: true
