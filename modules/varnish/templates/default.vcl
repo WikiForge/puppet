@@ -234,7 +234,7 @@ sub mw_request {
 		req.http.Host == "avid.wiki" ||
 		req.http.Host == "avid.your.wf"
 	) {
-		set req.backend_hint = mwdedi1;
+		set req.backend_hint = mwdedi21;
 	} elseif (
 		# Harry Potter
 		req.http.Host == "harrypotter.wiki" ||
@@ -242,7 +242,7 @@ sub mw_request {
 		req.http.Host == "theharrypotter.wiki" ||
 		req.http.Host == "www.theharrypotter.wiki"
 	) {
-		set req.backend_hint = mwdedi2;
+		set req.backend_hint = mwdedi22;
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
@@ -386,18 +386,18 @@ sub vcl_recv {
 		req.http.Host == "ssl.inside.wf" ||
 		req.http.Host == "acme.inside.wf"
 	) {
-		set req.backend_hint = puppet1;
+		set req.backend_hint = puppet21;
 		return (pass);
 	}
 
 	if (req.http.Host ~ "^(alphatest|betatest|stabletest|test1|test)\.(wikiforge\.net)") {
-		set req.backend_hint = test1;
+		set req.backend_hint = staging21;
 		return (pass);
 	}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.inside.wf") {
-		set req.backend_hint = matomo1;
+		set req.backend_hint = matomo21;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/matomo.js") {
@@ -409,7 +409,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "monitoring.inside.wf" || req.http.Host == "grafana.inside.wf") {
-		# set req.backend_hint = mon1;
+		# set req.backend_hint = mon21;
 
 		if (req.http.upgrade ~ "(?i)websocket") {
 			return (pipe);
@@ -424,13 +424,7 @@ sub vcl_recv {
 		req.http.Host == "phorge-static.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
 	) {
-		set req.backend_hint = phorge1;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "webmail.inside.wf") {
-		set req.backend_hint = mail1;
+		set req.backend_hint = phorge21;
 		return (pass);
 	}
 
