@@ -356,7 +356,7 @@ Femiwiki:
 FileStorageMonitor:
   branch: master
   path: extensions/FileStorageMonitor
-  repo_url: https://github.com/miraheze/FileStorageMonitor
+  repo_url: https://github.com/WikiForge/FileStorageMonitor
   composer: true
 FlaggedRevs:
   branch: _branch_
@@ -1274,7 +1274,7 @@ WikiEditor:
 WikiForgeMagic:
   branch: master
   path: extensions/WikiForgeMagic
-  repo_url: https://github.com/miraheze/WikiForgeMagic
+  repo_url: https://github.com/WikiForge/WikiForgeMagic
 WikiForum:
   branch: master
   path: extensions/WikiForum
