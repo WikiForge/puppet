@@ -1053,7 +1053,7 @@ SpriteSheet:
   path: extensions/SpriteSheet
   repo_url: https://github.com/WikiForge/SpriteSheet
 StandardDialogs:
-  branch: master
+  branch: _branch_
   path: extensions/StandardDialogs
   repo_url: https://github.com/wikimedia/mediawiki-extensions-StandardDialogs
 StopForumSpam:
