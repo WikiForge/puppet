@@ -249,7 +249,7 @@ DarkMode:
 DataDump:
   branch: master
   path: extensions/DataDump
-  repo_url: https://github.com/WikiForge/DataDump
+  repo_url: https://github.com/miraheze/DataDump
 DataTransfer:
   branch: _branch_
   path: extensions/DataTransfer
@@ -356,7 +356,7 @@ Femiwiki:
 FileStorageMonitor:
   branch: master
   path: extensions/FileStorageMonitor
-  repo_url: https://github.com/WikiForge/FileStorageMonitor
+  repo_url: https://github.com/miraheze/FileStorageMonitor
   composer: true
 FlaggedRevs:
   branch: _branch_
@@ -467,11 +467,11 @@ ImageRating:
 ImportDump:
   branch: master
   path: extensions/ImportDump
-  repo_url: https://github.com/WikiForge/ImportDump
+  repo_url: https://github.com/miraheze/ImportDump
 IncidentReporting:
   branch: master
   path: extensions/IncidentReporting
-  repo_url: https://github.com/WikiForge/IncidentReporting
+  repo_url: https://github.com/miraheze/IncidentReporting
 InputBox:
   branch: _branch_
   path: extensions/InputBox
@@ -602,7 +602,7 @@ Math:
 MatomoAnalytics:
   branch: master
   path: extensions/MatomoAnalytics
-  repo_url: https://github.com/WikiForge/MatomoAnalytics
+  repo_url: https://github.com/miraheze/MatomoAnalytics
 MediaSearch:
   branch: _branch_
   path: extensions/MediaSearch
@@ -779,7 +779,7 @@ OrphanedTalkPages:
 PDFEmbed:
   branch: master
   path: extensions/PDFEmbed
-  repo_url: https://github.com/WikiForge/PDFEmbed
+  repo_url: https://github.com/miraheze/PDFEmbed
 PWA:
   branch: main
   path: extensions/PWA
@@ -928,7 +928,7 @@ RelatedArticles:
 RemovePII:
   branch: master
   path: extensions/RemovePII
-  repo_url: https://github.com/WikiForge/RemovePII
+  repo_url: https://github.com/miraheze/RemovePII
 RemoveRedlinks:
   branch: master
   path: extensions/RemoveRedlinks
@@ -956,7 +956,7 @@ RightFunctions:
 RottenLinks:
   branch: master
   path: extensions/RottenLinks
-  repo_url: https://github.com/WikiForge/RottenLinks
+  repo_url: https://github.com/miraheze/RottenLinks
 SandboxLink:
   branch: _branch_
   path: extensions/SandboxLink
@@ -972,7 +972,7 @@ Scribunto:
 SearchVue:
   branch: _branch_
   path: extensions/SearchVue
-  repo_url: https://github.com/WikiForge/mediawiki-extensions-SearchVue
+  repo_url: https://github.com/miraheze/mediawiki-extensions-SearchVue
 SecureLinkFixer:
   branch: _branch_
   path: extensions/SecureLinkFixer
@@ -1051,7 +1051,7 @@ Spoilers:
 SpriteSheet:
   branch: master
   path: extensions/SpriteSheet
-  repo_url: https://github.com/WikiForge/SpriteSheet
+  repo_url: https://github.com/miraheze/SpriteSheet
 StandardDialogs:
   branch: _branch_
   path: extensions/StandardDialogs
@@ -1266,7 +1266,7 @@ WikiCategoryTagCloud:
 WikiDiscover:
   branch: master
   path: extensions/WikiDiscover
-  repo_url: https://github.com/WikiForge/WikiDiscover
+  repo_url: https://github.com/miraheze/WikiDiscover
 WikiEditor:
   branch: _branch_
   path: extensions/WikiEditor
@@ -1274,7 +1274,7 @@ WikiEditor:
 WikiForgeMagic:
   branch: master
   path: extensions/WikiForgeMagic
-  repo_url: https://github.com/WikiForge/WikiForgeMagic
+  repo_url: https://github.com/miraheze/WikiForgeMagic
 WikiForum:
   branch: master
   path: extensions/WikiForum
@@ -1339,7 +1339,7 @@ WikimediaIncubator:
 YouTube:
   branch: master
   path: extensions/YouTube
-  repo_url: https://github.com/WikiForge/YouTube
+  repo_url: https://github.com/miraheze/YouTube
 apex:
   branch: _branch_
   path: skins/apex
