@@ -178,7 +178,6 @@ class role::opensearch (
         nginx::site { 'opensearch.inside.wf':
             ensure  => present,
             source  => 'puppet:///modules/role/opensearch/nginx.conf',
-            monitor => false,
         }
 
         $firewall_rules_str = join(
