@@ -14,10 +14,6 @@ AbuseFilter:
   branch: _branch_
   path: extensions/AbuseFilter
   repo_url: https://github.com/wikimedia/mediawiki-extensions-AbuseFilter
-AddHTMLMetaAndTitle:
-  branch: _branch_
-  path: extensions/AddHTMLMetaAndTitle
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-AddHTMLMetaAndTitle
 AdminLinks:
   branch: _branch_
   path: extensions/AdminLinks
@@ -619,6 +615,10 @@ Mermaid:
   branch: master
   path: extensions/Mermaid
   repo_url: https://github.com/SemanticMediaWiki/Mermaid
+MessageCachePerformance:
+  branch: master
+  path: extensions/MessageCachePerformance
+  repo_url: https://github.com/miraheze/MessageCachePerformance
 Metrolook:
   branch: _branch_
   path: skins/Metrolook
@@ -635,10 +635,6 @@ Mirage:
   branch: _branch_
   path: skins/Mirage
   repo_url: https://github.com/wikimedia/mediawiki-skins-Mirage
-MixedNamespaceSearchSuggestions:
-  branch: _branch_
-  path: extensions/MixedNamespaceSearchSuggestions
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-MixedNamespaceSearchSuggestions
 MobileDetect:
   branch: master
   path: extensions/MobileDetect
@@ -821,6 +817,11 @@ ParserFunctions:
   branch: _branch_
   path: extensions/ParserFunctions
   repo_url: https://github.com/wikimedia/mediawiki-extensions-ParserFunctions
+ParserMigration:
+  branch: _branch_
+  path: extensions/ParserMigration
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-ParserMigration
+  versions: '1.41, 1.42'
 PdfHandler:
   branch: _branch_
   path: extensions/PdfHandler
@@ -876,7 +877,7 @@ ProtectionIndicator:
 Purge:
   branch: master
   path: extensions/Purge
-  repo_url: https://github.com/Hutchy68/Purge
+  repo_url: https://github.com/AlPha5130/mediawiki-extensions-Purge
 QuickInstantCommons:
   branch: master
   path: extensions/QuickInstantCommons
@@ -933,10 +934,6 @@ RemoveRedlinks:
   branch: master
   path: extensions/RemoveRedlinks
   repo_url: https://github.com/marohh/mediawikiRemoveRedlinks
-Renameuser:
-  branch: _branch_
-  path: extensions/Renameuser
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-Renameuser
 ReplaceText:
   branch: _branch_
   path: extensions/ReplaceText
@@ -945,6 +942,10 @@ Report:
   branch: master
   path: extensions/Report
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Report
+RequestSSL:
+  branch: master
+  path: extensions/RequestSSL
+  repo_url: https://github.com/miraheze/RequestSSL
 RevisionSlider:
   branch: _branch_
   path: extensions/RevisionSlider
@@ -961,10 +962,17 @@ SandboxLink:
   branch: _branch_
   path: extensions/SandboxLink
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SandboxLink
+SaneCase:
+  branch: master
+  repo_url: https://github.com/ciencia/mediawiki-extensions-SaneCase
 Score:
   branch: _branch_
   path: extensions/Score
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Score
+Screenplay:
+  branch: _branch_
+  path: extensions/Screenplay
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-Screenplay
 Scribunto:
   branch: _branch_
   path: extensions/Scribunto
@@ -995,7 +1003,6 @@ SemanticScribunto:
   branch: master
   path: extensions/SemanticScribunto
   repo_url: https://github.com/SemanticMediaWiki/SemanticScribunto
-  composer: true
 Share:
   branch: master
   path: extensions/Share
@@ -1184,6 +1191,10 @@ UniversalLanguageSelector:
   branch: master
   path: extensions/UniversalLanguageSelector
   repo_url: https://github.com/wikimedia/mediawiki-extensions-UniversalLanguageSelector
+UnlinkedWikibase:
+  branch: _branch_
+  path: extensions/UnlinkedWikibase
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-UnlinkedWikibase
 UploadWizard:
   branch: _branch_
   path: extensions/UploadWizard
