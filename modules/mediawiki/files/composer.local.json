@@ -1,12 +1,12 @@
 {
 	"require": {
-		"psy/psysh": "^0.11.1"
+		"psy/psysh": "^0.11.1 || ^0.12.0"
 	},
 	"extra": {
 		"merge-plugin": {
 			"include": [
-				"extensions/AWS/composer.json",
 				"extensions/OOJSPlus/composer.json",
+				"extensions/SemanticScribunto/composer.json",
 				"extensions/Wikibase/composer.json",
 				"extensions/WikibaseEdtf/composer.json"
 			]
