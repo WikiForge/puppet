@@ -53,10 +53,9 @@ class role::openldap (
         ],
     }
 
-    openldap::server::access { 'admin-monitor-access':
+    openldap::server::access { 'admin-monitor-access on cn=monitor':
         ensure => present,
         what   => 'dn.subtree="cn=monitor"',
-        suffix => 'cn=monitor',
         access => [
             'by dn="cn=admin,dc=wikiforge,dc=net" write',
             'by dn="cn=monitor,dc=wikiforge,dc=net" read',
@@ -83,10 +82,6 @@ class role::openldap (
     }
 
     openldap::server::module { 'auditlog':
-        ensure => present,
-    }
-
-    openldap::server::module { 'ppolicy':
         ensure => present,
     }
 
