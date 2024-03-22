@@ -32,6 +32,17 @@ node 'jobchron21.inside.wf' {
     include mediawiki::jobqueue::chron
 }
 
+node 'ldap21.inside.wf' {
+    include base
+    include role::openldap
+}
+
+node 'mail21.inside.wf' {
+    include base
+    include role::mail
+    include role::snappymail
+}
+
 node 'graylog21.inside.wf' {
     include base
     include role::graylog

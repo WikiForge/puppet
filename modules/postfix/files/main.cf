@@ -8,7 +8,7 @@ mailbox_size_limit = 0
 virtual_mailbox_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
-smtp_bind_address=208.110.84.237
+smtp_bind_address=38.46.217.174
 inet_protocols = ipv4
 
 virtual_mailbox_domains = $myhostname
