@@ -772,14 +772,14 @@ OpenIDConnect:
   path: extensions/OpenIDConnect
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OpenIDConnect
   composer: true
-OrphanedTalkPages:
-  branch: _branch_
-  path: extensions/OrphanedTalkPages
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-OrphanedTalkPages
 OreDict:
   branch: master
   path: extensions/OreDict
   repo_url: https://github.com/FTB-Gamepedia/OreDict
+OrphanedTalkPages:
+  branch: _branch_
+  path: extensions/OrphanedTalkPages
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-OrphanedTalkPages
 PDFEmbed:
   branch: master
   path: extensions/PDFEmbed
@@ -887,7 +887,7 @@ Purge:
   path: extensions/Purge
   repo_url: https://github.com/AlPha5130/mediawiki-extensions-Purge
 QuickInstantCommons:
-  branch: master
+  branch: _branch_
   path: extensions/QuickInstantCommons
   repo_url: https://github.com/wikimedia/mediawiki-extensions-QuickInstantCommons
 Quiz:
