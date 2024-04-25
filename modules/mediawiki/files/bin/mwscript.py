@@ -24,7 +24,7 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
-    mw_versions = os.popen('getMWVersions all').read().strip()
+    mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
     versions = {}
     if mw_versions:
         versions = json.loads(mw_versions)
@@ -32,21 +32,42 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     del mw_versions
 
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
+    validDBLists = (
+        'active',
+        'active-beta',
+        'beta',
+        'deleted',
+        'deleted-beta',
+    ) + versionLists
 
-    longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
+    longscripts = (
+        'compressold',
+        'deletebatch',
+        'importdump',
+        'importimages',
+        'nukens',
+        'rebuildall',
+        'rebuildimages',
+        'rebuildtextindex',
+        'refreshlinks',
+        'runjobs',
+        'purgelist',
+        'cargorecreatedata',
+    )
+
     long = False
     generate = None
 
     try:
         if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *versionLists]:
+        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikibeta') or args.arguments[0] in [*['all'], *validDBLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:
                 args.arguments = False
         else:
-            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *versionLists]}')
+            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
             return 2
     except IndexError:
         print('Not enough Arguments given.')
@@ -56,7 +77,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         dbname = wiki
         if not dbname:
             dbname = 'default'
-        args.version = os.popen(f'getMWVersion {dbname}').read().strip()
+        args.version = os.popen(f'/usr/local/bin/getMWVersion {dbname}').read().strip()
         if wiki and wiki in versionLists:
             args.version = versions.get(wiki[:-6])
 
@@ -89,13 +110,13 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
 
     if wiki == 'all':
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases-wikiforge.json {script}'
-    elif wiki and wiki in versionLists:
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
+    elif wiki and wiki in validDBLists:
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}-wikiforge.json {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/WikiForgeMagic/maintenance/generateExtensionDatabaseList.php --wiki=hubwiki --extension={args.extension}'
+        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
