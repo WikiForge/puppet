@@ -683,6 +683,10 @@ MultiBoilerplate:
   branch: _branch_
   path: extensions/MultiBoilerplate
   repo_url: https://github.com/wikimedia/mediawiki-extensions-MultiBoilerplate
+MultiPurge:
+  branch: master
+  path: extensions/MultiPurge
+  repo_url: https://github.com/octfx/mediawiki-extensions-MultiPurge
 MultimediaViewer:
   branch: _branch_
   path: extensions/MultimediaViewer
@@ -772,6 +776,10 @@ OrphanedTalkPages:
   branch: _branch_
   path: extensions/OrphanedTalkPages
   repo_url: https://github.com/wikimedia/mediawiki-extensions-OrphanedTalkPages
+OreDict:
+  branch: master
+  path: extensions/OreDict
+  repo_url: https://github.com/FTB-Gamepedia/OreDict
 PDFEmbed:
   branch: master
   path: extensions/PDFEmbed
@@ -994,15 +1002,12 @@ SemanticFormsSelect:
   branch: master
   path: extensions/SemanticFormsSelect
   repo_url: https://github.com/SemanticMediaWiki/SemanticFormsSelect
-SemanticMediaWiki:
-  branch: master
-  path: extensions/SemanticMediaWiki
-  repo_url: https://github.com/SemanticMediaWiki/SemanticMediaWiki
-  composer: true
+  recurse_submodules: false
 SemanticScribunto:
   branch: master
   path: extensions/SemanticScribunto
   repo_url: https://github.com/SemanticMediaWiki/SemanticScribunto
+  composer: true
 Share:
   branch: master
   path: extensions/Share
@@ -1125,6 +1130,10 @@ Theme:
   branch: _branch_
   path: extensions/Theme
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Theme
+Tilesheets:
+  branch: master
+  path: extensions/Tilesheets
+  repo_url: https://github.com/FTB-Gamepedia/Tilesheets
 TimeMachine:
   branch: _branch_
   path: extensions/TimeMachine
