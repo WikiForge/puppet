@@ -183,7 +183,7 @@ class phorge (
                 'key'          => 'wikiforge-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'tuesday.mxrouting.net',
+                    'host'     => 'smtp.purelymail.com',
                     'port'     => 587,
                     'user'     => 'noreply@wikiforge.net',
                     'password' => lookup('passwords::mail::noreply'),
