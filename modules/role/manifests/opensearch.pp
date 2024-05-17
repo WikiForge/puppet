@@ -176,8 +176,8 @@ class role::opensearch (
         ssl::wildcard { 'opensearch wildcard': }
 
         nginx::site { 'opensearch.inside.wf':
-            ensure  => present,
-            source  => 'puppet:///modules/role/opensearch/nginx.conf',
+            ensure => present,
+            source => 'puppet:///modules/role/opensearch/nginx.conf',
         }
 
         $firewall_rules_str = join(
