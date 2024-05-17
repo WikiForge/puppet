@@ -81,7 +81,7 @@ node 'os21.inside.wf' {
 
 node 'phorge21.inside.wf' {
     include base
-    include role::phorge
+    include role::osticket
 }
 
 node 'prometheus21.inside.wf' {
