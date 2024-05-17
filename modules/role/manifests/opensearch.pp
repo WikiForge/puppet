@@ -210,7 +210,7 @@ class role::opensearch (
     $firewall_os_nodes = join(
         query_facts('Class[Role::Opensearch]', ['networking'])
         .map |$key, $value| {
-           if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
+            if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']}"
