@@ -186,9 +186,9 @@ class role::opensearch (
                 if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
                  "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
                 } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens18']['ip']}"
+                  "${value['networking']['interfaces']['ens18']['ip']}"
                 } else {
-                 "${value['networking']['ip']} ${value['networking']['ip6']}"
+                  "${value['networking']['ip']} ${value['networking']['ip6']}"
                 }
             }
             .flatten()
