@@ -176,8 +176,8 @@ class role::opensearch (
         ssl::wildcard { 'opensearch wildcard': }
 
         nginx::site { 'opensearch.inside.wf':
-            ensure  => present,
-            source  => 'puppet:///modules/role/opensearch/nginx.conf',
+            ensure => present,
+            source => 'puppet:///modules/role/opensearch/nginx.conf',
         }
 
         $firewall_rules_str = join(
@@ -186,9 +186,9 @@ class role::opensearch (
                 if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
                  "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
                 } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens18']['ip']}"
+                  "${value['networking']['interfaces']['ens18']['ip']}"
                 } else {
-                 "${value['networking']['ip']} ${value['networking']['ip6']}"
+                  "${value['networking']['ip']} ${value['networking']['ip6']}"
                 }
             }
             .flatten()
@@ -210,7 +210,7 @@ class role::opensearch (
     $firewall_os_nodes = join(
         query_facts('Class[Role::Opensearch]', ['networking'])
         .map |$key, $value| {
-           if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
+            if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']}"
