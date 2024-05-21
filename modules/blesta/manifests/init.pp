@@ -1,5 +1,9 @@
 # === Class blesta
-class blesta {
+class blesta (
+    Integer $request_timeout = lookup('phorge::php::request_timeout', {'default_value' => 60}),
+) {
+    stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
+
         $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
         'error_log'                       => 'syslog',
