@@ -433,6 +433,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (
+		req.http.Host == "central.wikiforge.net" ||
 		req.http.Host == "support.wikiforge.net" ||
 		req.http.Host == "phorge-static.wikiforge.net" ||
 		req.http.Host == "blog.wikiforge.net"
