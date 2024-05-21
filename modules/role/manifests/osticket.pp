@@ -33,6 +33,12 @@ class role::osticket {
         notrack => true,
     }
 
+    cron { 'osticket-cron':
+            ensure   => present,
+            command  => "/usr/bin/php /srv/osticket/api/cron.php 2>&1",
+            user     => 'www-data',
+            minute   => '1',
+    }
 
     motd::role { 'role::osticket':
         description => 'OSTicket Support instance',
