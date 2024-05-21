@@ -2,17 +2,22 @@
 class role::blesta {
     include blesta
 
-    if $strict_firewall {
-        $firewall_rules_str = join(
-            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services]", ['networking'])
-            .map |$key, $value| {
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
+        .map |$key, $value| {
+            if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']}"
+            } else {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
-            .flatten()
-            .unique()
-            .sort(),
-            ' '
-        )
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
 
         ferm::service { 'http':
             proto   => 'tcp',
