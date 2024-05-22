@@ -28,7 +28,7 @@ class blesta (
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
-        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_7.3.so',
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
     }
 
     $core_extensions =  [
@@ -120,6 +120,7 @@ class blesta (
 
     file { [
         '/srv/blesta',
+        '/usr/local/ioncube',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
