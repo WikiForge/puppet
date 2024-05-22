@@ -2,7 +2,7 @@ groups:
   sre:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, reception, universalomega]
+    members: [agent]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-roots:
     gid: 2001
@@ -12,7 +12,7 @@ groups:
   mediawiki-admins:
     gid: 2002
     description: sudo on MediaWiki servers
-    members: [notaracham]
+    members: []
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
@@ -23,7 +23,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [notaracham]
+    members: []
   mediawiki-test-admins:
     gid: 2010
     description: sudo on the MediaWiki test server
@@ -37,19 +37,17 @@ groups:
 
 users:
   universalomega:
-    ensure: present
+    ensure: absent
     uid: 1001
     name: universalomega
     realname: Universal Omega
-    ssh_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ
+    ssh_keys: []
   reception:
-    ensure: present
+    ensure: absent
     uid: 1002
     name: reception
     realname: Reception
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN50cum9FqBozQgyHuw6zh5kGvbyiKgZg3x+g/+wCnM9]
+    ssh_keys: []
   agent:
     ensure: present
     uid: 1010
@@ -63,8 +61,8 @@ users:
     realname: Rman41
     ssh_keys: []
   notaracham:
-    ensure: present
+    ensure: absent
     uid: 1012
     name: notaracham
     realname: NotAracham
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFNwBn4iuC8qQDC+hAhPBzoo7fRPF00qLw7WteBzeFCA]
+    ssh_keys: []
