@@ -88,7 +88,6 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
-        'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
         'wikiforge': ['CreateWiki', 'DataDump', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'WikiForgeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
     }
     return packs.get(pack_name, [])
@@ -97,7 +96,6 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
 def get_skins_in_pack(pack_name: str) -> list[str]:
     packs = {
         'bundled': ['MinervaNeue', 'MonoBook', 'Timeless', 'Vector'],
-        'universalomega': ['Cosmos', 'Monaco'],
     }
     return packs.get(pack_name, [])
 
