@@ -35,9 +35,11 @@ class blesta (
         'curl',
         'gd',
         'gmp',
+        'imap',
         'intl',
         'mbstring',
         'ldap',
+        'pdo_mysql',
         'zip',
     ]
 
