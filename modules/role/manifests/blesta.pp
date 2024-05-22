@@ -46,6 +46,13 @@ class role::blesta {
         values => { 'net.ipv4.tcp_tw_reuse' => 1 },
     }
 
+    cron { 'blesta-cron':
+            ensure   => present,
+            command  => "/usr/bin/php -q /srv/blesta/blesta/index.php cron > /dev/null 2>&1",
+            user     => 'www-data',
+            minute   => '1',
+    }
+
     motd::role { 'role::blesta':
         description => 'Blesta appserver',
     }
