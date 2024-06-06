@@ -65,17 +65,13 @@ server {
 
 	location ~ \.php {
 		include fastcgi_params;
-		fastcgi_index index.php;
+		fastcgi_index index.html;
 		fastcgi_split_path_info ^(.+\.php)(.*)$;
 		try_files $fastcgi_script_name =404;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
 		send_timeout 140;
-	}
-
-	location /discord {
-		return 301 https://discord.gg/rNbf3UsDHQ;
 	}
 
 	location ~ ^/((?!(css|discord|js|images|img|lib|scss)).)*$ {
