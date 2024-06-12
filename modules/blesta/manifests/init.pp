@@ -31,6 +31,10 @@ class blesta (
         'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
     }
 
+    $cli_config = {
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
+    }
+
     $core_extensions =  [
         'curl',
         'gd',
@@ -52,9 +56,7 @@ class blesta (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'fpm' => $fpm_config,
-            'cli' => [
-                'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
-            ],
+            'cli' => $cli_config,
         },
     }
 
