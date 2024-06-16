@@ -30,6 +30,7 @@ script-src:
   - '*.hcaptcha.com'
   - 'code.jquery.com'
   - 'cdn.jsdelivr.net'
+  - 'js.stripe.com'
 
 style-src:
   - "'self'"
@@ -125,6 +126,7 @@ frame-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'player.vimeo.com'
+  - 'js.stripe.com'
 
 connect-src:
   - "'self'"
@@ -141,3 +143,4 @@ connect-src:
   - '*.youtube-nocookie.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'api.stripe.com'
