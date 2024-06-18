@@ -546,10 +546,6 @@ Linter:
   branch: _branch_
   path: extensions/Linter
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Linter
-Listings:
-  branch: _branch_
-  path: extensions/Listings
-  repo_url: https://github.com/wikimedia/mediawiki-extensions-Listings
 LockAuthor:
   branch: _branch_
   path: extensions/LockAuthor
