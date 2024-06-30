@@ -133,11 +133,6 @@ class role::openldap (
         require => File['/etc/ldap/schema/postfix.schema'],
     }
 
-    openldap::server::schema { 'ppolicy':
-        ensure => absent,
-        path   => '/etc/ldap/schema/ppolicy.schema',
-    }
-
     openldap::server::overlay { 'ppolicy':
         ensure  => present,
         suffix  => 'cn=config',
