@@ -18,10 +18,10 @@ class role::openldap (
         require   => Ssl::Wildcard['openldap wildcard']
     }
 
-    openldap::server::database { 'dc=wikiforge,dc=net':
+    openldap::server::database { 'dc=wikiforge,dc=xyz':
         ensure    => present,
         directory => '/var/lib/ldap/wikiforge',
-        rootdn    => 'cn=admin,dc=wikiforge,dc=net',
+        rootdn    => 'cn=admin,dc=wikiforge,dc=xyz',
         rootpw    => $admin_password,
     }
 
@@ -32,11 +32,11 @@ class role::openldap (
     }
 
     # Allow everybody to try to bind
-    openldap::server::access { '0 on dc=wikiforge,dc=net':
+    openldap::server::access { '0 on dc=wikiforge,dc=xyz':
         what   => 'attrs=userPassword,shadowLastChange',
         access => [
-            'by dn="cn=admin,dc=wikiforge,dc=net" write',
-            'by group.exact="cn=Administrators,ou=groups,dc=wikiforge,dc=net" write',
+            'by dn="cn=admin,dc=wikiforge,dc=xyz" write',
+            'by group.exact="cn=Administrators,ou=groups,dc=wikiforge,dc=xyz" write',
             'by self write',
             'by anonymous auth',
             'by * none',
@@ -44,10 +44,10 @@ class role::openldap (
     }
 
     # Allow admin users to manage things and authed users to read
-    openldap::server::access { '1 on dc=wikiforge,dc=net':
-        what   => 'dn.children="dc=wikiforge,dc=net"',
+    openldap::server::access { '1 on dc=wikiforge,dc=xyz':
+        what   => 'dn.children="dc=wikiforge,dc=xyz"',
         access => [
-            'by group.exact="cn=Administrators,ou=groups,dc=wikiforge,dc=net" write',
+            'by group.exact="cn=Administrators,ou=groups,dc=wikiforge,dc=xyz" write',
             'by users read',
             'by * break',
         ],
@@ -57,8 +57,8 @@ class role::openldap (
         ensure => present,
         what   => 'dn.subtree="cn=monitor"',
         access => [
-            'by dn="cn=admin,dc=wikiforge,dc=net" write',
-            'by dn="cn=monitor,dc=wikiforge,dc=net" read',
+            'by dn="cn=admin,dc=wikiforge,dc=xyz" write',
+            'by dn="cn=monitor,dc=wikiforge,dc=xyz" read',
             'by self write',
             'by * none',
         ],
@@ -93,7 +93,7 @@ class role::openldap (
         ensure => present,
     }
 
-    openldap::server::overlay { 'memberof on dc=wikiforge,dc=net':
+    openldap::server::overlay { 'memberof on dc=wikiforge,dc=xyz':
         ensure => present,
     }
 
@@ -148,7 +148,7 @@ class role::openldap (
     }
 
     class { 'openldap::client':
-        base       => 'dc=wikiforge,dc=net',
+        base       => 'dc=wikiforge,dc=xyz',
         uri        => ["ldaps://${facts['networking']['fqdn']}"],
         tls_cacert => '/etc/ssl/certs/ISRG_Root_X1.pem',
     }
@@ -204,7 +204,7 @@ class role::openldap (
         check_command => 'ldap',
         vars          => {
             ldap_address => $facts['networking']['fqdn'],
-            ldap_base    => 'dc=wikiforge,dc=net',
+            ldap_base    => 'dc=wikiforge,dc=xyz',
             ldap_v3      => true,
             ldap_ssl     => true,
         },

@@ -13,7 +13,7 @@ ssl_skip_verify = false
 root_ca_cert = "/etc/ssl/certs/ISRG_Root_X1.pem"
 
 # Search user bind dn
-bind_dn = "cn=write-user,dc=wikiforge,dc=net"
+bind_dn = "cn=write-user,dc=wikiforge,dc=xyz"
 # Search user bind password
 # If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
 bind_password = '<%= @ldap_password %>'
@@ -23,11 +23,11 @@ bind_password = '<%= @ldap_password %>'
 search_filter = "(uid=%s)"
 
 # An array of base dns to search through
-search_base_dns = ["ou=people,dc=wikiforge,dc=net"]
+search_base_dns = ["ou=people,dc=wikiforge,dc=xyz"]
 
 # group_search_filter = "(&(objectClass=groupOfNames))"
 # group_search_filter_user_attribute = "distinguishedName"
-group_search_base_dns = ["ou=groups,dc=wikiforge,dc=net"]
+group_search_base_dns = ["ou=groups,dc=wikiforge,dc=xyz"]
 
 # Specify names of the ldap attributes your ldap uses
 [servers.attributes]
@@ -38,12 +38,12 @@ member_of = "memberOf"
 email =  "mail"
 
 [[servers.group_mappings]]
-group_dn = "cn=sre-roots,ou=groups,dc=wikiforge,dc=net"
+group_dn = "cn=sre-roots,ou=groups,dc=wikiforge,dc=xyz"
 org_role = "Admin"
 grafana_admin = true
 
 [[servers.group_mappings]]
-group_dn = "cn=sre-mediawiki,ou=groups,dc=wikiforge,dc=net"
+group_dn = "cn=sre-mediawiki,ou=groups,dc=wikiforge,dc=xyz"
 org_role = "Editor"
 
 [[servers.group_mappings]]

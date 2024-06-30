@@ -24,11 +24,11 @@ class base::mail {
     }
 
     mailalias { 'root':
-        recipient => 'root@wikiforge.net',
+        recipient => 'root@wikiforge.xyz',
     }
 
     file { '/etc/mailname':
         ensure  => present,
-        content => 'wikiforge.net',
+        content => 'wikiforge.xyz',
     }
 }

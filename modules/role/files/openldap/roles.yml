@@ -4,11 +4,11 @@ admin:
     LC_admins: True
     backends_groups:
         ldap:
-            - cn=sre,ou=groups,dc=wikiforge,dc=net
+            - cn=sre,ou=groups,dc=wikiforge,dc=xyz
 
 users:
     display_name: Users
     description: Basic users of the system
     backends_groups:
         ldap:
-            - cn=users,ou=groups,dc=wikiforge,dc=net
+            - cn=users,ou=groups,dc=wikiforge,dc=xyz

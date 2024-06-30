@@ -1,6 +1,6 @@
 server_host = ldaps://ldap.inside.wf
 bind = yes
-bind_dn = cn=write-user,dc=wikiforge,dc=net
+bind_dn = cn=write-user,dc=wikiforge,dc=xyz
 bind_pw = <%= @ldap_password %>
-search_base = ou=people,dc=wikiforge,dc=net
+search_base = ou=people,dc=wikiforge,dc=xyz
 scope = sub

@@ -1,4 +1,4 @@
-myhostname = mail.wikiforge.net
+myhostname = mail.wikiforge.xyz
 myorigin = /etc/mailname
 mydestination = localhost
 relayhost =
