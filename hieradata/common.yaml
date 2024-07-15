@@ -11,6 +11,8 @@ mediawiki::multiversion::versions:
   '1.41':
     branch: 'REL1_41'
     default: true
+  '1.42':
+    branch: 'REL1_42'
 
 puppetserver_hostname: puppet21-private.inside.wf
 role::salt::minions::salt_master: 'puppet21-private.inside.wf'
