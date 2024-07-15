@@ -140,7 +140,7 @@ class SslCertificate:
 
             os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
-            os.system('git -C /srv/ssl/ssl/ config user.email "universalomega@wikiforge.net"')
+            os.system('git -C /srv/ssl/ssl/ config user.email "sre-management@wikiforge.xyz"')
             os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
             os.system('git -C /srv/ssl/ssl/ pull')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
@@ -214,7 +214,7 @@ class SslCertificate:
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
-        os.system('git -C /srv/ssl/ssl/ config user.email "sre@wikiforge.net"')
+        os.system('git -C /srv/ssl/ssl/ config user.email "sre-management@wikiforge.xyz"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{domain}.crt')

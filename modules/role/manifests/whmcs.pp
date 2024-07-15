@@ -1,9 +1,12 @@
-# role: osticket
-class role::osticket {
-    include osticket
+# === Class role::whmcs
+class role::whmcs {
+    include whmcs
+
+    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
+    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
+        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens18'] and $value['networking']['interfaces']['ens19'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens19']['ip6']}"
@@ -33,14 +36,27 @@ class role::osticket {
         notrack => true,
     }
 
-    cron { 'osticket-cron':
+    # Using fastcgi we need more local ports
+    sysctl::parameters { 'raise_port_range':
+        values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },
+        priority => 90,
+    }
+
+    # Allow sockets in TIME_WAIT state to be re-used.
+    # This helps prevent exhaustion of ephemeral port or conntrack sessions.
+    # See <http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html>
+    sysctl::parameters { 'tcp_tw_reuse':
+        values => { 'net.ipv4.tcp_tw_reuse' => 1 },
+    }
+
+    cron { 'whmcs-cron':
             ensure   => present,
-            command  => "/usr/bin/php /srv/osticket/api/cron.php 2>&1",
+            command  => "/usr/bin/php -q /srv/whmcs/whmcs/index.php cron > /dev/null 2>&1",
             user     => 'www-data',
             minute   => '1',
     }
 
-    motd::role { 'role::osticket':
-        description => 'OSTicket Support instance',
+    motd::role { 'role::whmcs':
+        description => 'whmcs appserver',
     }
 }

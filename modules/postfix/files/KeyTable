@@ -1,1 +1,4 @@
 mail._domainkey.wikiforge.net wikiforge.net:mail:/etc/opendkim/keys/mail.private
+mail._domainkey.wikiforge.xyz wikiforge.xyz:mail:/etc/opendkim/keys/mail.private
+mail._domainkey.inside.wf inside.wf:mail:/etc/opendkim/keys/mail.private
+mail._domainkey.your.wf your.wf:mail:/etc/opendkim/keys/mail.private

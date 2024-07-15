@@ -1,13 +1,10 @@
-# class: osticket
-class osticket (
-    Integer $request_timeout = lookup('osticket::php::request_timeout', {'default_value' => 60}),
+# === Class whmcs
+class whmcs (
+    Integer $request_timeout = lookup('phorge::php::request_timeout', {'default_value' => 60}),
 ) {
     stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
-    $s3_access = lookup('mediawiki::aws_s3_access_key')
-    $s3_secret = lookup('mediawiki::aws_s3_access_secret_key')
-
-    $fpm_config = {
+        $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
         'error_log'                       => 'syslog',
         'pcre.backtrack_limit'            => 5000000,
@@ -31,15 +28,22 @@ class osticket (
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
+    }
+
+    $cli_config = {
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
     }
 
     $core_extensions =  [
         'curl',
         'gd',
         'gmp',
+        'imap',
         'intl',
         'mbstring',
         'ldap',
+        'pdo_mysql',
         'zip',
     ]
 
@@ -52,6 +56,7 @@ class osticket (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'fpm' => $fpm_config,
+            'cli' => $cli_config,
         },
     }
 
@@ -113,33 +118,28 @@ class osticket (
         }
     }
 
-    nginx::site { 'support.wikiforge.net':
+    nginx::site { 'my.wikiforge.xyz':
         ensure => present,
-        source => 'puppet:///modules/osticket/support.wikiforge.net.conf',
+        source => 'puppet:///modules/whmcs/my.wikiforge.xyz.conf',
     }
 
-    ssl::wildcard { 'osticket wildcard': }
+    ssl::wildcard { 'phorge wildcard': }
 
-    git::clone { 'osticket':
-        ensure    => present,
-        directory => '/srv/osticket',
+    file { [
+        '/srv/whmcs',
+        '/usr/local/ioncube',
+    ]:
+        ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
-        origin    => 'https://github.com/osTicket/osTicket',
+        mode   => '0755',
     }
 
-    git::clone { 'errorpages':
-        ensure    => present,
-        directory => '/srv/osticket/ErrorPages',
-        origin    => 'https://github.com/WikiForge/ErrorPages',
-        require   => File['/srv/osticket'],
-    }
-
-    monitoring::services { 'support.wikiforge.net HTTPS 2':
+    monitoring::services { 'my.wikiforge.xyz HTTPS':
         check_command => 'check_http',
         vars          => {
             http_ssl   => true,
-            http_vhost => 'support.wikiforge.net',
+            http_vhost => 'my.wikiforge.xyz',
         },
     }
 }

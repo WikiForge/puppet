@@ -81,7 +81,7 @@ node 'os21.inside.wf' {
 
 node 'phorge21.inside.wf' {
     include base
-    include role::blesta
+    include role::whmcs
 }
 
 node 'prometheus21.inside.wf' {

@@ -12,7 +12,7 @@ charset = "utf8mb4"
 [General]
 browser_archiving_disabled_enforce = 1
 force_ssl = 1
-noreply_email_address = "noreply@wikiforge.net"
+noreply_email_address = "noreply@inside.wf"
 enable_load_data_infile = 0
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.inside.wf"
@@ -20,9 +20,9 @@ trusted_hosts[] = "matomo.inside.wf"
 [mail]
 transport = "smtp"
 port = 587
-host = "smtp.purelymail.com"
+host = "mail.wikiforge.xyz"
 type = "LOGIN"
-username = "noreply@wikiforge.net"
+username = "noreply@wikiforge.wf"
 password = "<%= @noreply_password %>"
 encryption = "tls"
 

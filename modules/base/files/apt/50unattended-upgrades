@@ -17,7 +17,7 @@ Unattended-Upgrade::Package-Blacklist {
 	"varnish";
 };
 
-Unattended-Upgrade::Mail "sre@wikiforge.net";
+Unattended-Upgrade::Mail "sre@wikiforge.xyz";
 Unattended-Upgrade::MailReport "only-on-error";
 
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
