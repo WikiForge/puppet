@@ -535,9 +535,9 @@ Lingo:
   repo_url: https://github.com/wikimedia/mediawiki-extensions-Lingo
   composer: true
 LinkCards:
-  branch: _branch_
+  branch: master
   path: extensions/LinkCards
-  repo_url: https://github.com/Wikimedia-AU/MediaWiki-extension-LinkCards
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-LinkCards
 LinkSuggest:
   branch: _branch_
   path: extensions/LinkSuggest
@@ -976,6 +976,7 @@ SandboxLink:
   repo_url: https://github.com/wikimedia/mediawiki-extensions-SandboxLink
 SaneCase:
   branch: master
+  path: extensions/SaneCase
   repo_url: https://github.com/ciencia/mediawiki-extensions-SaneCase
 Score:
   branch: _branch_
@@ -992,7 +993,7 @@ Scribunto:
 SearchVue:
   branch: _branch_
   path: extensions/SearchVue
-  repo_url: https://github.com/WikiForge/mediawiki-extensions-SearchVue
+  repo_url: https://github.com/wikimedia/mediawiki-extensions-SearchVue
 SecureLinkFixer:
   branch: _branch_
   path: extensions/SecureLinkFixer
