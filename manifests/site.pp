@@ -79,7 +79,7 @@ node 'os21.inside.wf' {
     include role::opensearch
 }
 
-node 'phorge21.inside.wf' {
+node 'whmcs21.inside.wf' {
     include base
     include role::whmcs
 }
