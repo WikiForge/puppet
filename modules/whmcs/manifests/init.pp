@@ -28,11 +28,11 @@ class whmcs (
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
-        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.1.so',
     }
 
     $cli_config = {
-        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.2.so',
+        'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.1.so',
     }
 
     $core_extensions =  [
