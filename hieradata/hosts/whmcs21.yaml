@@ -1,6 +1,6 @@
 php::fpm::fpm_workers_multiplier: 1.5
 php::fpm::fpm_min_child: 8
-php::php_version: '8.2'
+php::php_version: '8.1'
 
 nginx::use_graylog: true
 
