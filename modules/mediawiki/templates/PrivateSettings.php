@@ -21,6 +21,10 @@ $wmgSwiftPassword = '<%= @swift_password %>';
 $wgUpgradeKey = '<%= @mediawiki_upgradekey %>';
 $wgSecretKey = '<%= @mediawiki_secretkey %>';
 
+// MultiPurge configuration tokens for CloudFlare
+$wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
+$wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
+
 // Noreply authentication
 $wmgSMTPPassword = '<%= @noreply_password %>';
 

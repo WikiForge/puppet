@@ -105,6 +105,8 @@ class mediawiki {
     $swift_password           = lookup('mediawiki::swift_password')
     $aws_s3_access_key        = lookup('mediawiki::aws_s3_access_key')
     $aws_s3_access_secret_key = lookup('mediawiki::aws_s3_access_secret_key')
+    $multipurge_apitoken      = lookup('mediawiki::multipurge_apitoken')  
+    $multipurge_zoneid        = lookup('mediawiki::multipurge_zoneid')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
