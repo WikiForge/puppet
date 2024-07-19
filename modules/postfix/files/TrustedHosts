@@ -1,5 +1,6 @@
 127.0.0.1
+::1
 localhost
-10.0.0.0/16
-
+10.0.2.1/24
 *.inside.wf
+*.wikiforge.net
