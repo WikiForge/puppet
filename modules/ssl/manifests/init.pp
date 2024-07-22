@@ -2,7 +2,7 @@
 class ssl {
     $cf_apitoken = lookup('passwords::cloudflare_api')
 
-    stdlib::ensure_packages('certbot', 'python3-certbot-dns-cloudflare')
+    stdlib::ensure_packages(['certbot', 'python3-certbot-dns-cloudflare'])
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,
