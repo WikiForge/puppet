@@ -17,7 +17,7 @@ class ssl {
         ensure  => present,
         owner   => 'root',
         group   => 'root',
-        content  => template('modules/ssl/cloudflare-credentials.ini.erb'),
+        content  => template('ssl/cloudflare-credentials.ini.erb'),
         mode    => '0600',
         require => Package['certbot'],
     }
