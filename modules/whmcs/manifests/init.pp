@@ -25,6 +25,7 @@ class whmcs (
                 'revalidate_freq' => 10,
         },
         'max_execution_time' => 230,
+        'memory_limit' => '128M',
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
@@ -32,6 +33,7 @@ class whmcs (
     }
 
     $cli_config = {
+        'memory_limit' => '128M',
         'zend_extension' => '/usr/local/ioncube/ioncube_loader_lin_8.1.so',
     }
 
@@ -43,7 +45,7 @@ class whmcs (
         'intl',
         'mbstring',
         'ldap',
-        'pdo_mysql',
+        'soap',
         'zip',
     ]
 
