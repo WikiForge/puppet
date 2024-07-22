@@ -204,7 +204,7 @@ class SslCertificate:
                         os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
                     if domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
-                    os.system(f'/usr/bin/certbot --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                        os.system(f'/usr/bin/certbot --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
                     else:
                         os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
