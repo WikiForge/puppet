@@ -118,7 +118,7 @@ class SslCertificate:
                     if out != 0:
                         sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
-                if domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
+                if self.domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
                     print(f'{self.domain} is a CloudFlare domain! Generating automatically...')
                     out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
                     if out != 0:
@@ -168,7 +168,7 @@ class SslCertificate:
         os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
         os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
         os.system('git -C /srv/ssl/ssl/ push origin master')
-        print(f'This change has been pushed to GitHub.')
+        print('This change has been pushed to GitHub.')
 
         if self.private:
             print('Private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
@@ -203,7 +203,7 @@ class SslCertificate:
 
                         os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
-                    if domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
+                    if self.domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
                         os.system(f'/usr/bin/certbot --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
                     else:
                         os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
