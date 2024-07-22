@@ -51,9 +51,9 @@ class role::whmcs {
 
     cron { 'whmcs-cron':
             ensure   => present,
-            command  => "/usr/bin/php -q /srv/whmcs/whmcs/index.php cron > /dev/null 2>&1",
+            command  => "/usr/bin/php -q /srv/whmcs/whmcs/crons/cron.php > /dev/null 2>&1",
             user     => 'www-data',
-            minute   => '1',
+            minute   => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
     }
 
     motd::role { 'role::whmcs':
