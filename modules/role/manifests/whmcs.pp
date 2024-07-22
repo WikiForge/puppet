@@ -56,6 +56,13 @@ class role::whmcs {
             minute   => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
     }
 
+    cron { 'whmcs-mail-import-cron':
+            ensure   => present,
+            command  => "/usr/bin/php8.1 -q /srv/whmcs/whmcs/crons/pop.php > /dev/null 2>&1",
+            user     => 'www-data',
+            minute   => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
+    }
+
     motd::role { 'role::whmcs':
         description => 'whmcs appserver',
     }
