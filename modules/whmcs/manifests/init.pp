@@ -94,6 +94,8 @@ class whmcs (
             priority     => 15;
         'mysqli':
             package_name => "php${php_version}-mysql";
+        'pdo_mysql':
+            package_name => '';
     }
 
     # XML
