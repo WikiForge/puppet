@@ -108,13 +108,25 @@ class SslCertificate:
                 print('Generating Wildcard SSL certificate with LetsEncrypt')
 
             if self.no_existing_key:
-                out = os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
-                if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                if self.domain == ['wikiforge.net', 'inside.wf', 'your.wf', 'try.wf']:
+                    print(f'{self.domain} is a CloudFlare domain! Generating automatically...')
+                    out = os.system(f'/usr/bin/certbot --force-renewal --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    if out != 0:
+                        sys.exit("Error: Certbot failed (either the domain isn't pointed, we are being rate limited, or a CloudFlare issue occurred)")
+                else:
+                    out = os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    if out != 0:
+                        sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
-                out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
-                if out != 0:
-                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                if domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
+                    print(f'{self.domain} is a CloudFlare domain! Generating automatically...')
+                    out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    if out != 0:
+                        sys.exit("Error: Certbot failed (either the domain isn't pointed, we are being rate limited, or a CloudFlare issue occurred)")
+                else:
+                    out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    if out != 0:
+                        sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
@@ -134,9 +146,8 @@ class SslCertificate:
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
-        if not self.wildcard:
-            if not self.quiet:
-                print('Pushing LetsEncrypt SSL certificate to GitHub')
+        if not self.quiet:
+            print('Pushing LetsEncrypt SSL certificate to GitHub...')
 
             os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiForgeSSLBot"')
@@ -146,15 +157,18 @@ class SslCertificate:
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
             os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
+        if not self.wildcard:
+            print(f'Adding {self.domain} to certs.yaml...')
             with open('/srv/ssl/ssl/certs.yaml', 'a') as certs:
                 certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
                 certs.write(f"  url: '{self.domain}'\n")
                 certs.write("  ca: 'LetsEncrypt'\n")
                 certs.write('  disable_event: false\n')
 
-            os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
-            os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
-            os.system('git -C /srv/ssl/ssl/ push origin master')
+        os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
+        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
+        os.system('git -C /srv/ssl/ssl/ push origin master')
+        print(f'This change has been pushed to GitHub.')
 
         if self.private:
             print('Private key is being copied to /etc/puppetlabs/puppet/ssl-keys')
@@ -166,19 +180,33 @@ class SslCertificate:
         self.newprivate = False
         if self.wildcard:
             if not self.quiet:
-                print(f'Re-generating a new wildcard SSL cert for {self.domain}')
+                print(f'Re-generating a new wildcard SSL cert for {self.domain}...')
 
             if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
-                    self.newprivate = True
+                    if self.domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
+                        print(f'{self.domain} is a CloudFlare domain! Re-generating automatically...')
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                        self.newprivate = True
 
-                    os.system(f'/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                        os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                    os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                        os.system(f'/usr/bin/certbot --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
+
+                        os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+                    else:
+                        self.newprivate = True
+
+                        os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
+
+                        os.system(f'/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+
+                        os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
-                    os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    if domain == ['wikiforge.net', 'inside.wf', 'your.wf']:
+                    os.system(f'/usr/bin/certbot --reuse-key --expand certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                    else:
+                        os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
                 self.newprivate = True
                 os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')

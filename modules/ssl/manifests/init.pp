@@ -1,6 +1,8 @@
 # === Class ssl
 class ssl {
-    stdlib::ensure_packages('certbot')
+    $cf_apitoken = lookup('passwords::cloudflare_api')
+
+    stdlib::ensure_packages('certbot', 'python3-certbot-dns-cloudflare')
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,
@@ -8,6 +10,15 @@ class ssl {
         group   => 'root',
         source  => 'puppet:///modules/ssl/letsencrypt.ini',
         mode    => '0644',
+        require => Package['certbot'],
+    }
+
+    file { '/etc/letsencrypt/cloudflare.ini':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        content  => template('modules/ssl/cloudflare-credentials.ini.erb'),
+        mode    => '0600',
         require => Package['certbot'],
     }
 
