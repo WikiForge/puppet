@@ -3,6 +3,7 @@
 # Nginx config using hiera
 class mediawiki::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
+    $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $php_fpm_sock = 'php/fpm-www.sock'
 
     $module_path = get_module_path($module_name)

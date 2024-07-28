@@ -188,19 +188,19 @@ class _WikiForgeRewriteContext(WSGIContext):
         # (d) global-data-repo-zone.shard (if sharded)
         #
         # Rewrite wiki-global URLs of these forms:
-        # (a) http://static.wikiforge.net/<proj>/math/<relpath>
+        # (a) http://user-content.your.wf/<proj>/math/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/math/<relpath>
-        # (b) http://static.wikiforge.net/<proj>/<relpath>
+        # (b) http://user-content.your.wf/<proj>/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/<relpath>
-        # (c) http://static.wikiforge.net/<proj>/archive/<relpath>
+        # (c) http://user-content.your.wf/<proj>/archive/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/archive/<relpath>
-        # (d) http://static.wikiforge.net/<proj>/thumb/<relpath>
+        # (d) http://user-content.your.wf/<proj>/thumb/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/thumb/<relpath>
-        # (e) https://static.wikiforge.net/<proj>/temp/<relpath>
+        # (e) https://user-content.your.wf/<proj>/temp/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/temp/<relpath>
-        # (f) https://static.wikiforge.net/<proj>/transcoded/<relpath>
+        # (f) https://user-content.your.wf/<proj>/transcoded/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/transcoded/<relpath>
-        # (g) https://static.wikiforge.net/<proj>/timeline/<relpath>
+        # (g) https://user-content.your.wf/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
         zone = ''

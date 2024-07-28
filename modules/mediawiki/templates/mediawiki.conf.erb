@@ -5,7 +5,7 @@ server {
 	listen 443 ssl deferred http2 backlog=4096;
 	listen [::]:443 deferred ssl http2 backlog=4096;
 
-	server_name *.wikiforge.net;
+	server_name *.your.wf your.wf;
 	root /srv/mediawiki;
 
 	ssl_certificate /etc/ssl/localcerts/wikiforge.net.crt;
@@ -18,7 +18,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
+	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -41,78 +41,7 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name wikiforge.net try.wf;
-	root /srv/mediawiki/landing;
-	index index.php index.html;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	ssl_certificate /etc/ssl/localcerts/wikiforge.net.crt;
-	ssl_certificate_key /etc/ssl/private/wikiforge.net.key;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
-
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
-
-	location ~ ^/(\.git|config) {
-		deny all;
-	}
-
-	location ~ \.php {
-		include fastcgi_params;
-		fastcgi_index index.html;
-		fastcgi_split_path_info ^(.+\.php)(.*)$;
-		try_files $fastcgi_script_name =404;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
-	}
-
-	location ~ ^/((?!(css|discord|js|images|img|lib|scss)).)*$ {
-		# redirect query parameter to path
-		if ($arg_lang !~ '^$|en') {
-			return 301 /$arg_lang;
-		}
-
-		# redirect en (default) to /
-		if ($arg_lang = 'en') {
-			return 301 /;
-		}
-
-		rewrite ^/en(/.*)?$ / permanent;
-
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
-
-		# if we aren't using a user selected language,
-		# use $http_accept_language
-		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
-		}
-
-		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
-		}
-	}
-}
-
-server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name wikiforge.xyz;
+	server_name wikiforge.xyz *.wikiforge.xyz;
 	root /srv/mediawiki/landing;
 	index index.html;
 
@@ -130,7 +59,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
+	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -183,7 +112,7 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name static.wikiforge.net;
+	server_name user-content.your.wf;
 
 	send_timeout 120;
 
@@ -239,47 +168,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
-
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
-
-	include /etc/nginx/mediawiki-includes;
-
-	location = /robots.txt {
-		rewrite ^(.*)$ /robots.php;
-	}
-
-	location = /check {
-		rewrite ^(.*)$ /healthcheck.php;
-	}
-
-	location = /sitemap.xml {
-		rewrite ^(.*)$ /sitemap.php;
-	}
-}
-
-server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name *.your.wf your.wf;
-	root /srv/mediawiki;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	ssl_certificate /etc/ssl/localcerts/your.wf.crt;
-	ssl_certificate_key /etc/ssl/private/your.wf.key;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
+	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -325,6 +214,52 @@ server {
 	}
 }
 
+<%- @sslredirects.each_pair do | name, property | -%>
+	server {
+		listen 443 ssl http2;
+		listen [::]:443 ssl http2;
+	
+		<%- if property['additional_domain'] -%>
+		server_name <%= property['url'] %> <%= property['additional_domain'] %>;
+		<%- else -%>
+		server_name <%= property['url'] %>;
+		<%- end -%>
+	
+		root /var/www/html;
+	
+		ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
+		ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
+	
+		<%- if property['hsts'] == "strict" -%>
+		add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+		<%- else -%>
+		add_header Strict-Transport-Security "max-age=604800";
+		<%- end -%>
+		<%- if property['path_redirects'] -%>
+		<%- property['path_redirects'].each_pair do | path, redirect | -%>
+		location ~* <%= path %>$ {
+			return 301 https://<%= redirect %>;
+		}
+		<%- end -%>
+		# If we are using path_redirects, make the main
+		# redirect property optional.
+		<%- if property['redirect'] -%>
+		# Only redirect if there are no other matches found.
+		# This prevents this from conflicting with
+		# redirects specified in path_redirects.
+		location / {
+			return 301 https://<%= property['redirect'] %>$request_uri;
+		}
+		<%- end -%>
+		<%- else -%>
+		# If we aren't using path_redirects, always
+		# redirect using the main redirect property.
+		return 301 https://<%= property['redirect'] %>$request_uri;
+		<%- end -%>
+	}
+	
+	<%- end -%>
+	
 <%- @sslcerts.each_pair do | name, property | -%>
 server {
 	listen 443 ssl http2;
@@ -354,7 +289,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.wikiforge.net";
+	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 

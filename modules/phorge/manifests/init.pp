@@ -210,13 +210,13 @@ class phorge (
         require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
 
-    monitoring::services { 'phorge-static.wikiforge.net HTTPS':
+    monitoring::services { 'phorge-user-content.your.wf HTTPS':
         check_command => 'check_http',
         vars          => {
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
-            http_vhost  => 'phorge-static.wikiforge.net',
-            http_uri    => 'https://phorge-static.wikiforge.net/file/data/2jym57fdvuv7rfmkjnax/PHID-FILE-lhwdvoxb25xio5gvw2s3/logo'
+            http_vhost  => 'phorge-user-content.your.wf',
+            http_uri    => 'https://phorge-user-content.your.wf/file/data/2jym57fdvuv7rfmkjnax/PHID-FILE-lhwdvoxb25xio5gvw2s3/logo'
         },
     }
 
