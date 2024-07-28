@@ -1,7 +1,7 @@
 # Please be restrictive with sites that are added and to which list.
 default-src: 
   - "'self'"
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - '*.your.wf'
   
 script-src:
@@ -9,7 +9,7 @@ script-src:
   - "'self'"
   - "'unsafe-inline'"
   - "'unsafe-eval'"
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -35,7 +35,7 @@ style-src:
   - "'self'"
   - 'data:'
   - "'unsafe-inline'"
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -62,7 +62,7 @@ img-src:
   - 'blob:'
   - "'self'"
   - 'data:'
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - 'upload.wikimedia.org'
   - 'wikimedia.org'
   - 'maps.google.com'
@@ -85,7 +85,7 @@ img-src:
 font-src:
   - "'self'"
   - 'data:'
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
@@ -96,14 +96,14 @@ font-src:
 media-src:
   - "'self'"
   - 'blob:'
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - 'upload.wikimedia.org'
   - '*.youtube.com'
   - '*.youtube-nocookie.com'
 
 frame-src:
   - "'self'"
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - 'www.google.com'
   - 'docs.google.com'
   - 'web.libera.chat'
@@ -124,7 +124,7 @@ frame-src:
 
 connect-src:
   - "'self'"
-  - '*.wikiforge.net'
+  - 'user-content.static.wf'
   - 'www.wikidata.org'
   - '*.wikipedia.org'
   - 'www.mediawiki.org'
