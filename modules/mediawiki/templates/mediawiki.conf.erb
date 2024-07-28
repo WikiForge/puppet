@@ -18,7 +18,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
+	add_header X-Frame-Options "ALLOW-FROM user-content.static.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -59,7 +59,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
+	add_header X-Frame-Options "ALLOW-FROM user-content.static.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -112,7 +112,7 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name user-content.your.wf;
+	server_name user-content.static.wf;
 
 	send_timeout 120;
 
@@ -168,7 +168,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
+	add_header X-Frame-Options "ALLOW-FROM user-content.static.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -289,7 +289,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM user-content.your.wf";
+	add_header X-Frame-Options "ALLOW-FROM user-content.static.wf";
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
