@@ -1,7 +1,6 @@
 # Please be restrictive with sites that are added and to which list.
 default-src: 
   - "'self'"
-  - '*.wikiforge.net'
   - '*.wikitide.org'
 
 script-src:
