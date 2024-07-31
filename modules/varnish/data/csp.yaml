@@ -1,15 +1,17 @@
 # Please be restrictive with sites that are added and to which list.
 default-src: 
   - "'self'"
-  - '*.wikitide.org'
-
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
+  - '*.your.wf'
+  
 script-src:
   - 'blob:'
   - "'self'"
   - "'unsafe-inline'"
   - "'unsafe-eval'"
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -35,8 +37,8 @@ style-src:
   - "'self'"
   - 'data:'
   - "'unsafe-inline'"
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -63,8 +65,8 @@ img-src:
   - 'blob:'
   - "'self'"
   - 'data:'
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - 'upload.wikimedia.org'
   - 'wikimedia.org'
   - 'maps.google.com'
@@ -87,8 +89,8 @@ img-src:
 font-src:
   - "'self'"
   - 'data:'
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
@@ -99,16 +101,16 @@ font-src:
 media-src:
   - "'self'"
   - 'blob:'
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - 'upload.wikimedia.org'
   - '*.youtube.com'
   - '*.youtube-nocookie.com'
 
 frame-src:
   - "'self'"
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - 'www.google.com'
   - 'docs.google.com'
   - 'web.libera.chat'
@@ -129,8 +131,8 @@ frame-src:
 
 connect-src:
   - "'self'"
-  - '*.wikiforge.net'
-  - '*.wikitide.org'
+  - 'user-content.static.wf'
+  - 'static.wikiforge.net'
   - 'www.wikidata.org'
   - '*.wikipedia.org'
   - 'www.mediawiki.org'
